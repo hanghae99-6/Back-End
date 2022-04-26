@@ -23,7 +23,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .setAllowedOrigins("*"); // allow all origins
     }
 
-    @Bean
     public WebSocketHandler signalHandler() {
         return new SignalHandler();
     }
