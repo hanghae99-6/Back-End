@@ -91,14 +91,14 @@ public class SignalHandler extends TextWebSocketHandler {
             Room room;
             // message.getType() 값이랑 같은 case 값에 있는 로직이 실행된다.
             switch (message.getType()) {
-                // text message from client has been received
+                // text message from client has been received (클라이언트로부터 텍스트 메세지를 받을 때)
                 case MSG_TYPE_TEXT:
                     logger.debug("[ws] Text message: {}", message.getData());
-                    // message.data is the text sent by client
-                    // process text message if needed
+                    // message.data is the text sent by client (message.data 는 클라이언트에서 보낸 데이터)
+                    // process text message if needed (필요한 경우 text message 처리)
                     break;
 
-                // process signal received from client
+                // process signal received from client (클라이언트로부터 process signal 을 받음)
                 case MSG_TYPE_OFFER:
                 case MSG_TYPE_ANSWER:
                 case MSG_TYPE_ICE:

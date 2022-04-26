@@ -7,8 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DebateRoomResponseDto {
-    // 여기도 오케이 어떻게 줘야하는지 모르겠어서..ㅎㅎ
-//    private boolean ok;
+
     private Long debateId;
     private String topic;
     private String prosName;

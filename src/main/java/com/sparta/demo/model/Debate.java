@@ -3,6 +3,7 @@ package com.sparta.demo.model;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -13,7 +14,8 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-@AllArgsConstructor
+//@AllArgsConstructor
+@NoArgsConstructor
 public class Debate extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,13 +54,14 @@ public class Debate extends Timestamped{
     @Column
     private int speechMinute;
 
-    public Debate() {
-
-    }
+//    public Debate() {
+//
+//    }
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto) {
         // 얘는 홈트 어쩌고 그거 그대로 긁어온건데 뭔지 모르겠네요
         // 여기서 왜인지 모르겠는데 this. 이 안먹힙니다. 그래서 생성자안에 이렇게 넣어둔것 같아요... 고칠 수 있으면 고치고싶네요ㅠ
+        // todo: static(전역적으로 사용할 때) 인 경우 this를 못 쓰는걸로 알고 있습니다.
         Debate debate = new Debate();
         debate.roomId = UUID.randomUUID().toString();
         debate.topic = debateLinkRequestDto.getTopic();
