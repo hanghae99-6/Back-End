@@ -20,8 +20,10 @@ public class SocketHandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws InterruptedException, IOException {
         log.info("메세지 핸들러 : {}", session.getPrincipal());
+        log.info("textMessage : {}", message);
         for (WebSocketSession webSocketSession : sessions) {
             if (webSocketSession.isOpen() && !session.getId().equals(webSocketSession.getId())) {
+                log.info("textMessage for문 안쪽 : {}", message);
                 webSocketSession.sendMessage(message);
             }
         }
