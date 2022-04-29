@@ -30,8 +30,20 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         log.info("accessor.getCommand : {}", accessor.getCommand());
-        log.info("accessor.getCommand : {}", accessor.getSessionId());
-        log.info("accessor.getCommand : {}", message.getHeaders().get("simpSessionId"));
+        log.info("accessor.getSessionId : {}", accessor.getSessionId());
+        log.info("message.getHeaders().get('simpSessionId') : {}", message.getHeaders().get("simpSessionId"));
+
+        if (StompCommand.CONNECT == accessor.getCommand()){
+            log.info("if StompCommand.CONNECT");
+        }else if(StompCommand.SUBSCRIBE == accessor.getCommand()){
+            log.info("if StompCommand.SUBSCRIBE");
+            log.info("message.getHeaders().get('simpDestination') : {}",message.getHeaders().get("simpDestination"));
+            log.info("accessor.getSessionId : {}", accessor.getSessionId());
+        }else if (StompCommand.DISCONNECT == accessor.getCommand()) {
+            log.info("if StompCommand.DISCONNECT");
+            log.info("message.getHeaders().get('simpDestination') : {}",message.getHeaders().get("simpDestination"));
+        }
+
 //        // websocket 연결시 헤더의 jwt token 검증
 //        if (StompCommand.CONNECT == accessor.getCommand()) {
 //            jwtDecoder.decodeUsername(accessor.getFirstNativeHeader("Authorization").substring(7));
