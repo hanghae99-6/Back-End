@@ -6,6 +6,7 @@ import com.sparta.demo.dto.debate.DebateRoomResponseDto;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.repository.DebateRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,18 +17,18 @@ public class DebateService {
 
 
 
-    public DebateLinkResponseDto createLink(DebateLinkRequestDto debateLinkRequestDto) {
+    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto) {
         Debate debate = Debate.create(debateLinkRequestDto);
         Debate newDebate = debateRepository.save(debate);
 
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
         debateLinkResponseDto.setRoomId(newDebate.getRoomId());
 
-        return debateLinkResponseDto;
+        return ResponseEntity.ok().body(debateLinkResponseDto);
     }
 
-    public DebateRoomResponseDto getRoom(String roomId) {
-        Debate debate = debateRepository.findByroomId(roomId);
-        return new DebateRoomResponseDto(debate);
+    public ResponseEntity<DebateRoomResponseDto> getRoom(String roomId) {
+        Debate debate = debateRepository.findByRoomId(roomId);
+        return ResponseEntity.ok().body(new DebateRoomResponseDto(debate));
     }
 }
