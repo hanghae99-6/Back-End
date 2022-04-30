@@ -40,6 +40,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'javax.xml.bind:jaxb-api'
+
+    // openvidu
+    implementation 'io.openvidu:openvidu-java-client:2.21.1'
+    implementation 'org.springframework.boot:spring-boot-devtools'
 }
 
 'test' {
