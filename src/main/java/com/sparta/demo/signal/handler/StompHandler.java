@@ -1,5 +1,7 @@
 package com.sparta.demo.signal.handler;
 
+import com.sparta.demo.repository.UserRepository;
+import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -32,7 +34,7 @@ public class StompHandler implements ChannelInterceptor {
         log.info("accessor.getCommand : {}", accessor.getCommand());
         log.info("accessor.getCommand : {}", accessor.getSessionId());
         log.info("accessor.getCommand : {}", message.getHeaders().get("simpSessionId"));
-//        // websocket 연결시 헤더의 jwt token 검증
+        // websocket 연결시 헤더의 jwt token 검증
 //        if (StompCommand.CONNECT == accessor.getCommand()) {
 //            jwtDecoder.decodeUsername(accessor.getFirstNativeHeader("Authorization").substring(7));
 //        } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {

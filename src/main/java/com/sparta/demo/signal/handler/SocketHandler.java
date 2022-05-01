@@ -1,4 +1,4 @@
-package com.sparta.demo.signal.socket;
+package com.sparta.demo.signal.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -42,7 +42,6 @@ dependencies {
 
     // Java 10 이상일 경우 JWT 구현 시 에러가 발생할 수 있어 방지하기 위한 기능
     implementation 'org.glassfish.jaxb:jaxb-runtime'
-
 }
 
 'test' {
