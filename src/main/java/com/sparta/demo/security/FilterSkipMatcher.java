@@ -1,17 +1,14 @@
 package com.sparta.demo.security;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// todo: JwtAuthFilter를 거치는 모든 API 중 로그인 전에 허용되어야 하는 API에 대해 예외 처리를 해준다.(로그인, 회원가입 페이지, css ...)
+// JwtAuthFilter를 거치는 모든 API 중 로그인 전에 허용되어야 하는 API에 대해 예외 처리를 해준다.(로그인, 회원가입 페이지, css ...)
 public class FilterSkipMatcher  implements RequestMatcher {
 
     private final OrRequestMatcher orRequestMatcher;

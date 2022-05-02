@@ -13,8 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.Resource;
 
-// todo: Provider - Filter가 인증에 필요한 정보를 적합한 클래스 형태로 만들어 Spring Security에 인증 요청을 한다.
-// todo: Spring Security는 Filter 가 요청한 인증 처리를 할 수 있는 Provider를 찾고, 실제 인증 처리는 Provider에 의해 진행된다.
+// Provider - Filter가 인증에 필요한 정보를 적합한 클래스 형태로 만들어 Spring Security에 인증 요청을 한다.
+// Spring Security는 Filter 가 요청한 인증 처리를 할 수 있는 Provider를 찾고, 실제 인증 처리는 Provider에 의해 진행된다.
 @RequiredArgsConstructor
 public class FormLoginAuthProvider implements AuthenticationProvider {
 
@@ -38,7 +38,7 @@ public class FormLoginAuthProvider implements AuthenticationProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
-    // todo: supports 함수를 통해 "인증 정보의 클래스 타입"을 보고 판단
+    // supports 함수를 통해 "인증 정보의 클래스 타입"을 보고 판단
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);

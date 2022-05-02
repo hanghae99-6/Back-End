@@ -12,7 +12,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-// todo: 폼 로그인 요청 시 유저 아이디와 패스워드를 가지고 인증을 진행한다.
+// 폼 로그인 요청 시 유저 아이디와 패스워드를 가지고 인증을 진행한다.
 public class FormLoginFilter extends UsernamePasswordAuthenticationFilter {
     private final ObjectMapper objectMapper;
 
@@ -27,7 +27,6 @@ public class FormLoginFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         UsernamePasswordAuthenticationToken authRequest;
         try {
-            // todo: getInputStream
             JsonNode requestBody = objectMapper.readTree(request.getInputStream());
             String username = requestBody.get("userId").asText();
             String password = requestBody.get("password").asText();
@@ -38,6 +37,6 @@ public class FormLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         setDetails(request, authRequest);
         return this.getAuthenticationManager().authenticate(authRequest);
-        // todo: FormLoginAuthProvider 에서 처리
+        // FormLoginAuthProvider 에서 처리
     }
 }

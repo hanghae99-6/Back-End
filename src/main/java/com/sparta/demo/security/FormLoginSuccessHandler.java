@@ -7,7 +7,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-// todo: FormLogin 이 성공했을 때 호출된다.
+// FormLogin 이 성공했을 때 호출된다.
 public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     public static final String AUTH_HEADER = "Authorization";
@@ -20,7 +20,7 @@ public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
         // Token 생성
         final String token = JwtTokenUtils.generateJwtToken(userDetails);
         System.out.println("token = " + token);
-        // todo: generateJwtToken - JWT 토큰이 만들어진다.
+        // generateJwtToken - JWT 토큰이 만들어진다.
         response.addHeader(AUTH_HEADER, TOKEN_TYPE + " " + token);
     }
 }

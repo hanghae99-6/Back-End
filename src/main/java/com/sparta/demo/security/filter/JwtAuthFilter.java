@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-// todo: API 요청 헤더에 전달되는 JWT 유효성 인증, 모든 API에 대해서 JwtAuthFilter가 JWT 확인(정보가 맞는지, 유효 기간 등등) 후 컨트롤러로 보냄.
+// API 요청 헤더에 전달되는 JWT 유효성 인증, 모든 API에 대해서 JwtAuthFilter가 JWT 확인(정보가 맞는지, 유효 기간 등등) 후 컨트롤러로 보냄.
 public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
 
     private final HeaderTokenExtractor extractor;
