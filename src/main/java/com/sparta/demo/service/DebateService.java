@@ -99,4 +99,10 @@ public class DebateService {
 //
 //        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
     }
+    public void sendDisChatMessage(StpMessage stpMessage) throws InterruptedException {
+
+        stpMessage.setUserCount(stpMessageRepository.findAllByRoomId(stpMessage.getRoomId())-1);
+    }
+
+
 }

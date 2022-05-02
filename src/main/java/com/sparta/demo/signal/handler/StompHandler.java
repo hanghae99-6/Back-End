@@ -29,8 +29,6 @@ public class StompHandler implements ChannelInterceptor {
 //    private final EnterUserRepository enterUserRepository;
     private final DebateService debateService;
     private final DebateRepository debateRepository;
-    private final StpMessageRepository stpMessageRepository;
-    private final StpMessage stpMessage;
     private final Long min = 0L;
 
 
@@ -48,8 +46,9 @@ public class StompHandler implements ChannelInterceptor {
             log.info("message.getHeaders().get('simpDestination') : {}",message.getHeaders().get("simpDestination"));
             log.info("accessor.getSessionId : {}", accessor.getSessionId());
 
-            String name = "name With hardcoding";
+            String name = "name With hardcoding - get in";
             String roomId = debateService.getRoomId( Optional.ofNullable((String)message.getHeaders().get("simpDestination")).orElse("InvalidPartitionId"));
+            log.info("CONNECT.roomId : {}", roomId);
 //            String sessionId = (String) message.getHeaders().get("simpSessionId");
 
             try {
@@ -66,28 +65,34 @@ public class StompHandler implements ChannelInterceptor {
 //                    room.setUserCount(min);
 //                }
                 debateRepository.save(debate);
+                log.info("CONNECT.debate.roomId: {}",debate.getRoomId());
+                log.info("CONNECT.debate.getConsName: {}",debate.getConsName());
+                log.info("CONNECT.debate.getProsName: {}",debate.getProsName());
             }
 
         }else if (StompCommand.DISCONNECT == accessor.getCommand()) {
             log.info("if StompCommand.DISCONNECT");
             log.info("message.getHeaders().get('simpDestination') : {}", message.getHeaders().get("simpDestination"));
 
-            String name = "name With hardcoding - out";
+            String name = "name With hardcoding - get out";
             String roomId = debateService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidPartitionId"));
+            log.info("CONNECT.roomId : {}", roomId);
 //            String sessionId = (String) message.getHeaders().get("simpSessionId");
 
             if (roomId != null) {
-
-
                 try {
-                    debateService.sendChatMessage(StpMessage.builder().type(StpMessage.MessageType.QUIT).roomId(roomId).videoUser(name).build());
+                    debateService.sendDisChatMessage(StpMessage.builder().type(StpMessage.MessageType.QUIT).roomId(roomId).videoUser(name).build());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 //
                 Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다.(DISCONNECT)"));
 
-                stpMessage.setUserCount(stpMessageRepository.findAllByRoomId(roomId) - 1);
+                debateRepository.save(debate);
+                log.info("CONNECT.debate.roomId: {}",debate.getRoomId());
+                log.info("CONNECT.debate.getConsName: {}",debate.getConsName());
+                log.info("CONNECT.debate.getProsName: {}",debate.getProsName());
+
             }
         }
         return message;
