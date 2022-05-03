@@ -9,15 +9,41 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
 
 @Configuration
-@EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
+@EnableWebSocketMessageBroker // Stomp사용위해
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+//    @Override
+//    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+//        registry.addHandler(new SocketHandler(), "/socket")
+//                .setAllowedOrigins("*");
+//    }
 
     @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new SocketHandler(), "/socket")
-                .setAllowedOrigins("*");
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/sub");
+        config.setApplicationDestinationPrefixes("/pub");
     }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+//        registry.addEndpoint("/chat-socket").setAllowedOrigins("*")
+        registry.addEndpoint("/chat-socket").setAllowedOriginPatterns("*")
+                .withSockJS();
+    }
+
 }
+
+//@Configuration
+//@EnableWebSocket
+//public class WebSocketConfig implements WebSocketConfigurer {
+//
+//    @Override
+//    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+//        registry.addHandler(new SocketHandler(), "/socket")
+//                .setAllowedOrigins("*");
+//    }
+//}
+
 //@RequiredArgsConstructor
 //@Configuration
 //@EnableWebSocketMessageBroker

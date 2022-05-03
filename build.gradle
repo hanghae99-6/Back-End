@@ -28,7 +28,28 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // redis
+//`    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//    implementation 'it.ozimov:embedded-redis:0.7.2'
+//    implementation 'org.springframework.boot:spring-boot-devtools'`
+
+    // 스프링 시큐리티
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'commons-codec:commons-codec:1.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    implementation 'com.auth0:java-jwt:3.13.0'
+    implementation 'commons-io:commons-io:2.8.0'
+
+    // 소설 로그인
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
+
+
 
 'test' {
     useJUnitPlatform()
