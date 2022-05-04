@@ -4,6 +4,7 @@ import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 // 홈트에서 room 레퍼런스로 참고
@@ -48,6 +49,9 @@ public class Debate extends Timestamped{
 
     @Column
     private int speechMinute;
+
+    @OneToMany(mappedBy = "debate")
+    private List<Reply> replyList;
 
 //    public Debate() {
 //
