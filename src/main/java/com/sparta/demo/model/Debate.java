@@ -34,7 +34,6 @@ public class Debate extends Timestamped{
     @Column(nullable = false)
     private String catName;
 
-
     // 이 부분을 유저로 받아와야할 지 고민해봤으면 좋겠습니다.
     // 지금은 user entity 없이 만드는 거라고 생각해서 그냥 String 값을 해두었습니다.
     // 추후에 user로 바꾸면 나중에 내가 참여한 토론 등에서 찾기 좀 쉽지 않을까요?(잘모르겠지만요)
@@ -43,7 +42,6 @@ public class Debate extends Timestamped{
 
     @Column(nullable = false)
     private String consName;
-
 
     @Column
     private int speechCnt;
