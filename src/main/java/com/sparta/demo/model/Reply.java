@@ -1,10 +1,13 @@
 package com.sparta.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,10 +26,14 @@ public class Reply extends Timestamped{
 //    @JoinColumn(name = "userId")
 //    private User user;
 
-    // TODO: 그냥 debateId만 넣는걸로 변경(연관관계 해제)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "debateId")
+    @JsonBackReference
     private Debate debate;
+
+    @OneToMany(mappedBy = "reply", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Likes> likesList;
 
     public Reply(String reply, Debate debate) {
         this.reply = reply;

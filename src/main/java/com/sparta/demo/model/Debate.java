@@ -1,5 +1,6 @@
 package com.sparta.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import lombok.*;
 
@@ -50,12 +51,9 @@ public class Debate extends Timestamped{
     @Column
     private int speechMinute;
 
-    @OneToMany(mappedBy = "debate")
-    private List<Reply> replyList;
+//    @OneToMany(mappedBy = "debate")
+//    private List<Reply> replyList;
 
-//    public Debate() {
-//
-//    }
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto) {
         // 얘는 홈트 어쩌고 그거 그대로 긁어온건데 뭔지 모르겠네요
