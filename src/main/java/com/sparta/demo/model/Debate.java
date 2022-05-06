@@ -1,12 +1,11 @@
 package com.sparta.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 // 홈트에서 room 레퍼런스로 참고
@@ -37,7 +36,6 @@ public class Debate extends Timestamped{
     @Column(nullable = false)
     private String catName;
 
-
     // 이 부분을 유저로 받아와야할 지 고민해봤으면 좋겠습니다.
     // 지금은 user entity 없이 만드는 거라고 생각해서 그냥 String 값을 해두었습니다.
     // 추후에 user로 바꾸면 나중에 내가 참여한 토론 등에서 찾기 좀 쉽지 않을까요?(잘모르겠지만요)
@@ -47,16 +45,15 @@ public class Debate extends Timestamped{
     @Column(nullable = false)
     private String consName;
 
-
     @Column
     private int speechCnt;
 
     @Column
     private int speechMinute;
 
-//    public Debate() {
-//
-//    }
+//    @OneToMany(mappedBy = "debate")
+//    private List<Reply> replyList;
+
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto) {
         // 얘는 홈트 어쩌고 그거 그대로 긁어온건데 뭔지 모르겠네요
@@ -72,4 +69,5 @@ public class Debate extends Timestamped{
         debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
         return debate;
     }
+
 }
