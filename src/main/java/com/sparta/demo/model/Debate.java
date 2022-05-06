@@ -1,10 +1,7 @@
 package com.sparta.demo.model;
 
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -72,4 +69,5 @@ public class Debate extends Timestamped{
         debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
         return debate;
     }
+
 }

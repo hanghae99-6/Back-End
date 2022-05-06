@@ -3,6 +3,7 @@ package com.sparta.demo.controller;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import com.sparta.demo.dto.debate.DebateLinkResponseDto;
 import com.sparta.demo.dto.debate.DebateRoomResponseDto;
+import com.sparta.demo.dto.debate.DebateRoomValidateDto;
 import com.sparta.demo.service.DebateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,4 +27,8 @@ public class DebateController {
         return debateService.getRoom(roomId);
     }
 
+    @GetMapping("/{roomId}/check")
+    public ResponseEntity<DebateRoomValidateDto> validateRoomId(@PathVariable String roomId){
+        return debateService.validateRoomId(roomId);
+    }
 }
