@@ -43,18 +43,6 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    // todo: 홈트에서 그대로 가져왔습니다.
-    //embedded-redis
-    implementation 'it.ozimov:embedded-redis:0.7.2'
-    implementation 'org.webjars.bower:bootstrap:4.3.1'
-    implementation 'org.webjars.bower:vue:2.5.16'
-    implementation 'org.webjars.bower:axios:0.17.1'
-    implementation 'org.webjars:sockjs-client:1.1.2'
-    implementation 'org.webjars:stomp-websocket:2.3.3-1'
-    implementation 'com.google.code.gson:gson:2.8.0'
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    implementation 'javax.xml.bind:jaxb-api'
-
     // openvidu
     implementation 'io.openvidu:openvidu-java-client:2.21.1'
     implementation 'org.springframework.boot:spring-boot-devtools'
