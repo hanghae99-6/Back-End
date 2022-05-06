@@ -26,13 +26,19 @@ public class JwtDecoder {
 
         Date now = new Date();
         if (expiredDate.before(now)) {
-            throw new IllegalArgumentException("유효한 토큰이 아닙니다.");
+            throw new IllegalArgumentException("유효한 DATE토큰이 아닙니다.");
         }
 
         String username = decodedJWT
                 .getClaim(CLAIM_USER_NAME)
                 .asString();
+
         return username;
+
+//        String email = decodedJWT
+//                .getClaim(CLAIM_EMAIL)
+//                .asString();
+//        return email;
     }
 
     private Optional<DecodedJWT> isValidToken(String token) {

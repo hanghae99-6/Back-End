@@ -40,12 +40,20 @@ public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
     ) throws AuthenticationException, IOException {
 
         // JWT 값을 담아주는 변수 TokenPayload
+        System.out.println("request 값:"+request);
+        System.out.println("request.getRequestURI 값:"+request.getRequestURI());
+        System.out.println("request.getHeaderNames 값:"+request.getHeaderNames());
+
+        System.out.println("response 값:" + response);
+        System.out.println("response.getHeader 값:" + response.getHeader("Authorization"));
+
         String tokenPayload = request.getHeader("Authorization");
         System.out.println("request Authorization header : " + tokenPayload + " / " + (tokenPayload == null?"null 토큰.":"값이 존재하는 토큰."));
         if (tokenPayload == null) {
 //            response.sendRedirect("/user/loginView");
-            response.sendError(400, "유효하지 않은 토큰입니다.");
-            return null;
+//            response.sendError(400, "유효하지 않은 토큰입니다.");
+//            return null;
+            throw new IllegalArgumentException("로그인 정보가 없습니다.");
         }
 
         JwtPreProcessingToken jwtToken = new JwtPreProcessingToken(

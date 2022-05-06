@@ -39,6 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
 
+
     public WebSecurityConfig(
             JWTAuthProvider jwtAuthProvider,
             HeaderTokenExtractor headerTokenExtractor
@@ -77,7 +78,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS).permitAll() // preflight 대응
                 .antMatchers("/auth/**").permitAll(); // /auth/**에 대한 접근을 인증 절차 없이 허용(로그인 관련 url)
                 // 특정 권한을 가진 사용자만 접근을 허용해야 할 경우, 하기 항목을 통해 가능
-                //.antMatchers("/admin/**").hasAnyRole("ADMIN"
+
+
 
 
         http
@@ -145,6 +147,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/user/**");
         skipPathList.add("POST,/user/**");
         skipPathList.add("GET,/oauth/**");
+        skipPathList.add("GET,/user/kakao/**");
+        skipPathList.add("GET,/user/kakao/callback");
 
         skipPathList.add("GET,/image/**");
         skipPathList.add("GET,/");
@@ -180,6 +184,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Authorization");
+        configuration.setAllowCredentials(true);
+        configuration.addAllowedOriginPattern("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

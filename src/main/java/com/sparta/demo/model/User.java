@@ -18,20 +18,41 @@ public class User {
     @Column(nullable = false, unique = true)
     private String userName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nickName; // 카톡 닉네임이 곧 유저네임
 
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @Column
     private String profileImg;
 
+    @Column(unique = true)
+    private Long kakaoId;
 
-    public User(String userName, String nickName, String enPassword, String profileImg) {
+    @Column(unique = true)
+    private Long naverId;
+
+
+
+    @Builder
+    public User(String userName, String nickName, String enPassword, String email, String profileImg) {
         this.userName = userName;
         this.nickName = nickName;
         this.password = enPassword;
+        this.email = email;
         this.profileImg = profileImg;
     }
+
+
+    public User update(String nickName, String profileImg){
+        this.nickName = nickName;
+        this.profileImg = profileImg;
+        return this;
+    }
+
+
 }

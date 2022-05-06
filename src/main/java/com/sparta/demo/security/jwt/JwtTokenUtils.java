@@ -20,6 +20,8 @@ public final class JwtTokenUtils {
 
     public static final String CLAIM_EXPIRED_DATE = "EXPIRED_DATE";
     public static final String CLAIM_USER_NAME = "USER_NAME";
+    public static final String CLAIM_NICK_NAME = "NICK_NAME";
+    public static final String CLAIM_EMAIL = "EMAIL";
     public static final String JWT_SECRET = "jwt_secret_!@#$%";
     public static final String CLAIM_PROFILE_IMG = "PROFILE_IMG";
 
@@ -30,7 +32,9 @@ public final class JwtTokenUtils {
                     .withIssuer("sparta")
                     .withClaim(CLAIM_USER_NAME, userDetails.getUsername())
                     .withClaim(CLAIM_PROFILE_IMG,userDetails.getUser().getProfileImg())
-                     // 토큰 만료 일시 = 현재 시간 + 토큰 유효기간)
+                    .withClaim(CLAIM_NICK_NAME,userDetails.getUser().getNickName())
+                    .withClaim(CLAIM_EMAIL,userDetails.getUser().getEmail())
+                    // 토큰 만료 일시 = 현재 시간 + 토큰 유효기간)
                     .withClaim(CLAIM_EXPIRED_DATE, new Date(System.currentTimeMillis() + JWT_TOKEN_VALID_MILLI_SEC))
                     .sign(generateAlgorithm());
         } catch (Exception e) {
