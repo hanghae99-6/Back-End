@@ -3,12 +3,17 @@ package com.sparta.demo.service;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import com.sparta.demo.dto.debate.DebateLinkResponseDto;
 import com.sparta.demo.dto.debate.DebateRoomResponseDto;
+import com.sparta.demo.dto.debate.DebateRoomValidateDto;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.repository.DebateRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DebateService {
@@ -43,5 +48,15 @@ public class DebateService {
         } else {
             return "";
         }
+    }
+
+    public ResponseEntity<DebateRoomValidateDto> validateRoomId(String roomId) {
+
+        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
+        DebateRoomValidateDto debateRoomValidateDto = new DebateRoomValidateDto();
+        log.info("debate.isPresent(): {}",debate.isPresent());
+        debateRoomValidateDto.setOk(debate.isPresent());
+
+        return ResponseEntity.ok().body(debateRoomValidateDto);
     }
 }
