@@ -1,8 +1,10 @@
 package com.sparta.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,6 +37,10 @@ public class User {
 
     @Column(unique = true)
     private Long naverId;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Debate> debateList;
 
 
 

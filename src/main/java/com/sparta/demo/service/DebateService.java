@@ -7,11 +7,14 @@ import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.StpMessage;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.StpMessageRepository;
+import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DebateService {
 
@@ -19,8 +22,11 @@ public class DebateService {
     private final StpMessageRepository stpMessageRepository;
 
 
-    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto) {
-        Debate debate = Debate.create(debateLinkRequestDto);
+    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
+
+        log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
+
+        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
         Debate newDebate = debateRepository.save(debate);
 
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
