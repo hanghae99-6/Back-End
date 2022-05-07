@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -21,10 +22,11 @@ public class Reply extends Timestamped{
     @Column(nullable = false)
     private String reply;
 
-    // TODO: 추후에 user과 합치면 주석 해제(연관관계 주의)
-//    @ManyToOne
-//    @JoinColumn(name = "userId")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
+    @NotNull
+    @JsonBackReference
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "debateId")
@@ -35,8 +37,9 @@ public class Reply extends Timestamped{
     @JsonManagedReference
     private List<Likes> likesList;
 
-    public Reply(String reply, Debate debate) {
+    public Reply(String reply, Debate debate, User user) {
         this.reply = reply;
         this.debate = debate;
+        this.user = user;
     }
 }

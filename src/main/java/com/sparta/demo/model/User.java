@@ -42,6 +42,10 @@ public class User {
     @JsonManagedReference
     private List<Debate> debateList;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Reply> replyList;
+
 
 
     @Builder
