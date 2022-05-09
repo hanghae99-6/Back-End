@@ -23,13 +23,12 @@ public class ReplyService {
 
         log.info("service debateId: {}",debateId);
         log.info("service reply: {}",reply);
+        log.info("service userDetails.getUsername: {}",userDetails.getUsername());
 
         Debate debate = debateRepository.findByDebateId(debateId).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
 
         log.info("service debate.getTopic: {}",debate.getTopic());
 
-//        Reply newReply = new Reply(reply,debate);
-        // TODO: user와 합치면 생성자에 user을 넣어야함
         Reply newReply = new Reply(reply,debate,userDetails.getUser());
 
         replyRepository.save(newReply);

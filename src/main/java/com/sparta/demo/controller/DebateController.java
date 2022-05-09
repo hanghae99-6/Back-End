@@ -20,7 +20,9 @@ public class DebateController {
     public ResponseEntity<DebateLinkResponseDto> createLink(
             @RequestBody DebateLinkRequestDto debateLinkRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return debateService.createLink(debateLinkRequestDto, userDetails);
+
+//        return debateService.createLink(debateLinkRequestDto, userDetails);
+        return debateService.createLink(debateLinkRequestDto);
     }
 
     @GetMapping("/{roomId}")
