@@ -4,8 +4,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 public class JwtPreProcessingToken extends UsernamePasswordAuthenticationToken {
 
-    public JwtPreProcessingToken(Object principal, Object credentials) {
-        super(principal, credentials);
+    private JwtPreProcessingToken(
+            Object principal,
+            Object credentials
+    ) {
+        super(
+                principal,
+                credentials
+        );
     }
 
     public JwtPreProcessingToken(String token) {

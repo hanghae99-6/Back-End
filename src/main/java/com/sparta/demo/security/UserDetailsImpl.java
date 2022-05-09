@@ -1,28 +1,28 @@
 package com.sparta.demo.security;
 
 import com.sparta.demo.model.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
 
-@RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
-    // private final String userName;
-    // private final String password;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+    public UserDetailsImpl(User user) {
+        this.user = user;
     }
+
+    public User getUser() {
+        return user;
+    }
+
 
     @Override
     public String getPassword() {
-        return null;
+        return user.getPassword();
     }
 
     @Override
@@ -30,27 +30,35 @@ public class UserDetailsImpl implements UserDetails {
         return user.getUserName();
     }
 
-    public String getNickname() {
-        return user.getNickName();
-    }
-
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
+    }
+
+    @Override // 인가를 해주는 부분
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String toString() {
+        return "UserDetailsImpl{" +
+                "user=" + user +
+                '}';
     }
 }

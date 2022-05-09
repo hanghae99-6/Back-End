@@ -8,11 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// JwtAuthFilter를 거치는 모든 API 중 로그인 전에 허용되어야 하는 API에 대해 예외 처리를 해준다.(로그인, 회원가입 페이지, css ...)
-public class FilterSkipMatcher  implements RequestMatcher {
+public class FilterSkipMatcher implements RequestMatcher {
 
     private final OrRequestMatcher orRequestMatcher;
-    private final RequestMatcher processingMatcher;
+    private final RequestMatcher   processingMatcher;
 
     public FilterSkipMatcher(
             List<String> pathToSkip,
@@ -29,7 +28,7 @@ public class FilterSkipMatcher  implements RequestMatcher {
         String[] splitStr = skipPath.split(",");
 
         /*
-         * 배열 [1] httpMethod 방식 post get 인지 구분
+         * 배열 [1] httpMathod 방식 post get 인지 구분
          * 배열 [0] 제외하는 url
          * */
         return new AntPathRequestMatcher(
@@ -39,7 +38,7 @@ public class FilterSkipMatcher  implements RequestMatcher {
     }
 
     @Override
-    public boolean matches(HttpServletRequest request) {
-        return !orRequestMatcher.matches(request) && processingMatcher.matches(request);
+    public boolean matches(HttpServletRequest req) {
+        return !orRequestMatcher.matches(req) && processingMatcher.matches(req);
     }
 }

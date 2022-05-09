@@ -1,9 +1,11 @@
 package com.sparta.demo.controller;
 
 import com.sparta.demo.dto.debate.*;
+import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.DebateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +17,10 @@ public class DebateController {
     private final DebateService debateService;
 
     @PostMapping("/link")
-    public ResponseEntity<DebateLinkResponseDto> createLink(@RequestBody DebateLinkRequestDto debateLinkRequestDto){
-        return debateService.createLink(debateLinkRequestDto);
+    public ResponseEntity<DebateLinkResponseDto> createLink(
+            @RequestBody DebateLinkRequestDto debateLinkRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return debateService.createLink(debateLinkRequestDto, userDetails);
     }
 
     @GetMapping("/{roomId}")

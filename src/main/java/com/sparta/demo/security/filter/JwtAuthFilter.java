@@ -1,5 +1,4 @@
 package com.sparta.demo.security.filter;
-
 import com.sparta.demo.security.jwt.HeaderTokenExtractor;
 import com.sparta.demo.security.jwt.JwtPreProcessingToken;
 import org.springframework.security.core.Authentication;
@@ -15,7 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-// API 요청 헤더에 전달되는 JWT 유효성 인증, 모든 API에 대해서 JwtAuthFilter가 JWT 확인(정보가 맞는지, 유효 기간 등등) 후 컨트롤러로 보냄.
+
+/**
+ * Token 을 내려주는 Filter 가 아닌  client 에서 받아지는 Token 을 서버 사이드에서 검증하는 클레스 SecurityContextHolder 보관소에 해당
+ * Token 값의 인증 상태를 보관 하고 필요할때 마다 인증 확인 후 권한 상태 확인 하는 기능
+ */
 public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
 
     private final HeaderTokenExtractor extractor;
@@ -30,14 +33,26 @@ public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+    public Authentication attemptAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws AuthenticationException, IOException {
 
         // JWT 값을 담아주는 변수 TokenPayload
+        System.out.println("request 값:"+request);
+        System.out.println("request.getRequestURI 값:"+request.getRequestURI());
+        System.out.println("request.getHeaderNames 값:"+request.getHeaderNames());
+
+        System.out.println("response 값:" + response);
+        System.out.println("response.getHeader 값:" + response.getHeader("Authorization"));
+
         String tokenPayload = request.getHeader("Authorization");
+        System.out.println("request Authorization header : " + tokenPayload + " / " + (tokenPayload == null?"null 토큰.":"값이 존재하는 토큰."));
         if (tokenPayload == null) {
-            response.addHeader("Authorization", "Token이 없습니다.");
-//            response.sendRedirect("/");
-            return null;
+//            response.sendRedirect("/user/loginView");
+//            response.sendError(400, "유효하지 않은 토큰입니다.");
+//            return null;
+            throw new IllegalArgumentException("로그인 정보가 없습니다.");
         }
 
         JwtPreProcessingToken jwtToken = new JwtPreProcessingToken(
@@ -64,10 +79,31 @@ public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
         context.setAuthentication(authResult);
         SecurityContextHolder.setContext(context);
 
-        // FilterChain chain 해당 필터가 실행 후 다른 필터도 실행할 수 있도록 연결 시켜주는 메서드
+
+        // FilterChain chain 해당 필터가 실행 후 다른 필터도 실행할 수 있도록 연결실켜주는 메서드
         chain.doFilter(
                 request,
                 response
+        );
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException failed
+    ) throws IOException, ServletException {
+        /*
+         *	로그인을 한 상태에서 Token값을 주고받는 상황에서 잘못된 Token값이라면
+         *	인증이 성공하지 못한 단계 이기 때문에 잘못된 Token값을 제거합니다.
+         *	모든 인증받은 Context 값이 삭제 됩니다.
+         */
+        SecurityContextHolder.clearContext();
+
+        super.unsuccessfulAuthentication(
+                request,
+                response,
+                failed
         );
     }
 }

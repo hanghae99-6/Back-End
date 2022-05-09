@@ -16,7 +16,6 @@ import static com.sparta.demo.security.jwt.JwtTokenUtils.*;
 @Component
 public class JwtDecoder {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     public String decodeUsername(String token) {
         DecodedJWT decodedJWT = isValidToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("유효한 토큰이 아닙니다."));
@@ -27,7 +26,7 @@ public class JwtDecoder {
 
         Date now = new Date();
         if (expiredDate.before(now)) {
-            throw new IllegalArgumentException("유효한 토큰이 아닙니다.");
+            throw new IllegalArgumentException("유효한 DATE토큰이 아닙니다.");
         }
 
         String username = decodedJWT
@@ -35,6 +34,10 @@ public class JwtDecoder {
                 .asString();
 
         return username;
+//        String email = decodedJWT
+//                .getClaim(CLAIM_EMAIL)
+//                .asString();
+//        return email;
     }
 
     private Optional<DecodedJWT> isValidToken(String token) {

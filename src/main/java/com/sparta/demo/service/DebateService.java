@@ -3,6 +3,7 @@ package com.sparta.demo.service;
 import com.sparta.demo.dto.debate.*;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.repository.DebateRepository;
+import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +11,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Slf4j
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DebateService {
 
     private final DebateRepository debateRepository;
 
 
-    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto) {
-        Debate debate = Debate.create(debateLinkRequestDto);
+    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
+
+        log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
+
+        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
         Debate newDebate = debateRepository.save(debate);
 
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
@@ -67,4 +71,6 @@ public class DebateService {
 
         return ResponseEntity.ok().body(debateRoomValidateDto);
     }
+
+
 }
