@@ -12,4 +12,5 @@ public class DebateLinkRequestDto {
     private String consName;
     private int speechCnt;
     private int speechMinute;
+    private String content;
 }

@@ -14,6 +14,7 @@ public class DebateRoomResponseDto {
     private String consName;
     private int speechCnt;
     private int speechMinute;
+    private String content;
 
     public DebateRoomResponseDto(Debate debate) {
         this.debateId = debate.getDebateId();
@@ -22,5 +23,6 @@ public class DebateRoomResponseDto {
         this.consName = debate.getConsName();
         this.speechCnt = debate.getSpeechCnt();
         this.speechMinute = debate.getSpeechMinute();
+        this.content = debate.getContent();
     }
 }

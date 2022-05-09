@@ -19,11 +19,27 @@ public class DebateService {
     private final DebateRepository debateRepository;
 
 
-    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
+    // todo : 프론트에서 로그인 기능까지 합칠 경우
+//    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
+//
+//        log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
+//
+//        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
+//        Debate newDebate = debateRepository.save(debate);
+//
+//        DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
+//        debateLinkResponseDto.setRoomId(newDebate.getRoomId());
+//
+//        return ResponseEntity.ok().body(debateLinkResponseDto);
+//    }
 
-        log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
+    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto) {
 
-        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
+        log.info("debateLinkRequestDto.getSpeechMinute(): {}",debateLinkRequestDto.getSpeechMinute());
+        log.info("debateLinkRequestDto.getContent(): {}",debateLinkRequestDto.getContent());
+        log.info("userDetails.getUser().getUserName() : {}", "유저디테일즈 안씀");
+
+        Debate debate = Debate.create(debateLinkRequestDto, null);
         Debate newDebate = debateRepository.save(debate);
 
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
