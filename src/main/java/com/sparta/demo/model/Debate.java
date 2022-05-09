@@ -11,7 +11,6 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-//@AllArgsConstructor
 @NoArgsConstructor
 public class Debate extends Timestamped{
     @Id
@@ -69,5 +68,4 @@ public class Debate extends Timestamped{
         debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
         return debate;
     }
-
 }

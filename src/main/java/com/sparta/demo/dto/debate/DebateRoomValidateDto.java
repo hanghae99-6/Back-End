@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class DebateRoomValidateDto {
-    private boolean ok;
+    private boolean roomId;
+    private boolean user;
 }

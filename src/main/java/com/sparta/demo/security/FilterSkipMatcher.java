@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class FilterSkipMatcher  implements RequestMatcher {
 
     private final OrRequestMatcher orRequestMatcher;
-    private final RequestMatcher   processingMatcher;
+    private final RequestMatcher processingMatcher;
 
     public FilterSkipMatcher(
             List<String> pathToSkip,

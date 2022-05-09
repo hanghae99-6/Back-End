@@ -1,9 +1,6 @@
 package com.sparta.demo.service;
 
-import com.sparta.demo.dto.debate.DebateLinkRequestDto;
-import com.sparta.demo.dto.debate.DebateLinkResponseDto;
-import com.sparta.demo.dto.debate.DebateRoomResponseDto;
-import com.sparta.demo.dto.debate.DebateRoomValidateDto;
+import com.sparta.demo.dto.debate.*;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.repository.DebateRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,12 +47,23 @@ public class DebateService {
         }
     }
 
-    public ResponseEntity<DebateRoomValidateDto> validateRoomId(String roomId) {
+    public ResponseEntity<DebateRoomValidateDto> checkRoomIdUser(DebateRoomIdUserCheckDto debateRoomIdUserCheckDto) {
 
-        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
+        Optional<Debate> debate = debateRepository.findByRoomId(debateRoomIdUserCheckDto.getRoomId());
         DebateRoomValidateDto debateRoomValidateDto = new DebateRoomValidateDto();
         log.info("debate.isPresent(): {}",debate.isPresent());
-        debateRoomValidateDto.setOk(debate.isPresent());
+        debateRoomValidateDto.setRoomId(debate.isPresent());
+
+        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(debateRoomIdUserCheckDto.getRoomId(),debateRoomIdUserCheckDto.getUsername());
+        Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(debateRoomIdUserCheckDto.getRoomId(), debateRoomIdUserCheckDto.getUsername());
+
+        log.info("debate1.isPresent(): {}",debate1.isPresent());
+        log.info("debate2.isPresent(): {}",debate2.isPresent());
+
+        if(debate1.isPresent() || debate2.isPresent()) {
+            debateRoomValidateDto.setUser(true);
+        }
+
 
         return ResponseEntity.ok().body(debateRoomValidateDto);
     }
