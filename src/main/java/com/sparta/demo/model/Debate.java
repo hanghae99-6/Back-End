@@ -48,6 +48,9 @@ public class Debate extends Timestamped{
     @Column
     private int speechMinute;
 
+    @Column
+    private String content;
+
 //    @OneToMany(mappedBy = "debate")
 //    private List<Reply> replyList;
 
@@ -65,6 +68,7 @@ public class Debate extends Timestamped{
         debate.consName = debateLinkRequestDto.getConsName();
         debate.speechCnt = debateLinkRequestDto.getSpeechCnt();
         debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
+        debate.content = debateLinkRequestDto.getContent();
         return debate;
     }
 }
