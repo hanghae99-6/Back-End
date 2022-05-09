@@ -23,7 +23,7 @@ public class Debate extends Timestamped{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-    @NotNull
+//    @NotNull
     @JsonBackReference
     private User user;
 

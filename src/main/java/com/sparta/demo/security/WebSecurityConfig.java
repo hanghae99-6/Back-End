@@ -152,6 +152,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         skipPathList.add("GET,/image/**");
         skipPathList.add("GET,/");
+        // 시큐리티 없이 테스트
+        skipPathList.add("GET,/**");
+        skipPathList.add("POST,/**");
+        skipPathList.add("DELETE,/**");
+
+        skipPathList.add("GET,/favicon.ico");
 
 
 
@@ -179,7 +185,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // local 테스트 시
+//        configuration.addAllowedOrigin("http://localhost:3000");  // local 테스트 시
+        configuration.addAllowedOrigin("*");
 //        configuration.addAllowedOrigin("http://hanghae99-sout.s3-website.ap-northeast-2.amazonaws.com"); // 배포 시
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
