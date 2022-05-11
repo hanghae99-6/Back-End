@@ -30,8 +30,13 @@ public class DebateController {
         return debateService.getRoom(roomId);
     }
 
-    @PostMapping("/check")
-    public ResponseEntity<DebateRoomValidateDto> checkRoomIdUser(@RequestBody DebateRoomIdUserCheckDto debateRoomIdUserCheckDto){
-        return debateService.checkRoomIdUser(debateRoomIdUserCheckDto);
+    @GetMapping("/{roomId}/check/{username}")
+    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @PathVariable String username){
+        return debateService.checkRoomIdUser(roomId, username);
+    }
+
+    @PostMapping("/userName/check")
+    public ResponseEntity<DebateUserValidateDto> checkRoomIdUser(@RequestBody DebateUserCheckDto debateUserCheckDto){
+        return debateService.checkUser(debateUserCheckDto);
     }
 }

@@ -3,7 +3,7 @@ package com.sparta.demo.dto.debate;
 import lombok.Data;
 
 @Data
-public class DebateRoomIdUserCheckDto {
+public class DebateUserCheckDto {
     private String roomId;
     private String username;
 
