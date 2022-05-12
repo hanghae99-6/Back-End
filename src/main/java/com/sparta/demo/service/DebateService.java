@@ -93,6 +93,7 @@ public class DebateService {
         Optional<Integer> found = enterUserRepository.countAllByDebate_RoomId(roomId);
 
         if(found.get()<2){
+            log.info("found.get(): {}", found.get());
             debateRoomIdUserValidateDto.setSum(true);
         }
 
