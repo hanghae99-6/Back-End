@@ -87,13 +87,13 @@ public class DebateService {
             debateRoomIdUserValidateDto.setUser(true);
         }
 
-        EnterUser enterUser = new EnterUser(debate.get(),username);
-        enterUserRepository.save(enterUser);
 
         Optional<Integer> found = enterUserRepository.countAllByDebate_RoomId(roomId);
 
         if(found.get()<2){
             debateRoomIdUserValidateDto.setSum(true);
+            EnterUser enterUser = new EnterUser(debate.get(),username);
+            enterUserRepository.save(enterUser);
         }
 
         return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
