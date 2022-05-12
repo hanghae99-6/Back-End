@@ -93,12 +93,14 @@ public class DebateService {
         if(found.get()<2){
             log.info("found.get(): {}", found.get());
             debateRoomIdUserValidateDto.setSum(true);
+            log.info("debate.get().getTopic(): {}",debate.get().getTopic());
             EnterUser enterUser = new EnterUser(debate.get(),username);
             enterUserRepository.save(enterUser);
         }
 
         return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
     }
+
     public ResponseEntity<DebateUserValidateDto> checkUser(DebateUserCheckDto debateUserCheckDto) {
 
 //        Optional<Debate> debate = debateRepository.findByRoomId(roomId);

@@ -15,8 +15,14 @@ public class OneClick {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long oneClickId;
 
+    @Column
+    private String userIp;
+
     @Column(nullable = false)
     private String oneClickTopic;
+
+    @Column
+    private String side;
 
     @Column
     private int agreeNum;
@@ -24,6 +30,5 @@ public class OneClick {
     @Column
     private int oppoNum;
 
-    @Column
-    private String userIp;
+
 }
