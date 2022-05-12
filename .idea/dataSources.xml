@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="demoDB" uuid="346af60c-6ee1-4965-ab34-057a3ce5f484">
+    <data-source source="LOCAL" name="wepeech" uuid="6084b3d3-adf2-489c-96bb-37a877ea60b6">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://database-springboot.cpbkqzl9osar.ap-northeast-2.rds.amazonaws.com:3306</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-<<<<<<< HEAD
-    <data-source source="LOCAL" name="wepeech" uuid="4b063a12-61bb-414a-8e6d-d27e6dba2239">
-=======
-    <data-source source="LOCAL" name="@database-springboot.cpbkqzl9osar.ap-northeast-2.rds.amazonaws.com" uuid="f1738b7d-0104-4436-8828-0975c9bb3b65">
->>>>>>> e90e9ea459d7b3699e4c74a83a1b1020bab5a938
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://database-springboot.cpbkqzl9osar.ap-northeast-2.rds.amazonaws.com:3306</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-<<<<<<< HEAD
-=======
-    <data-source source="LOCAL" name="mygddb@database-1.caa2dozv5mti.us-west-1.rds.amazonaws.com" uuid="2780baa5-4c81-45b5-aca0-1bdf498c74f6">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://database-1.caa2dozv5mti.us-west-1.rds.amazonaws.com:3306/mygddb</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
->>>>>>> e90e9ea459d7b3699e4c74a83a1b1020bab5a938
   </component>
 </project>
