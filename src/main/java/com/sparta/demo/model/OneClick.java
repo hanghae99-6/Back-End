@@ -15,20 +15,18 @@ public class OneClick {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long oneClickId;
 
-    @Column
+    @Column(nullable = false)
     private String userIp;
 
     @Column(nullable = false)
     private String oneClickTopic;
 
     @Column
-    private String side;
+    private int side;
 
     @Column
     private int agreeNum;
 
     @Column
     private int oppoNum;
-
-
 }

@@ -77,23 +77,14 @@ public class MainService {
 
     public ResponseEntity<OneClick> sumOneClick(OneClickRequestDto oneClickRequestDto, HttpServletRequest request) {
         String userIp = GetIp.getIp(request);
-        String side = oneClickRequestDto.getSide();
+        int side = oneClickRequestDto.getSide();
         String oneClickTopic = oneClickRequestDto.getOneClickTopic();
 
-        Optional<OneClick> optionalOneClick = oneClickRepository.findByUserIp(userIp);
+        Optional<OneClick> optionalOneClick = oneClickRepository.findByUserIpAndOneClickTopic(userIp, oneClickTopic);
         if(!optionalOneClick.isPresent()){
             throw new IllegalArgumentException("이미 선택한 토픽입니다.");
         }
-        List<OneClick> oneClicks = oneClickRepository.findByOneClickTopic(oneClickTopic);
-        for(OneClick oneClick : oneClicks) {
-            if(!oneClick.getUserIp().contains(userIp)){
-                if(side.equals("agree")) {
-                    oneClick.setAgreeNum(oneClick.getAgreeNum()+1);
-                }else if(side.equals("oppo")) {
-                    oneClick.setOppoNum(oneClick.getOppoNum()+1);
-                }
-            }
-        }
+
         return null;
     }
 }

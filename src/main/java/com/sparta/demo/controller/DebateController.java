@@ -37,23 +37,10 @@ public class DebateController {
         return debateService.checkRoomIdUser(roomId, username);
     }
 
-//    @PostMapping("/check")
-//    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@RequestBody DebateCheckDto debateCheckDto){
-//        log.info("방 체크 컨트롤러");
-//        String roomId = debateCheckDto.getRoomId();
-//        String userName = debateCheckDto.getUserName();
-//        return debateService.checkRoomIdUser(roomId, userName);
-//    }
-
     @PostMapping("/{roomId}")
     public ResponseEntity<String> saveDebateInfo(@PathVariable String roomId,
                                                  @RequestBody DebateInfoDto debateInfoDto,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);
-    }
-
-    @PostMapping("/userName/check")
-    public ResponseEntity<DebateUserValidateDto> checkRoomIdUser(@RequestBody DebateUserCheckDto debateUserCheckDto){
-        return debateService.checkUser(debateUserCheckDto);
     }
 }
