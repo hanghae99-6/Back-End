@@ -51,6 +51,10 @@ public class Debate extends Timestamped{
     @Column
     private String content;
 
+    @OneToMany(mappedBy = "debate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<EnterUser> enterUserList;
+
 //    @OneToMany(mappedBy = "debate")
 //    private List<Reply> replyList;
 

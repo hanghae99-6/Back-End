@@ -34,7 +34,6 @@ public class MainService {
 
         MainResponseDto mainResponseDto = new MainResponseDto(debateList);
 
-
         return ResponseEntity.ok().body(mainResponseDto);
     }
 
