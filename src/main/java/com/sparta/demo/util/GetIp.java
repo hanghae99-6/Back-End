@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 @Configuration
 public class GetIp {
     // 접속자 ip 가져오는 메서드
-    public String getIp(HttpServletRequest request) {
+    public static String getIp(HttpServletRequest request) {
 
         String ip = request.getHeader("X-Forwarded-For");
 
