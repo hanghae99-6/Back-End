@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface DebateVoteRepository extends JpaRepository<DebateVote, Long> {
     Optional<DebateVote> findByDebate_DebateIdAndIp(Long debateId, String ip);
     Long countAllBySide(SideTypeEnum side);
+    Long countAllBySideAndDebate_DebateId(SideTypeEnum side, Long debateId);
 }
