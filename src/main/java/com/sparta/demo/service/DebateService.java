@@ -23,26 +23,11 @@ public class DebateService {
 
 
     // todo : 프론트에서 로그인 기능까지 합칠 경우
-//    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
-//
-//        log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
-//
-//        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
-//        Debate newDebate = debateRepository.save(debate);
-//
-//        DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
-//        debateLinkResponseDto.setRoomId(newDebate.getRoomId());
-//
-//        return ResponseEntity.ok().body(debateLinkResponseDto);
-//    }
+    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
 
-    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto) {
+        log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
 
-        log.info("debateLinkRequestDto.getSpeechMinute(): {}",debateLinkRequestDto.getSpeechMinute());
-        log.info("debateLinkRequestDto.getContent(): {}",debateLinkRequestDto.getContent());
-        log.info("userDetails.getUser().getUserName() : {}", "유저디테일즈 안씀");
-
-        Debate debate = Debate.create(debateLinkRequestDto, null);
+        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
         Debate newDebate = debateRepository.save(debate);
 
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
@@ -80,8 +65,8 @@ public class DebateService {
         Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(roomId, username);
         Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(roomId, username);
 
-        log.info("debate1.isPresent(): {}",debate1.isPresent());
-        log.info("debate2.isPresent(): {}",debate2.isPresent());
+        log.info("prosName.isPresent(): {}",debate1.isPresent());
+        log.info("consName.isPresent(): {}",debate2.isPresent());
 
         if(debate1.isPresent() || debate2.isPresent()) {
             debateRoomIdUserValidateDto.setUser(true);
@@ -99,29 +84,6 @@ public class DebateService {
         }
 
         return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
-    }
-
-    public ResponseEntity<DebateUserValidateDto> checkUser(DebateUserCheckDto debateUserCheckDto) {
-
-//        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
-//        DebateRoomIdValidateDto debateRoomIdValidateDto = new DebateRoomIdValidateDto();
-//        log.info("debate.isPresent(): {}",debate.isPresent());
-//        debateRoomIdValidateDto.setRoomId(debate.isPresent());
-
-        DebateUserValidateDto debateUserValidateDto = new DebateUserValidateDto();
-
-        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(debateUserCheckDto.getRoomId(),debateUserCheckDto.getUsername());
-        Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(debateUserCheckDto.getRoomId(), debateUserCheckDto.getUsername());
-
-        log.info("debate1.isPresent(): {}",debate1.isPresent());
-        log.info("debate2.isPresent(): {}",debate2.isPresent());
-
-        if(debate1.isPresent() || debate2.isPresent()) {
-            debateUserValidateDto.setUser(true);
-        }
-
-
-        return ResponseEntity.ok().body(debateUserValidateDto);
     }
 
 

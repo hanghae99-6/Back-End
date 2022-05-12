@@ -3,6 +3,7 @@ package com.sparta.demo.service;
 import com.sparta.demo.dto.main.MainDetailResponseDto;
 import com.sparta.demo.dto.main.MainResponseDto;
 import com.sparta.demo.dto.main.OneClickRequestDto;
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.model.Reply;
@@ -66,8 +67,8 @@ public class MainService {
 
         List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debateId);
 
-        Long totalCons = debateVoteRepository.countAllBySide(2);
-        Long totalPros = debateVoteRepository.countAllBySide(1);
+        Long totalCons = debateVoteRepository.countAllBySide(SideTypeEnum.CONS);
+        Long totalPros = debateVoteRepository.countAllBySide(SideTypeEnum.PROS);
 
         MainDetailResponseDto mainDetailResponseDto = new MainDetailResponseDto(debate, replyList, totalPros,totalCons);
 
