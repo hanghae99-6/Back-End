@@ -67,8 +67,8 @@ public class MainService {
 
         List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debateId);
 
-        Long totalCons = debateVoteRepository.countAllBySide(SideTypeEnum.CONS);
-        Long totalPros = debateVoteRepository.countAllBySide(SideTypeEnum.PROS);
+        Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debateId);
+        Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debateId);
 
         MainDetailResponseDto mainDetailResponseDto = new MainDetailResponseDto(debate, replyList, totalPros,totalCons);
 
