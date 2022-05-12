@@ -67,6 +67,9 @@ dependencies {
 
     // 소설 로그인 (구글)
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // jsoup (크롤링)
+    implementation 'org.jsoup:jsoup:1.14.2'
 }
 
 'test' {
