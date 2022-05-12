@@ -37,6 +37,4 @@ public class MainController {
         log.info("controller debateId: {}", debateId);
         return mainService.getMainDetail(debateId);
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.sparta.demo.controller;
 
 import com.sparta.demo.dto.debate.*;
+import com.sparta.demo.model.Debate;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.DebateService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,13 @@ public class DebateController {
     @GetMapping("/{roomId}/check/{username}")
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @PathVariable String username){
         return debateService.checkRoomIdUser(roomId, username);
+    }
+
+    @PostMapping("/{roomId}")
+    public ResponseEntity<String> saveDebateInfo(@PathVariable String roomId,
+                                                 @RequestBody DebateInfoDto debateInfoDto,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);
     }
 
     @PostMapping("/userName/check")

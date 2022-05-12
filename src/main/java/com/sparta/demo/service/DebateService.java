@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -124,4 +123,13 @@ public class DebateService {
     }
 
 
+    public ResponseEntity<String> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
+        String userName = userDetails.getUsername();
+        Optional<Debate> optionalDebate = debateRepository.findByRoomId(roomId);
+        Debate debate = optionalDebate.get();
+
+        EnterUser enterUser = new EnterUser(debate, debateInfoDto, userName);
+        enterUserRepository.save(enterUser);
+        return ResponseEntity.ok().body("good!");
+    }
 }
