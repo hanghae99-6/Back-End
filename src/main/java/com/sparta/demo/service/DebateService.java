@@ -22,7 +22,6 @@ public class DebateService {
     private final EnterUserRepository enterUserRepository;
 
 
-    // todo : 프론트에서 로그인 기능까지 합칠 경우
     public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
 
         log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
