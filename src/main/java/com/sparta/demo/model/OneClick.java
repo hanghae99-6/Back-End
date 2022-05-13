@@ -1,5 +1,6 @@
 package com.sparta.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,5 +27,6 @@ public class OneClick {
     private int oppoNum;
 
     @OneToMany
+    @JsonIgnore
     private List<OneClickUser> oneClickUsers;
 }

@@ -9,10 +9,7 @@ import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.model.OneClickUser;
 import com.sparta.demo.model.Reply;
-import com.sparta.demo.repository.DebateRepository;
-import com.sparta.demo.repository.DebateVoteRepository;
-import com.sparta.demo.repository.OneClickRepository;
-import com.sparta.demo.repository.ReplyRepository;
+import com.sparta.demo.repository.*;
 import com.sparta.demo.util.GetIp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +34,7 @@ public class MainService {
     final private ReplyRepository replyRepository;
     final private DebateVoteRepository debateVoteRepository;
     private final OneClickRepository oneClickRepository;
+    private final OneClickUserRepository oneClickUserRepository;
     private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
     private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
 
@@ -44,12 +42,14 @@ public class MainService {
     public MainService(DebateRepository debateRepository,
                        ReplyRepository replyRepository,
                        DebateVoteRepository debateVoteRepository,
-                       OneClickRepository oneClickRepository) {
+                       OneClickRepository oneClickRepository,
+                       OneClickUserRepository oneClickUserRepository) {
 
         this.debateRepository = debateRepository;
         this.replyRepository = replyRepository;
         this.debateVoteRepository = debateVoteRepository;
         this.oneClickRepository = oneClickRepository;
+        this.oneClickUserRepository = oneClickUserRepository;
 
         sideTypeEnumMap.put(1, SideTypeEnum.PROS);
         sideTypeEnumMap.put(2, SideTypeEnum.CONS);
@@ -123,12 +123,24 @@ public class MainService {
         int side = oneClickRequestDto.getSide();
         String oneClickTopic = oneClickRequestDto.getOneClickTopic();
         SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(side);
-
         // oneClickTopic 에 OneClickUser 로 검색
         OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum);
-
-
-        return null;
+        OneClick oneClick = oneClickRepository.findByOneClickTopic(oneClickTopic).orElseThrow(
+                () -> new IllegalStateException("없는 토픽입니다.")
+        );
+        List<OneClickUser> oneClickUsers = oneClick.getOneClickUsers();
+        for(OneClickUser clickUser : oneClickUsers) {
+            if(clickUser.equals(oneClickUser)) {
+                oneClickUserRepository.delete(clickUser);
+                return ResponseEntity.ok().body(oneClick);
+            } else if(clickUser.getUserIp().equals(userIp)) {
+                oneClickUserRepository.delete(clickUser);
+                oneClickUserRepository.save(oneClickUser);
+                return ResponseEntity.ok().body(oneClick);
+            }
+        }
+        oneClickUserRepository.save(oneClickUser);
+        return ResponseEntity.ok().body(oneClick);
     }
 }
 
