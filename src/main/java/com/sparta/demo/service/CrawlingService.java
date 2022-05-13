@@ -1,7 +1,7 @@
 package com.sparta.demo.service;
 
 import com.sparta.demo.dto.main.CrawlingDto;
-import com.sparta.demo.model.CrawlTypeEnum;
+import com.sparta.demo.enumeration.CrawlTypeEnum;
 import com.sparta.demo.model.Crawling;
 import com.sparta.demo.repository.CrawlingRepository;
 import lombok.RequiredArgsConstructor;

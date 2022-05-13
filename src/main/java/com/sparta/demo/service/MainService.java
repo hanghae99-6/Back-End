@@ -3,6 +3,8 @@ package com.sparta.demo.service;
 import com.sparta.demo.dto.main.MainDetailResponseDto;
 import com.sparta.demo.dto.main.MainResponseDto;
 import com.sparta.demo.dto.main.OneClickRequestDto;
+import com.sparta.demo.enumeration.CategoryEnum;
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.model.Reply;
@@ -13,24 +15,38 @@ import com.sparta.demo.repository.ReplyRepository;
 import com.sparta.demo.util.GetIp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class MainService {
 
     final private DebateRepository debateRepository;
     final private ReplyRepository replyRepository;
     final private DebateVoteRepository debateVoteRepository;
     private final OneClickRepository oneClickRepository;
+    private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
+
+    @Autowired
+    public MainService(DebateRepository debateRepository, ReplyRepository replyRepository, DebateVoteRepository debateVoteRepository, OneClickRepository oneClickRepository) {
+        this.debateRepository = debateRepository;
+        this.replyRepository = replyRepository;
+        this.debateVoteRepository = debateVoteRepository;
+        this.oneClickRepository = oneClickRepository;
+
+        categoryEnumMap.put("ALL", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
+        categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("생활문화",CategoryEnum.CULTURE);
+        categoryEnumMap.put("IT/과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
+    }
+
 
     public ResponseEntity<List<OneClick>> getOneClick() {
         List<OneClick> oneClicks = oneClickRepository.findAll();
@@ -38,23 +54,39 @@ public class MainService {
     }
 
     public ResponseEntity<MainResponseDto> getMain(){
-        Pageable pageable = Pageable.ofSize(4);
+//        Pageable pageable = Pageable.ofSize(4);
 
-        Page<Debate> debateList = debateRepository.findAllByOrderByCreatedAtDesc(pageable);
+        List<Debate> debateList = debateRepository.findAllByOrderByCreatedAtDesc();
 
-        MainResponseDto mainResponseDto = new MainResponseDto(debateList);
+        ArrayList<Debate> arr = new ArrayList<>();
+        Random random = new Random();
+        for(int i=0; i<8;i++){
+            int ran = random.nextInt(debateList.size());
+            arr.add(debateList.get(ran));
+        }
+
+        MainResponseDto mainResponseDto = new MainResponseDto(arr);
 
         return ResponseEntity.ok().body(mainResponseDto);
     }
 
     public ResponseEntity<MainResponseDto> getCatMain(String catName){
-        Pageable pageable = Pageable.ofSize(4);
 
-        log.info("service catName: {}", catName);
-        Page<Debate> debateList = debateRepository.findAllByCatNameContains(catName, pageable);
+        log.info("catName 확인: " + catName);
+        CategoryEnum category = CategoryEnum.valueOf(String.valueOf(categoryEnumMap.get(catName)));
 
-        MainResponseDto mainResponseDto = new MainResponseDto(debateList);
+        log.info("카테고리: " + category);
 
+        List<Debate> debateList = debateRepository.findAllByCategoryEnum(category);
+
+        ArrayList<Debate> arr2 = new ArrayList<>();
+        Random random = new Random();
+        for(int i=0; i<8;i++){
+            int ran = random.nextInt(debateList.size());
+            arr2.add(debateList.get(ran));
+        }
+
+        MainResponseDto mainResponseDto = new MainResponseDto(arr2);
 
         return ResponseEntity.ok().body(mainResponseDto);
     }
@@ -66,8 +98,8 @@ public class MainService {
 
         List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debateId);
 
-        Long totalCons = debateVoteRepository.countAllBySide(2);
-        Long totalPros = debateVoteRepository.countAllBySide(1);
+        Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debateId);
+        Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debateId);
 
         MainDetailResponseDto mainDetailResponseDto = new MainDetailResponseDto(debate, replyList, totalPros,totalCons);
 

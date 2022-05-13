@@ -1,4 +1,4 @@
-package com.sparta.demo.model;
+package com.sparta.demo.enumeration;
 
 public enum CrawlTypeEnum {
     NEWS,

@@ -23,18 +23,16 @@ public class DebateController {
     public ResponseEntity<DebateLinkResponseDto> createLink(
             @RequestBody DebateLinkRequestDto debateLinkRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
-
-//        return debateService.createLink(debateLinkRequestDto, userDetails);
-        return debateService.createLink(debateLinkRequestDto);
+        return debateService.createLink(debateLinkRequestDto, userDetails);
     }
 
     @GetMapping("/{roomId}")
     public ResponseEntity<DebateRoomResponseDto> getRoom(@PathVariable String roomId){
         return debateService.getRoom(roomId);
     }
-    @GetMapping("/{roomId}/check/{username}")
-    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @PathVariable String username){
-        return debateService.checkRoomIdUser(roomId, username);
+    @GetMapping("/{roomId}/check")
+    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return debateService.checkRoomIdUser(roomId, userDetails.getUsername());
     }
 
     @PostMapping("/{roomId}")
