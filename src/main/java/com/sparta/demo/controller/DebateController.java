@@ -23,6 +23,7 @@ public class DebateController {
     public ResponseEntity<DebateLinkResponseDto> createLink(
             @RequestBody DebateLinkRequestDto debateLinkRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
+        log.info("userDetails.toString(): {}", userDetails.toString());
         return debateService.createLink(debateLinkRequestDto, userDetails);
     }
 

@@ -6,6 +6,7 @@ import com.sparta.demo.dto.main.OneClickRequestDto;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.OneClick;
+import com.sparta.demo.model.OneClickUser;
 import com.sparta.demo.model.Reply;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.DebateVoteRepository;
@@ -20,18 +21,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class MainService {
 
     final private DebateRepository debateRepository;
     final private ReplyRepository replyRepository;
     final private DebateVoteRepository debateVoteRepository;
     private final OneClickRepository oneClickRepository;
+    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
+
+    public MainService(DebateRepository debateRepository,
+                       ReplyRepository replyRepository,
+                       DebateVoteRepository debateVoteRepository,
+                       OneClickRepository oneClickRepository) {
+        this.debateRepository = debateRepository;
+        this.replyRepository = replyRepository;
+        this.debateVoteRepository = debateVoteRepository;
+        this.oneClickRepository = oneClickRepository;
+
+        sideTypeEnumMap.put(1, SideTypeEnum.PROS);
+        sideTypeEnumMap.put(2, SideTypeEnum.CONS);
+    }
+
+
 
     public ResponseEntity<List<OneClick>> getOneClick() {
         List<OneClick> oneClicks = oneClickRepository.findAll();
@@ -80,10 +98,14 @@ public class MainService {
         String userIp = GetIp.getIp(request);
         int side = oneClickRequestDto.getSide();
         String oneClickTopic = oneClickRequestDto.getOneClickTopic();
+        SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(side);
 
         // oneClickTopic 에 OneClickUser 로 검색
+        OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum);
+        Optional<OneClick> optionalOneClick = oneClickRepository.findByOneClickTopicAndOneClickUsers(oneClickUser);
+        if(optionalOneClick.isPresent()) {
 
-
+        }
 
         return null;
     }

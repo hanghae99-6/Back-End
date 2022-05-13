@@ -153,11 +153,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/image/**");
         skipPathList.add("GET,/");
         // 시큐리티 없이 테스트
-        skipPathList.add("GET,/**");
-        skipPathList.add("POST,/**");
-        skipPathList.add("DELETE,/**");
-        skipPathList.add("POST,/debate/**");
-        skipPathList.add("GET,/debate/**");
+//        skipPathList.add("GET,/**");
+//        skipPathList.add("POST,/**");
+//        skipPathList.add("DELETE,/**");
+//        skipPathList.add("POST,/debate/**");
+//        skipPathList.add("GET,/debate/**");
 
         skipPathList.add("GET,/favicon.ico");
 

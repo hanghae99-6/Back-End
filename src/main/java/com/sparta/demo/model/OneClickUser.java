@@ -20,4 +20,9 @@ public class OneClickUser {
 
     @Column
     private SideTypeEnum sideTypeEnum;
+
+    public OneClickUser(String userIp, SideTypeEnum sideTypeEnum) {
+        this.userIp = userIp;
+        this.sideTypeEnum = sideTypeEnum;
+    }
 }

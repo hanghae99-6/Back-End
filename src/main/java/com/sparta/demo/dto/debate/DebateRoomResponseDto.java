@@ -21,8 +21,8 @@ public class DebateRoomResponseDto {
         this.topic = debate.getTopic();
         this.prosName = debate.getProsName();
         this.consName = debate.getConsName();
-        this.speechCnt = debate.getSpeechCnt();
-        this.speechMinute = debate.getSpeechMinute();
+//        this.speechCnt = debate.getSpeechCnt();
+//        this.speechMinute = debate.getSpeechMinute();
         this.content = debate.getContent();
     }
 }
