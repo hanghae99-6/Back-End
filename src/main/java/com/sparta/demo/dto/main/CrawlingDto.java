@@ -11,3 +11,4 @@ public class CrawlingDto {
 //    private String content;
     private Crawling crawling;
 }
+

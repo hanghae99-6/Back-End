@@ -1,6 +1,8 @@
 package com.sparta.demo.service;
 
 import com.sparta.demo.dto.debate.*;
+import com.sparta.demo.enumeration.CategoryEnum;
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.repository.DebateRepository;
@@ -11,22 +13,37 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class DebateService {
 
     private final DebateRepository debateRepository;
+    private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
     private final EnterUserRepository enterUserRepository;
 
+    public DebateService(DebateRepository debateRepository, EnterUserRepository enterUserRepository) {
+        this.debateRepository = debateRepository;
+        this.enterUserRepository = enterUserRepository;
 
+        categoryEnumMap.put("ALL", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
+        categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("생활문화",CategoryEnum.CULTURE);
+        categoryEnumMap.put("IT/과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
+    }
+
+
+    // todo : 프론트에서 로그인 기능까지 합칠 경우
     public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
+//    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto) {
 
         log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
+        CategoryEnum category = CategoryEnum.valueOf(String.valueOf(categoryEnumMap.get(debateLinkRequestDto.getCategoryName())));
 
-        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
+
+        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser(), category);
         Debate newDebate = debateRepository.save(debate);
 
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
@@ -42,8 +59,6 @@ public class DebateService {
 
 
 
-
-
     // StompHandler에서 필요한 메서드 모음(삭제하거나 이동 예정)
     public String getRoomId(String destination) {
         int lastIndex = destination.lastIndexOf('/');
@@ -54,15 +69,15 @@ public class DebateService {
         }
     }
 
-    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, String username) {
+    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, String userEmail) {
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
         DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
         log.info("debate.isPresent(): {}",debate.isPresent());
         debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
 
-        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(roomId, username);
-        Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(roomId, username);
+        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(roomId, userEmail);
+        Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(roomId, userEmail);
 
         log.info("prosName.isPresent(): {}",debate1.isPresent());
         log.info("consName.isPresent(): {}",debate2.isPresent());
@@ -78,7 +93,7 @@ public class DebateService {
             log.info("found.get(): {}", found.get());
             debateRoomIdUserValidateDto.setSum(true);
             log.info("debate.get().getTopic(): {}",debate.get().getTopic());
-            EnterUser enterUser = new EnterUser(debate.get(),username);
+            EnterUser enterUser = new EnterUser(debate.get(),userEmail);
             enterUserRepository.save(enterUser);
         }
 

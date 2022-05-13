@@ -33,7 +33,7 @@ public class DebateController {
     }
     @GetMapping("/{roomId}/check")
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return debateService.checkRoomIdUser(roomId, userDetails.getUsername());
+        return debateService.checkRoomIdUser(roomId, userDetails.getUser().getEmail());
     }
 
     @PostMapping("/{roomId}")

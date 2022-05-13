@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="wepeech" uuid="6084b3d3-adf2-489c-96bb-37a877ea60b6">
+    <data-source source="LOCAL" name="@database-springboot.cpbkqzl9osar.ap-northeast-2.rds.amazonaws.com" uuid="074d1583-a19c-45d8-a231-2d64f524dc39">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
