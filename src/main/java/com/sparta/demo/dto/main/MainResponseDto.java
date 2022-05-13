@@ -4,11 +4,14 @@ import com.sparta.demo.model.Debate;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 @Data
 public class MainResponseDto {
-    private Page<Debate> mainDebateList;
+//    private Page<Debate> mainDebateList;
+    private List<Debate> mainDebateList;
 
-    public MainResponseDto(Page<Debate>debateList){
+    public MainResponseDto(List<Debate>debateList){
         this.mainDebateList = debateList;
     }
 }

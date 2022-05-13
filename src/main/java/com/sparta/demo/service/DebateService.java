@@ -1,6 +1,8 @@
 package com.sparta.demo.service;
 
 import com.sparta.demo.dto.debate.*;
+import com.sparta.demo.enumeration.CategoryEnum;
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.repository.DebateRepository;
@@ -11,23 +13,39 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class DebateService {
 
     private final DebateRepository debateRepository;
+    private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
     private final EnterUserRepository enterUserRepository;
+
+
+    public DebateService(DebateRepository debateRepository, EnterUserRepository enterUserRepository) {
+        this.debateRepository = debateRepository;
+        this.enterUserRepository = enterUserRepository;
+
+        categoryEnumMap.put("ALL", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
+        categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("생활문화",CategoryEnum.CULTURE);
+        categoryEnumMap.put("IT/과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
+    }
 
 
     // todo : 프론트에서 로그인 기능까지 합칠 경우
     public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
+//    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto) {
 
         log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
+        CategoryEnum category = CategoryEnum.valueOf(String.valueOf(categoryEnumMap.get(debateLinkRequestDto.getCategoryName())));
 
-        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
+
+        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser(), category);
         Debate newDebate = debateRepository.save(debate);
 
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
@@ -40,8 +58,6 @@ public class DebateService {
         Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(()->new NullPointerException("존재하지 않는 방입니다."));
         return ResponseEntity.ok().body(new DebateRoomResponseDto(debate));
     }
-
-
 
 
 
