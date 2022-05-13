@@ -61,6 +61,12 @@ public class Debate extends Timestamped{
     @JsonManagedReference
     private List<EnterUser> enterUserList;
 
+    @Column
+    private Long totalPros;
+
+    @Column
+    private Long totalCons;
+
 //    @OneToMany(mappedBy = "debate")
 //    private List<Reply> replyList;
 
