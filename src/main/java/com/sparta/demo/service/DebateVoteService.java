@@ -54,17 +54,18 @@ public class DebateVoteService {
         if(found.isPresent()){
             if(found.get().getSide() == side){
                 found.get().setSide(SideTypeEnum.DEFAULT);
+                debateVoteRepository.delete(found.get());
             }else{
                 found.get().setSide(side);
             }
-            totalCons = debateVoteRepository.countAllBySide(SideTypeEnum.CONS);
-            totalPros = debateVoteRepository.countAllBySide(SideTypeEnum.PROS);
+            totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getDebateId());
+            totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getDebateId());
             return ResponseEntity.ok().body(new DebateVoteResponseDto(found, totalCons, totalPros));
         }else {
             DebateVote debateVote = new DebateVote(debate,ip, side);
             debateVoteRepository.save(debateVote);
-            totalCons = debateVoteRepository.countAllBySide(SideTypeEnum.CONS);
-            totalPros = debateVoteRepository.countAllBySide(SideTypeEnum.PROS);
+            totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getDebateId());
+            totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getDebateId());
             return ResponseEntity.ok().body(new DebateVoteResponseDto(Optional.of(debateVote),totalCons,totalPros));
         }
     }
