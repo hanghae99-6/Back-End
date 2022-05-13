@@ -58,9 +58,8 @@ public class User {
     }
 
 
-    public User update(String nickName, String profileImg){
+    public User update(String nickName){
         this.nickName = nickName;
-        this.profileImg = profileImg;
         return this;
     }
 }

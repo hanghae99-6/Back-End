@@ -1,7 +1,10 @@
 package com.sparta.demo.dto.user;
 
+import com.sparta.demo.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.Optional;
 
 @Getter
 @AllArgsConstructor
@@ -10,4 +13,8 @@ public class KakaoUserInfoDto {
     private String nickname;
     private String profileImg;
     private String email;
+
+
+    public KakaoUserInfoDto(Optional<User> user) {
+    }
 }
