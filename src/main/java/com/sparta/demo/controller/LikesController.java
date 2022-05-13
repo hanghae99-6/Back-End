@@ -23,6 +23,4 @@ public class LikesController {
     public ResponseEntity<ReplyLikesResponseDto> getLikes(@RequestBody ReplyLikesRequestDto replyLikesRequestDto, HttpServletRequest request){
         return likesService.getLikes(replyLikesRequestDto,request);
     }
-
-
 }

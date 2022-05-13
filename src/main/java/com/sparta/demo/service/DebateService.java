@@ -2,7 +2,9 @@ package com.sparta.demo.service;
 
 import com.sparta.demo.dto.debate.*;
 import com.sparta.demo.model.Debate;
+import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.repository.DebateRepository;
+import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,29 +19,15 @@ import java.util.Optional;
 public class DebateService {
 
     private final DebateRepository debateRepository;
+    private final EnterUserRepository enterUserRepository;
 
 
     // todo : 프론트에서 로그인 기능까지 합칠 경우
-//    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
-//
-//        log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
-//
-//        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
-//        Debate newDebate = debateRepository.save(debate);
-//
-//        DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
-//        debateLinkResponseDto.setRoomId(newDebate.getRoomId());
-//
-//        return ResponseEntity.ok().body(debateLinkResponseDto);
-//    }
+    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
 
-    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto) {
+        log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
 
-        log.info("debateLinkRequestDto.getSpeechMinute(): {}",debateLinkRequestDto.getSpeechMinute());
-        log.info("debateLinkRequestDto.getContent(): {}",debateLinkRequestDto.getContent());
-        log.info("userDetails.getUser().getUserName() : {}", "유저디테일즈 안씀");
-
-        Debate debate = Debate.create(debateLinkRequestDto, null);
+        Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser());
         Debate newDebate = debateRepository.save(debate);
 
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
@@ -67,26 +55,45 @@ public class DebateService {
         }
     }
 
-    public ResponseEntity<DebateRoomValidateDto> checkRoomIdUser(DebateRoomIdUserCheckDto debateRoomIdUserCheckDto) {
+    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, String username) {
 
-        Optional<Debate> debate = debateRepository.findByRoomId(debateRoomIdUserCheckDto.getRoomId());
-        DebateRoomValidateDto debateRoomValidateDto = new DebateRoomValidateDto();
+        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
+        DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
         log.info("debate.isPresent(): {}",debate.isPresent());
-        debateRoomValidateDto.setRoomId(debate.isPresent());
+        debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
 
-        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(debateRoomIdUserCheckDto.getRoomId(),debateRoomIdUserCheckDto.getUsername());
-        Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(debateRoomIdUserCheckDto.getRoomId(), debateRoomIdUserCheckDto.getUsername());
+        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(roomId, username);
+        Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(roomId, username);
 
-        log.info("debate1.isPresent(): {}",debate1.isPresent());
-        log.info("debate2.isPresent(): {}",debate2.isPresent());
+        log.info("prosName.isPresent(): {}",debate1.isPresent());
+        log.info("consName.isPresent(): {}",debate2.isPresent());
 
         if(debate1.isPresent() || debate2.isPresent()) {
-            debateRoomValidateDto.setUser(true);
+            debateRoomIdUserValidateDto.setUser(true);
         }
 
 
-        return ResponseEntity.ok().body(debateRoomValidateDto);
+        Optional<Integer> found = enterUserRepository.countAllByDebate_RoomId(roomId);
+
+        if(found.get()<2){
+            log.info("found.get(): {}", found.get());
+            debateRoomIdUserValidateDto.setSum(true);
+            log.info("debate.get().getTopic(): {}",debate.get().getTopic());
+            EnterUser enterUser = new EnterUser(debate.get(),username);
+            enterUserRepository.save(enterUser);
+        }
+
+        return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
     }
 
 
+    public ResponseEntity<String> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
+        String userName = userDetails.getUsername();
+        Optional<Debate> optionalDebate = debateRepository.findByRoomId(roomId);
+        Debate debate = optionalDebate.get();
+
+        EnterUser enterUser = new EnterUser(debate, debateInfoDto, userName);
+        enterUserRepository.save(enterUser);
+        return ResponseEntity.ok().body("good!");
+    }
 }

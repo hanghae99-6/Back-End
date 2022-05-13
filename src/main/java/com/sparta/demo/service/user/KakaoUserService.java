@@ -118,7 +118,7 @@ public class KakaoUserService {
 //        String profileImg = jsonNode.get("properties").get("profile_image").asText();
         String profileImg = "";
         if(jsonNode.get("properties").get("profile_image") == null) {
-            profileImg = null;
+            profileImg = "null";
         } else {
             profileImg = jsonNode.get("properties").get("profile_image").asText();
         }

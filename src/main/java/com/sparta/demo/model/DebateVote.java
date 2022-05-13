@@ -1,5 +1,6 @@
 package com.sparta.demo.model;
 
+import com.sparta.demo.enumeration.SideTypeEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,13 +20,13 @@ public class DebateVote {
     private String ip;
 
     @Column
-    private int side;
+    private SideTypeEnum side;
 
     @ManyToOne
     @JoinColumn(name = "debateId")
     private Debate debate;
 
-    public DebateVote(Debate debate, String ip, int side) {
+    public DebateVote(Debate debate, String ip, SideTypeEnum side) {
         this.ip = ip;
         this.debate = debate;
         this.side = side;

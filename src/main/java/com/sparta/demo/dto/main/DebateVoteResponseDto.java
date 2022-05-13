@@ -1,5 +1,6 @@
 package com.sparta.demo.dto.main;
 
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.DebateVote;
 import lombok.Data;
 
@@ -7,7 +8,7 @@ import java.util.Optional;
 
 @Data
 public class DebateVoteResponseDto {
-    private int side;
+    private SideTypeEnum side;
     private String ip;
     private Long totalPros;
     private Long totalCons;
