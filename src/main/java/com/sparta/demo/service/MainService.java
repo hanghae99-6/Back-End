@@ -81,10 +81,9 @@ public class MainService {
         int side = oneClickRequestDto.getSide();
         String oneClickTopic = oneClickRequestDto.getOneClickTopic();
 
-        Optional<OneClick> optionalOneClick = oneClickRepository.findByUserIpAndOneClickTopic(userIp, oneClickTopic);
-        if(!optionalOneClick.isPresent()){
-            throw new IllegalArgumentException("이미 선택한 토픽입니다.");
-        }
+        // oneClickTopic 에 OneClickUser 로 검색
+
+
 
         return null;
     }

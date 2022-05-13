@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,17 +17,14 @@ public class OneClick {
     private Long oneClickId;
 
     @Column(nullable = false)
-    private String userIp;
-
-    @Column(nullable = false)
     private String oneClickTopic;
-
-    @Column
-    private int side;
 
     @Column
     private int agreeNum;
 
     @Column
     private int oppoNum;
+
+    @OneToMany
+    private List<OneClickUser> oneClickUsers;
 }
