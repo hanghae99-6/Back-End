@@ -6,6 +6,7 @@ import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.CrawlTypeEnum;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -48,12 +49,6 @@ public class Debate extends Timestamped{
     @Column(nullable = false)
     private String consName;
 
-//    @Column
-//    private int speechCnt;
-//
-//    @Column
-//    private int speechMinute;
-
     @Column
     private String content;
 
@@ -61,10 +56,10 @@ public class Debate extends Timestamped{
     @JsonManagedReference
     private List<EnterUser> enterUserList;
 
-    @Column
+    @Column(columnDefinition = "Long default 0")
     private Long totalPros;
 
-    @Column
+    @Column(columnDefinition = "Long default 0")
     private Long totalCons;
 
 //    @OneToMany(mappedBy = "debate")
@@ -79,12 +74,9 @@ public class Debate extends Timestamped{
         debate.user = user;
         debate.roomId = UUID.randomUUID().toString();
         debate.topic = debateLinkRequestDto.getTopic();
-//        debate.catName = debateLinkRequestDto.getCategoryName();
         debate.categoryEnum = category;
         debate.prosName = debateLinkRequestDto.getProsName();
         debate.consName = debateLinkRequestDto.getConsName();
-//        debate.speechCnt = debateLinkRequestDto.getSpeechCnt();
-//        debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
         debate.content = debateLinkRequestDto.getContent();
         return debate;
     }
