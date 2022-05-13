@@ -48,11 +48,11 @@ public class Debate extends Timestamped{
     @Column(nullable = false)
     private String consName;
 
-    @Column
-    private int speechCnt;
-
-    @Column
-    private int speechMinute;
+//    @Column
+//    private int speechCnt;
+//
+//    @Column
+//    private int speechMinute;
 
     @Column
     private String content;
@@ -83,8 +83,8 @@ public class Debate extends Timestamped{
         debate.categoryEnum = category;
         debate.prosName = debateLinkRequestDto.getProsName();
         debate.consName = debateLinkRequestDto.getConsName();
-        debate.speechCnt = debateLinkRequestDto.getSpeechCnt();
-        debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
+//        debate.speechCnt = debateLinkRequestDto.getSpeechCnt();
+//        debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
         debate.content = debateLinkRequestDto.getContent();
         return debate;
     }

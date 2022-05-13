@@ -10,7 +10,7 @@ public class DebateLinkRequestDto {
     private String categoryName;
     private String prosName;
     private String consName;
-    private int speechCnt;
-    private int speechMinute;
+//    private int speechCnt;
+//    private int speechMinute;
     private String content;
 }

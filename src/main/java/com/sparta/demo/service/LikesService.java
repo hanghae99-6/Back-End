@@ -42,16 +42,16 @@ public class LikesService {
             }else{
                 found.get().setStatus(replyLikesRequestDto.getStatus());
             }
-            badCnt = likesRepository.countAllByStatus(2);
-            likesCnt = likesRepository.countAllByStatus(1);
+            badCnt = likesRepository.countAllByReply_ReplyIdAndStatus(replyLikesRequestDto.getReplyId(),2);
+            likesCnt = likesRepository.countAllByReply_ReplyIdAndStatus(replyLikesRequestDto.getReplyId(), 1);
             found.get().setBadCnt(badCnt);
             found.get().setLikesCnt(likesCnt);
             return ResponseEntity.ok().body(new ReplyLikesResponseDto(found));
         }else {
             Likes likes = new Likes(replyLikesRequestDto, ip, reply);
             likesRepository.save(likes);
-            badCnt = likesRepository.countAllByStatus(2);
-            likesCnt = likesRepository.countAllByStatus(1);
+            badCnt = likesRepository.countAllByReply_ReplyIdAndStatus(replyLikesRequestDto.getReplyId(),2);
+            likesCnt = likesRepository.countAllByReply_ReplyIdAndStatus(replyLikesRequestDto.getReplyId(), 1);
             likes.setBadCnt(badCnt);
             likes.setLikesCnt(likesCnt);
             return ResponseEntity.ok().body(new ReplyLikesResponseDto(Optional.of(likes)));
