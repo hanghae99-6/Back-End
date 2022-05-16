@@ -151,14 +151,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/user/kakao/callback");
 
         skipPathList.add("GET,/image/**");
-        skipPathList.add("GET,/");
+//        skipPathList.add("GET,/**");
         skipPathList.add("GET,/main/**");
-        skipPathList.add("POST,/main/**");
+        skipPathList.add("PUT,/main/**");
         // 시큐리티 없이 테스트
 //        skipPathList.add("GET,/**");
 //        skipPathList.add("POST,/**");
 //        skipPathList.add("DELETE,/**");
-//        skipPathList.add("POST,/debate/**");
+//        skipPathList.add("POST,/debate/{roomId}");
 //        skipPathList.add("GET,/debate/**");
 
         skipPathList.add("GET,/favicon.ico");

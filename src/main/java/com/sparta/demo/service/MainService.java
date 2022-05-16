@@ -122,23 +122,61 @@ public class MainService {
         String userIp = GetIp.getIp(request);
         int side = oneClickRequestDto.getSide();
         String oneClickTopic = oneClickRequestDto.getOneClickTopic();
+        log.info("oneClickTopic : {}", oneClickTopic);
+        // enum 값으로 변형
         SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(side);
-        // oneClickTopic 에 OneClickUser 로 검색
+        // userIp 와 찬/반 정보로 OnClickUser 객체 생성
         OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum);
-        OneClick oneClick = oneClickRepository.findByOneClickTopic(oneClickTopic).orElseThrow(
+        // oneClickTopic 으로 OneClick 객체를 찾아옴
+        OneClick oneClick = oneClickRepository.findByOneClickTopicAndTypeEnum(oneClickTopic, sideTypeEnum).orElseThrow(
                 () -> new IllegalStateException("없는 토픽입니다.")
         );
+        // 요청 유저가 누른 topic 의 OneClickUser 리스트를 뽑아오고 해당 리스트에서 각 oneClickUser 를 뽑아서 유효성 검사를 진행
         List<OneClickUser> oneClickUsers = oneClick.getOneClickUsers();
-        for(OneClickUser clickUser : oneClickUsers) {
-            if(clickUser.equals(oneClickUser)) {
+        log.info("oneClickUsers : {}", oneClickUsers);
+        for (OneClickUser clickUser : oneClickUsers) {
+            log.info("clickUser : {}", clickUser);
+            // 요청 유저의 찬/반 중 선택한 정보와 ip 정보 객체와 동일한게 있다면 삭제하고 찬/반 구분하여 투표 수 빼기
+            if (oneClickUser.getSideTypeEnum() == clickUser.getSideTypeEnum() && Objects.equals(oneClickUser.getUserIp(), clickUser.getUserIp())) {
+                log.info("oneClickUser : {}", oneClickUser);
                 oneClickUserRepository.delete(clickUser);
+                if (side == 1) {
+                    oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
+                } else {
+                    oneClick.setOppoNum(oneClick.getOppoNum() - 1);
+                }
                 return ResponseEntity.ok().body(oneClick);
-            } else if(clickUser.getUserIp().equals(userIp)) {
-                oneClickUserRepository.delete(clickUser);
-                oneClickUserRepository.save(oneClickUser);
+            }
+            // 동일한게 없다면 반대 측을 눌렀는지 확인하고 눌렀다면 요청 값이 찬성인지 반대인지에 따라 반대의 정보를 set 하고 투표 수에 더한다.
+            else if (userIp.equals(clickUser.getUserIp())) {
+                // TODO: 2022/05/14 DB 접근 없이 set으로 변경하는게 더 좋을까요?
+                //  set 사용을 지양하라고 하는데 아래처럼 생성자를 통해 하면 되나요?
+                //  생성자가 많아지지 않게 빌더를 쓰는게 낫나요?
+//                oneClickUserRepository.delete(clickUser);
+//                oneClickUserRepository.save(oneClickUser);
+                if (side == 1) {
+                    clickUser.setSideTypeEnum(SideTypeEnum.CONS);
+//                    oneClick.setOppoNum(oneClick.getOppoNum() + 1);
+                    oneClick = new OneClick.Builder(oneClickTopic)
+                            .oppoNum(oneClick.getOppoNum() + 1)
+                            .build();
+                    return ResponseEntity.ok().body(oneClick);
+                } else if (side == 2) {
+                    clickUser.setSideTypeEnum(SideTypeEnum.PROS);
+                    oneClick.setOppoNum(oneClick.getAgreeNum() + 1);
+                    return ResponseEntity.ok().body(oneClick);
+                }
                 return ResponseEntity.ok().body(oneClick);
             }
         }
+        if(sideTypeEnum == SideTypeEnum.PROS) {
+            OneClick addOneClickUser = new OneClick.Builder(oneClickTopic)
+                    .oneClickUsers(oneClickUsers)
+                    .agreeNum(1)
+                            .build();
+            oneClickRepository.save(addOneClickUser);
+        }
+
         oneClickUserRepository.save(oneClickUser);
         return ResponseEntity.ok().body(oneClick);
     }

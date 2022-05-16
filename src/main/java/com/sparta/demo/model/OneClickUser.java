@@ -20,6 +20,7 @@ public class OneClickUser {
     @Column
     private String userIp;
 
+    @Enumerated(value = EnumType.STRING)
     @Column
     private SideTypeEnum sideTypeEnum;
 
