@@ -26,7 +26,7 @@ public class UserController {
 
     // 닉네임 변경
     @PutMapping("/nick-name")
-    public KakaoUserInfoDto updateUserInfo(@RequestParam String nickName, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public KakaoUserInfoDto updateUserInfo(@RequestBody String nickName, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.updateUserInfo(nickName, userDetails);
     }
 
