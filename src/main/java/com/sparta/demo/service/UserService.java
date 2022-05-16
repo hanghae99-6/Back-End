@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,11 +50,15 @@ public class UserService {
     public ResponseEntity<List<MyDebateDto>> getMyDebate(UserDetailsImpl userDetails){
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
 
-        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(user.get().getEmail());
+        if(!user.isPresent()){
+            throw new IllegalArgumentException("유저정보가 없습니다");
+        }
+        String userEmail = user.get().getEmail();
+        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(userEmail, userEmail);
 
-        List<MyDebateDto> myDebateDtoList = new ManagedList<>();
+        List<MyDebateDto> myDebateDtoList = new ArrayList<>();
 
-        for(int i=0; i<debate.size();i++){
+        for(int i=0; i<debate.size(); i++){
             List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debate.get(i).getDebateId());
             int totalReply = replyList.size();
             Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.get(i).getDebateId());

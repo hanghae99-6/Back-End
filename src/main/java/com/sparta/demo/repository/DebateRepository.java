@@ -27,5 +27,5 @@ public interface DebateRepository extends JpaRepository<Debate, Long> {
 
     Optional<Debate> findByRoomIdAndConsName(String roomId, String username);
 
-    List<Debate> findAllByProsNameOrConsName(String username);
+    List<Debate> findAllByProsNameOrConsName(String userEmailPros, String userEmailCons);
 }

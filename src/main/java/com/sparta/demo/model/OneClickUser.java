@@ -18,14 +18,20 @@ public class OneClickUser {
     private Long oneClickUserId;
 
     @Column
+    private Long oneClickId;
+
+    @Column
     private String userIp;
 
     @Enumerated(value = EnumType.STRING)
     @Column
     private SideTypeEnum sideTypeEnum;
 
-    public OneClickUser(String userIp, SideTypeEnum sideTypeEnum) {
+
+
+    public OneClickUser(String userIp, SideTypeEnum sideTypeEnum, Long oneClickId) {
         this.userIp = userIp;
         this.sideTypeEnum = sideTypeEnum;
+        this.oneClickId = oneClickId;
     }
 }
