@@ -2,8 +2,11 @@ package com.sparta.demo.service;
 
 import com.sparta.demo.dto.user.KakaoUserInfoDto;
 import com.sparta.demo.dto.user.MyDebateDto;
+import com.sparta.demo.dto.user.MyReplyDto;
+import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
+import com.sparta.demo.model.Likes;
 import com.sparta.demo.model.Reply;
 import com.sparta.demo.model.User;
 import com.sparta.demo.repository.DebateRepository;
@@ -17,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,35 +33,33 @@ public class UserService {
     private final DebateVoteRepository debateVoteRepository;
 
     @Transactional
-    public KakaoUserInfoDto updateUserInfo(String nickName, UserDetailsImpl userDetails){
+    public ResponseEntity<KakaoUserInfoDto> updateUserInfo(String nickName, UserDetailsImpl userDetails) {
 
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
 
-        if(nickName == null)
-        nickName = user.get().getNickName();
-
-        if(user.isPresent()){
-            user.get().update(nickName);
-            return new KakaoUserInfoDto(user);
-        } else{
+        if (user.isPresent()) {
+            user.get().setNickName(nickName);
+        } else {
             throw new IllegalArgumentException("로그인 하지 않았습니다");
         }
+        KakaoUserInfoDto kakaoUserInfoDto = new KakaoUserInfoDto(user.get().getId(), nickName, user.get().getProfileImg(), user.get().getEmail());
 
+        return ResponseEntity.ok().body(kakaoUserInfoDto);
     }
 
     @Transactional
-    public ResponseEntity<List<MyDebateDto>> getMyDebate(UserDetailsImpl userDetails){
+    public ResponseEntity<List<MyDebateDto>> getMyDebate(UserDetailsImpl userDetails) {
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
 
-        if(!user.isPresent()){
+        if (!user.isPresent()) {
             throw new IllegalArgumentException("유저정보가 없습니다");
         }
         String userEmail = user.get().getEmail();
-        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(userEmail,userEmail);
+        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(userEmail, userEmail);
 
-        List<MyDebateDto> myDebateDtoList = new ManagedList<>();
+        List<MyDebateDto> myDebateDtoList = new ArrayList<>();
 
-        for(int i=0; i<debate.size();i++){
+        for (int i = 0; i < debate.size(); i++) {
             List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debate.get(i).getDebateId());
             int totalReply = replyList.size();
             Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.get(i).getDebateId());
@@ -68,5 +70,31 @@ public class UserService {
         }
 
         return ResponseEntity.ok().body(myDebateDtoList);
+    }
+
+    @Transactional
+    public ResponseEntity<List<MyReplyDto>> getMyReply(UserDetailsImpl userDetails) {
+        Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
+        if (!user.isPresent()) {
+            throw new IllegalArgumentException("유저정보가 없습니다");
+        }
+        String userEmail = user.get().getEmail();
+        List<Reply> replyList = replyRepository.findAllByUser_Email(userEmail);
+
+        List<MyReplyDto> myReplyDtoList = new ArrayList<>();
+
+        for (int i = 0; i < replyList.size(); i++) {
+            String reply = replyList.get(i).getReply();
+            Debate debate = replyList.get(i).getDebate();
+            String topic = debate.getTopic();
+            CategoryEnum categoryEnum = debate.getCategoryEnum();
+            String content = debate.getContent();
+            List<Likes> likesList = replyList.get(i).getLikesList();
+
+            MyReplyDto myReplyDto = new MyReplyDto(reply,likesList,topic,categoryEnum,content);
+            myReplyDtoList.add(myReplyDto);
+        }
+
+        return ResponseEntity.ok().body(myReplyDtoList);
     }
 }
