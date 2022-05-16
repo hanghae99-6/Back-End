@@ -15,17 +15,17 @@ import java.io.IOException;
 public class CrawlingController {
     private final CrawlingService crawlingService;
 
-    @GetMapping("/api/crawling/naverNews")
+    @GetMapping("/main/crawling/naverNews")
     public ResponseEntity<CrawlingDto> getNews() throws IOException {
         return crawlingService.getNaverNews();
     }
 
-    @GetMapping("/api/crawling/debateColumn")
+    @GetMapping("/main/crawling/debateColumn")
     public ResponseEntity<CrawlingDto> getColumn() throws IOException {
         return crawlingService.getColumn();
     }
 
-    @GetMapping("/api/crawling/cheilMagazine")
+    @GetMapping("/main/crawling/cheilMagazine")
     public ResponseEntity<CrawlingDto> getMagazine() throws IOException {
         return crawlingService.getMagazine();
     }

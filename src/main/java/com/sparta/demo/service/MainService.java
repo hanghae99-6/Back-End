@@ -63,6 +63,9 @@ public class MainService {
         for(int i=0; i<8;i++){
             int ran = random.nextInt(debateList.size());
             arr.add(debateList.get(ran));
+//            for(int j=0; j<i; j++){               // 8 개 이상일 경우 중복 허용 안하기.
+//                if(arr.get(i)==arr.get(j)) i--;
+//            }
         }
 
         MainResponseDto mainResponseDto = new MainResponseDto(arr);
