@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class UserController {
 
     // 프로필 - 1. 토론내역
     @GetMapping("/mydebate")
-    public ResponseEntity<MyDebateDto> getMyDebate(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<List<MyDebateDto>> getMyDebate(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.getMyDebate(userDetails);
     }
 }
