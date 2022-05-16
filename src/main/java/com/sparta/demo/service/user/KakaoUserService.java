@@ -1,5 +1,6 @@
 package com.sparta.demo.service.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.demo.dto.user.KakaoUserInfoDto;
@@ -8,7 +9,6 @@ import com.sparta.demo.repository.UserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,8 +26,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 @RequiredArgsConstructor
 @Service

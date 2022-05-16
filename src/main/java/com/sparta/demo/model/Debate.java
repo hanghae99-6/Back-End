@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import com.sparta.demo.enumeration.CategoryEnum;
-import com.sparta.demo.enumeration.CrawlTypeEnum;
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,10 +55,10 @@ public class Debate extends Timestamped{
     @JsonManagedReference
     private List<EnterUser> enterUserList;
 
-    @Column(columnDefinition = "long default '0'")
+    @Column
     private Long totalPros;
 
-    @Column(columnDefinition = "long default '0'")
+    @Column
     private Long totalCons;
 
 //    @OneToMany(mappedBy = "debate")
