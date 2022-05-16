@@ -49,7 +49,11 @@ public class UserService {
     public ResponseEntity<List<MyDebateDto>> getMyDebate(UserDetailsImpl userDetails){
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
 
-        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(user.get().getEmail());
+        if(!user.isPresent()){
+            throw new IllegalArgumentException("유저정보가 없습니다");
+        }
+        String userEmail = user.get().getEmail();
+        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(userEmail,userEmail);
 
         List<MyDebateDto> myDebateDtoList = new ManagedList<>();
 
