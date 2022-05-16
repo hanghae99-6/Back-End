@@ -48,9 +48,6 @@ public class DebateVoteService {
         SideTypeEnum side = SideTypeEnum.valueOf(String.valueOf(sideTypeEnumMap.get(debateVoteRequestDto.getSide())));
         System.out.println("side: "+side);
 
-        Long totalCons = 0L;
-        Long totalPros = 0L;
-
         if(found.isPresent()){
             if(found.get().getSide() == side){
                 found.get().setSide(SideTypeEnum.DEFAULT);
@@ -58,15 +55,24 @@ public class DebateVoteService {
             }else{
                 found.get().setSide(side);
             }
-            totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getDebateId());
-            totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getDebateId());
-            return ResponseEntity.ok().body(new DebateVoteResponseDto(found, totalCons, totalPros));
+            setTotals(debate);
+            return ResponseEntity.ok().body(new DebateVoteResponseDto(found, debate));
         }else {
             DebateVote debateVote = new DebateVote(debate,ip, side);
             debateVoteRepository.save(debateVote);
-            totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getDebateId());
-            totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getDebateId());
-            return ResponseEntity.ok().body(new DebateVoteResponseDto(Optional.of(debateVote),totalCons,totalPros));
+            setTotals(debate);
+            return ResponseEntity.ok().body(new DebateVoteResponseDto(Optional.of(debateVote),debate));
         }
+    }
+
+
+    // 찬반 총 투표수 debate에 저장
+    private void setTotals(Debate debate) {
+        Long totalCons;
+        Long totalPros;
+        totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getDebateId());
+        totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getDebateId());
+        debate.setTotalCons(totalCons);
+        debate.setTotalPros(totalPros);
     }
 }
