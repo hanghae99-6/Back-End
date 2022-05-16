@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Setter
 @Getter
@@ -30,17 +31,23 @@ public class EnterUser extends Timestamped{
     private String type;
 
     @Column
-    private String basis;
+    private String opinion;
+
+    @OneToMany
+    private List<DebateEvidence> evidences;
 
     public EnterUser(Debate debate, String username) {
         this.debate = debate;
         this.userName = username;
     }
 
-    public EnterUser(Debate debate, DebateInfoDto debateInfoDto, String userName) {
+    public EnterUser(Debate debate, DebateInfoDto debateInfoDto, String userName, List<DebateEvidence> evidences) {
         this.debate = debate;
         this.userName = userName;
-        this.type = debateInfoDto.getType();
-        this.basis = debateInfoDto.getBasis();
+        this.type = debateInfoDto.getProsCons();
+        this.opinion = debateInfoDto.getOpinion();
+        this.evidences = evidences;
     }
 }
+
+

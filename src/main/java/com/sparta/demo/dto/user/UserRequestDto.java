@@ -3,5 +3,6 @@ package com.sparta.demo.dto.user;
 import lombok.Getter;
 
 @Getter
-public class UserDto {
+public class UserRequestDto {
+    private String nickName;
 }
