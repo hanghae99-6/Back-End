@@ -9,11 +9,13 @@ public class MyDebateDto {
     private Long totalPros;
     private Long totalCons;
     private int totalReply;
+    private long totalDebateCnt;
 
-    public MyDebateDto(Debate debate, Long totalPros, Long totalCons, int totalReply) {
+    public MyDebateDto(Debate debate, Long totalPros, Long totalCons, int totalReply, long totalDebateCnt) {
         this.debate = debate;
         this.totalCons = totalCons;
         this.totalPros = totalPros;
         this.totalReply = totalReply;
+        this.totalDebateCnt = totalDebateCnt;
     }
 }

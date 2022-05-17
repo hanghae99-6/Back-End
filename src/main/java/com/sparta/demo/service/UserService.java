@@ -130,7 +130,7 @@ public class UserService {
             Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getContent().get(i).getDebateId());
             Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getContent().get(i).getDebateId());
 
-            MyDebateDto myDebateDto = new MyDebateDto(debate.getContent().get(i), totalPros, totalCons, totalReply);
+            MyDebateDto myDebateDto = new MyDebateDto(debate.getContent().get(i), totalPros, totalCons, totalReply, debate.getTotalElements());
 //            myDebateDtoList.add(myDebateDto);
             myDebateDtos = debate.map(mydebate -> myDebateDto);
         }
