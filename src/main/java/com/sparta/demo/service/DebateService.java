@@ -111,7 +111,8 @@ public class DebateService {
 
 
     public ResponseEntity<Boolean> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
-        String userName = userDetails.getUsername();
+        String userEmail = userDetails.getUser().getEmail();
+        String userImage = userDetails.getUser().getProfileImg();
         String prosCons = debateInfoDto.getProsCons();
         Optional<Debate> optionalDebate = debateRepository.findByRoomId(roomId);
         if(!optionalDebate.isPresent()){
@@ -126,7 +127,7 @@ public class DebateService {
 
         List<DebateEvidence> evidenceList = debateEvidenceRepository.findByRoomIdAndProsCons(roomId, prosCons);
 
-        EnterUser enterUser = new EnterUser(debate, debateInfoDto, userName, evidenceList);
+        EnterUser enterUser = new EnterUser(debate, debateInfoDto, userEmail, evidenceList, userImage);
         enterUserRepository.save(enterUser);
         log.info("EnterUser : {}", enterUser.getEvidences());
         return ResponseEntity.ok().body(true);
