@@ -61,6 +61,9 @@ public class Debate extends Timestamped{
     @Column
     private Long totalCons;
 
+    @OneToMany
+    private List<Reply> replyList;
+
 //    @OneToMany(mappedBy = "debate")
 //    private List<Reply> replyList;
 
