@@ -39,7 +39,7 @@ public class User {
     private List<Debate> debateList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JsonManagedReference
     private List<Reply> replyList;
 
 
