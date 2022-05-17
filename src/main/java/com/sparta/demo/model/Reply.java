@@ -23,14 +23,9 @@ public class Reply extends Timestamped{
     @Column(nullable = false)
     private String reply;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
-    @NotNull
-    @JsonBackReference
     private User user;
-
-    @Column
-    private String nickName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "debateId")
@@ -52,7 +47,6 @@ public class Reply extends Timestamped{
         this.reply = reply;
         this.debate = debate;
         this.user = user;
-        this.nickName = user.getNickName();
     }
 }
 

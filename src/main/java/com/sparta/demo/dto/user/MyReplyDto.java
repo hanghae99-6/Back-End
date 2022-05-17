@@ -1,10 +1,12 @@
 package com.sparta.demo.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.model.Likes;
 
 import java.util.List;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class MyReplyDto {
     private String reply;
     private String topic;
