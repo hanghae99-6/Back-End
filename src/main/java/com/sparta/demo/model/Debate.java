@@ -1,8 +1,6 @@
 package com.sparta.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import lombok.Getter;
@@ -10,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,8 +25,7 @@ public class Debate extends Timestamped{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-//    @NotNull
-//    @JsonBackReference
+    @NotNull
     @JsonIgnore
     private User user;
 
@@ -51,7 +49,7 @@ public class Debate extends Timestamped{
     private String content;
 
     @OneToMany(mappedBy = "debate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     private List<EnterUser> enterUserList;
 
     @Column
@@ -61,6 +59,7 @@ public class Debate extends Timestamped{
     private Long totalCons;
 
     @OneToMany(mappedBy = "debate")
+    @JsonIgnore
     private List<Reply> replyList;
 
 

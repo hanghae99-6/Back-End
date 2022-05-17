@@ -1,6 +1,7 @@
 package com.sparta.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateInfoDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +21,7 @@ public class EnterUser extends Timestamped{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "debateId")
-//    @NotNull
-    @JsonBackReference
+    @JsonIgnore
     private Debate debate;
 
     @Column
