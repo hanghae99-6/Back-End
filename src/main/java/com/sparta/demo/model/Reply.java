@@ -2,20 +2,18 @@ package com.sparta.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-public class Reply extends Timestamped{
+public class Reply extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long replyId;
@@ -23,14 +21,9 @@ public class Reply extends Timestamped{
     @Column(nullable = false)
     private String reply;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
-    @NotNull
-    @JsonBackReference
     private User user;
-
-    @Column
-    private String nickName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "debateId")
@@ -52,7 +45,6 @@ public class Reply extends Timestamped{
         this.reply = reply;
         this.debate = debate;
         this.user = user;
-        this.nickName = user.getNickName();
     }
 }
 
