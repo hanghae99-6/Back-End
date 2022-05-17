@@ -1,6 +1,7 @@
 package com.sparta.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.demo.dto.reply.ReplyLikesRequestDto;
 import lombok.Getter;
@@ -29,14 +30,8 @@ public class Likes {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "replyId")
     @NotNull
-    @JsonBackReference
+    @JsonIgnore
     private Reply reply;
-
-    @Column
-    private Long badCnt;
-
-    @Column
-    private Long likesCnt;
 
     public Likes(ReplyLikesRequestDto replyLikesRequestDto, String ip, Reply reply) {
         this.status = replyLikesRequestDto.getStatus();

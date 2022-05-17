@@ -1,5 +1,6 @@
 package com.sparta.demo.service;
 
+import com.sparta.demo.dto.reply.ReplyListResponseDto;
 import com.sparta.demo.dto.reply.ReplyResponseDto;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.Reply;
@@ -38,5 +39,13 @@ public class ReplyService {
         log.info("service replyResponseDto.getReply(): {}",replyResponseDto.getReply());
 
         return ResponseEntity.ok().body(replyResponseDto);
+    }
+
+    public ResponseEntity<ReplyListResponseDto> getReply(Long debateId) {
+        log.info("service debateId: {}",debateId);
+
+        Debate debate = debateRepository.findByDebateId(debateId).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
+
+        return ResponseEntity.ok().body(new ReplyListResponseDto(debate.getReplyList()));
     }
 }

@@ -61,8 +61,8 @@ public class Debate extends Timestamped{
     @Column
     private Long totalCons;
 
-//    @OneToMany(mappedBy = "debate")
-//    private List<Reply> replyList;
+    @OneToMany(mappedBy = "debate")
+    private List<Reply> replyList;
 
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto, User user, CategoryEnum category) {
