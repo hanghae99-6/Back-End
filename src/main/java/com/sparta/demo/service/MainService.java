@@ -5,10 +5,7 @@ import com.sparta.demo.dto.main.MainResponseDto;
 import com.sparta.demo.dto.main.OneClickRequestDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
-import com.sparta.demo.model.Debate;
-import com.sparta.demo.model.OneClick;
-import com.sparta.demo.model.OneClickUser;
-import com.sparta.demo.model.Reply;
+import com.sparta.demo.model.*;
 import com.sparta.demo.repository.*;
 import com.sparta.demo.util.GetIp;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +30,7 @@ public class MainService {
     final private DebateRepository debateRepository;
     final private ReplyRepository replyRepository;
     final private DebateVoteRepository debateVoteRepository;
+    final private EnterUserRepository enterUserRepository;
     private final OneClickRepository oneClickRepository;
     private final OneClickUserRepository oneClickUserRepository;
     private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
@@ -42,12 +40,14 @@ public class MainService {
     public MainService(DebateRepository debateRepository,
                        ReplyRepository replyRepository,
                        DebateVoteRepository debateVoteRepository,
+                       EnterUserRepository enterUserRepository,
                        OneClickRepository oneClickRepository,
                        OneClickUserRepository oneClickUserRepository) {
 
         this.debateRepository = debateRepository;
         this.replyRepository = replyRepository;
         this.debateVoteRepository = debateVoteRepository;
+        this.enterUserRepository = enterUserRepository;
         this.oneClickRepository = oneClickRepository;
         this.oneClickUserRepository = oneClickUserRepository;
 
@@ -110,7 +110,9 @@ public class MainService {
         log.info("service debateId: {}", debateId);
         Debate debate = debateRepository.findByDebateId(debateId).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
 
-        MainDetailResponseDto mainDetailResponseDto = new MainDetailResponseDto(debate);
+        List<EnterUser> enterUserList = enterUserRepository.findAllByDebate_DebateId(debateId);
+
+        MainDetailResponseDto mainDetailResponseDto = new MainDetailResponseDto(debate, enterUserList);
 
         log.info("debate.getTopic: {}", debate.getTopic());
         return ResponseEntity.ok().body(mainDetailResponseDto);
