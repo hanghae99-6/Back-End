@@ -72,6 +72,6 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.14.2'
 }
 
-'test' {
+test {
     useJUnitPlatform()
 }
