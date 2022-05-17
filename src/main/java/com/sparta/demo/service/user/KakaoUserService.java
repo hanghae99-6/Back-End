@@ -178,5 +178,4 @@ public class KakaoUserService {
         System.out.println("token값:"+ token);
         return TOKEN_TYPE + " " + token;
     }
-
 }
