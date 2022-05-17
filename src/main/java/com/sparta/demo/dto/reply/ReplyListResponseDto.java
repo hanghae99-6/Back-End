@@ -1,5 +1,6 @@
 package com.sparta.demo.dto.reply;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.sparta.demo.model.Reply;
 import lombok.Data;
 
