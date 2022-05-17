@@ -38,16 +38,11 @@ public class UserController {
     }
 
     // 프로필 - 1. 토론 내역
-//    @GetMapping("/mydebate")
-//    public ResponseEntity<List<MyDebateDto>> getMyDebate(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return userService.getMyDebate(userDetails);
-//    }
     @GetMapping("/mydebate")
-    public Page<MyDebateDto> getMyDebatePage(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                   @RequestParam(value = "page",required = false) Integer page) {
-        page -= 1;
-        return userService.getMyDebatePage(userDetails, page);
+    public ResponseEntity<List<MyDebateDto>> getMyDebate(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.getMyDebate(userDetails);
     }
+
 
     // 프로필 - 2. 내가 쓴 댓글
     @GetMapping("/myreply")

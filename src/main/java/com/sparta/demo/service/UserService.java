@@ -82,62 +82,33 @@ public class UserService {
 
 
     // 2. 프로필 페이지 - 토론 내역
-//    @Transactional
-//    public ResponseEntity<List<MyDebateDto>> getMyDebate(UserDetailsImpl userDetails) {
-//        Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
-//
-//        if (!user.isPresent()) {
-//            throw new IllegalArgumentException("유저정보가 없습니다");
-//        }
-//        String userEmail = user.get().getEmail();
-//        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(userEmail, userEmail);
-//
-//        List<MyDebateDto> myDebateDtoList = new ArrayList<>();
-//
-//        for (int i = 0; i < debate.size(); i++) {
-//            List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debate.get(i).getDebateId());
-//            int totalReply = replyList.size();
-//            Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.get(i).getDebateId());
-//            Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.get(i).getDebateId());
-//
-//            MyDebateDto myDebateDto = new MyDebateDto(debate.get(i), totalPros, totalCons, totalReply);
-//            myDebateDtoList.add(myDebateDto);
-//        }
-//
-//        return ResponseEntity.ok().body(myDebateDtoList);
-//    }
-
-    // 2. 프로필 페이지 - 토론 내역 페이징
     @Transactional
-    public Page<MyDebateDto> getMyDebatePage(UserDetailsImpl userDetails, int page) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page, 6, sort);
-
+    public ResponseEntity<List<MyDebateDto>> getMyDebate(UserDetailsImpl userDetails) {
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
 
         if (!user.isPresent()) {
             throw new IllegalArgumentException("유저정보가 없습니다");
         }
         String userEmail = user.get().getEmail();
-        Page<Debate> debate = debateRepository.findAllByProsNameOrConsName(userEmail, userEmail, pageable);
+        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(userEmail, userEmail);
 
-//        Page<MyDebateDto> myDebateDtoList = new ArrayList<>();
-        Page<MyDebateDto> myDebateDtos = null;
+        List<MyDebateDto> myDebateDtoList = new ArrayList<>();
 
-        for (int i = 0; i < debate.getTotalElements(); i++) {
-            List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debate.getContent().get(i).getDebateId());
+        for (int i = 0; i < debate.size(); i++) {
+            List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debate.get(i).getDebateId());
             int totalReply = replyList.size();
-            Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getContent().get(i).getDebateId());
-            Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getContent().get(i).getDebateId());
+//            Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.get(i).getDebateId());
+//            Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.get(i).getDebateId());
 
-            MyDebateDto myDebateDto = new MyDebateDto(debate.getContent().get(i), totalPros, totalCons, totalReply, debate.getTotalElements());
-//            myDebateDtoList.add(myDebateDto);
-            myDebateDtos = debate.map(mydebate -> myDebateDto);
+            MyDebateDto myDebateDto = new MyDebateDto(debate.get(i), totalReply, debate.size());
+            myDebateDtoList.add(myDebateDto);
         }
 
-        return myDebateDtos;
+        return ResponseEntity.ok().body(myDebateDtoList);
     }
 
+
+    // 3. 프로필 페이지 - 내가 쓴 댓글
     @Transactional
     public ResponseEntity<List<MyReplyDto>> getMyReply(UserDetailsImpl userDetails) {
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
@@ -157,7 +128,7 @@ public class UserService {
             String content = debate.getContent();
             List<Likes> likesList = replyList.get(i).getLikesList();
 
-            MyReplyDto myReplyDto = new MyReplyDto(reply,likesList,topic,categoryEnum,content);
+            MyReplyDto myReplyDto = new MyReplyDto(reply, likesList, topic, categoryEnum, content, replyList.size());
             myReplyDtoList.add(myReplyDto);
         }
 
