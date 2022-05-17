@@ -49,6 +49,5 @@ public class DebateController {
                                                  ) {
         log.info("evidence : {}", debateInfoDto.getEvidences().get(0));
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);
-//        return debateService.saveDebateInfo(roomId, debateInfoDto);
     }
 }

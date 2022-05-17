@@ -23,6 +23,7 @@ public class Reply extends Timestamped {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
+    @JsonBackReference
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
