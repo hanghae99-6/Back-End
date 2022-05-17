@@ -124,13 +124,20 @@ public class UserService {
 //        Page<MyDebateDto> myDebateDtoList = new ArrayList<>();
         Page<MyDebateDto> myDebateDtos = null;
 
+        log.info("debate.getTotalElements() : {}", debate.getTotalElements());
         for (int i = 0; i < debate.getTotalElements(); i++) {
+            log.info("i : {}", i);
+            log.info("debate.getContent().get(i) : {}", debate.getContent().get(i));
+            log.info("debate.get() : {}", debate.get());
+            log.info("getContent().get(0).getDebateId : {}", debate.getContent().get(0).getDebateId());
+            log.info("getContent().get(1).getDebateId : {}", debate.getContent().get(1).getDebateId());
+            log.info("getContent().get(1).getDebateId : {}", debate.getContent().get(i).getDebateId());
             List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debate.getContent().get(i).getDebateId());
             int totalReply = replyList.size();
             Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getContent().get(i).getDebateId());
             Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getContent().get(i).getDebateId());
 
-            MyDebateDto myDebateDto = new MyDebateDto(debate.getContent().get(i), totalPros, totalCons, totalReply);
+            MyDebateDto myDebateDto = new MyDebateDto(debate.getContent().get(i), totalPros, totalCons, totalReply, debate.getTotalElements());
 //            myDebateDtoList.add(myDebateDto);
             myDebateDtos = debate.map(mydebate -> myDebateDto);
         }

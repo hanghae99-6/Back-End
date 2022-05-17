@@ -9,7 +9,6 @@ import com.sparta.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -45,8 +44,7 @@ public class UserController {
     @GetMapping("/mydebate")
     public Page<MyDebateDto> getMyDebatePage(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                    @RequestParam(value = "page",required = false) Integer page) {
-        log.info("page num : {}", page);
-        return userService.getMyDebatePage(userDetails, page - 1);
+        return userService.getMyDebatePage(userDetails, page-1);
     }
 
     // 프로필 - 2. 내가 쓴 댓글
