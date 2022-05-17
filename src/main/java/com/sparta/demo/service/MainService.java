@@ -110,10 +110,7 @@ public class MainService {
         log.info("service debateId: {}", debateId);
         Debate debate = debateRepository.findByDebateId(debateId).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
 
-        Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debateId);
-        Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debateId);
-
-        MainDetailResponseDto mainDetailResponseDto = new MainDetailResponseDto(debate, totalPros,totalCons);
+        MainDetailResponseDto mainDetailResponseDto = new MainDetailResponseDto(debate);
 
         log.info("debate.getTopic: {}", debate.getTopic());
         return ResponseEntity.ok().body(mainDetailResponseDto);
