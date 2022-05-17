@@ -34,7 +34,7 @@ public class UserController {
     public ResponseEntity<KakaoUserInfoDto> updateUserInfo(@RequestBody UserRequestDto userRequestDto,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                            HttpServletResponse response){
-        return userService.updateUserInfo(userRequestDto.getNickname(), userDetails, response);
+        return userService.updateUserInfo(userRequestDto.getNickName(), userDetails, response);
     }
 
     // 프로필 - 1. 토론 내역
