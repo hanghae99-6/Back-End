@@ -14,13 +14,18 @@ import com.sparta.demo.repository.DebateVoteRepository;
 import com.sparta.demo.repository.ReplyRepository;
 import com.sparta.demo.repository.UserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
+import com.sparta.demo.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,25 +39,45 @@ public class UserService {
     private final ReplyRepository replyRepository;
     private final DebateVoteRepository debateVoteRepository;
 
+    // 1. 닉네임 수정
     @Transactional
-    public ResponseEntity<KakaoUserInfoDto> updateUserInfo(String nickName, UserDetailsImpl userDetails) {
-        log.info("nickName : {}", nickName);
+    public ResponseEntity<KakaoUserInfoDto> updateUserInfo(String nickName, UserDetailsImpl userDetails, HttpServletResponse response) {
+
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
 
         if (user.isPresent()) {
             user.get().setNickName(nickName);
-            log.info("UserService 44, user.get().getNickName() : {}", user.get().getNickName());
             userRepository.save(user.get());
         } else {
             throw new IllegalArgumentException("로그인 하지 않았습니다");
         }
         KakaoUserInfoDto kakaoUserInfoDto = new KakaoUserInfoDto
                 (user.get().getNickName(), user.get().getProfileImg(), user.get().getEmail());
-        log.info("kakaoUserInfoDto.getNickname() : {}", kakaoUserInfoDto.getNickname());
+
+        jwtTokenCreate(user, response);
 
         return ResponseEntity.ok().body(kakaoUserInfoDto);
     }
 
+    private void jwtTokenCreate(Optional<User> kakaoUser,HttpServletResponse response) {
+        String TOKEN_TYPE = "BEARER";
+
+        UserDetails userDetails = new UserDetailsImpl(kakaoUser.get());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        UserDetailsImpl userDetails1 = ((UserDetailsImpl) authentication.getPrincipal());
+
+        System.out.println("userDetails1 : " + userDetails1.toString());
+
+        final String token = JwtTokenUtils.generateJwtToken(userDetails1);
+
+        System.out.println("JWT토큰 : " + token);
+        response.addHeader("Authorization", TOKEN_TYPE + " " + token);
+    }
+
+
+    // 2. 프로필 페이지 - 토론 내역
     @Transactional
     public ResponseEntity<List<MyDebateDto>> getMyDebate(UserDetailsImpl userDetails) {
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());

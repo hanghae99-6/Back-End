@@ -43,5 +43,4 @@ public class Likes {
         this.ip = ip;
         this.reply = reply;
     }
-
 }
