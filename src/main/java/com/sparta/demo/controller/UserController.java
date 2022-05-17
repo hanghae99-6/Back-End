@@ -44,9 +44,9 @@ public class UserController {
 //    }
     @GetMapping("/mydebate")
     public Page<MyDebateDto> getMyDebatePage(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                   @RequestParam(value = "page",required = false) int page) {
-        page -= 1;
-        return userService.getMyDebatePage(userDetails, page);
+                                                   @RequestParam(value = "page",required = false) Integer page) {
+        log.info("page num : {}", page);
+        return userService.getMyDebatePage(userDetails, page - 1);
     }
 
     // 프로필 - 2. 내가 쓴 댓글
