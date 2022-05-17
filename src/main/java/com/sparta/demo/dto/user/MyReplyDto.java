@@ -20,6 +20,5 @@ public class MyReplyDto {
         this.categoryEnum = categoryEnum;
         this.content = content;
         this.totalReplyCnt = totalReplyCnt;
-
     }
 }

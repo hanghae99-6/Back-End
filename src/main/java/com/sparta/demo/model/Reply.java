@@ -1,6 +1,7 @@
 package com.sparta.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,19 +29,30 @@ public class Reply extends Timestamped{
     @JsonBackReference
     private User user;
 
+    @Column
+    private String nickName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "debateId")
     @JsonBackReference
     private Debate debate;
 
+    @Column
+    private Long badCnt;
+
+    @Column
+    private Long likesCnt;
+
     @OneToMany(mappedBy = "reply", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     private List<Likes> likesList;
+
 
     public Reply(String reply, Debate debate, User user) {
         this.reply = reply;
         this.debate = debate;
         this.user = user;
+        this.nickName = user.getNickName();
     }
 }
 

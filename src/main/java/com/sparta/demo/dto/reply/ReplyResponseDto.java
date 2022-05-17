@@ -5,16 +5,9 @@ import lombok.Data;
 
 @Data
 public class ReplyResponseDto {
-    private Long replyId;
-    private String reply;
-    private Long debateId;
-    private Long likesCnt;
-    private String nickName;
+    private Reply reply;
 
     public ReplyResponseDto(Reply newReply) {
-        this.replyId = newReply.getReplyId();
-        this.reply = newReply.getReply();
-        this.debateId = newReply.getDebate().getDebateId();
-        this.nickName = newReply.getUser().getNickName();
+        this.reply = newReply;
     }
 }
