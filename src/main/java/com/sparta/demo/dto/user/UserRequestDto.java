@@ -1,9 +1,8 @@
 package com.sparta.demo.dto.user;
 
-import com.sparta.demo.model.User;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class UserRequestDto {
     private String nickName;
 }

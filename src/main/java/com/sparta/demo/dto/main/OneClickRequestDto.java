@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class OneClickRequestDto {
-    private String oneClickTopic;
+    private Long oneClickId;
     private int side;
 }

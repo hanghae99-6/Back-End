@@ -20,7 +20,8 @@ public class LikesController {
     private final LikesService likesService;
 
     @PostMapping("/main/reply/likes")
-    public ResponseEntity<ReplyLikesResponseDto> getLikes(@RequestBody ReplyLikesRequestDto replyLikesRequestDto, HttpServletRequest request){
+    public ResponseEntity<ReplyLikesResponseDto> getLikes(@RequestBody ReplyLikesRequestDto replyLikesRequestDto,
+                                                          HttpServletRequest request){
         return likesService.getLikes(replyLikesRequestDto,request);
     }
 }

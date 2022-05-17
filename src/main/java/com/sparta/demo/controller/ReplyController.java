@@ -22,7 +22,7 @@ public class ReplyController {
 
     private final ReplyService replyService;
 
-    @PostMapping("/{debateId}/reply")
+    @PostMapping("/main/{debateId}/reply")
     public ResponseEntity<ReplyResponseDto> writeReply(@PathVariable Long debateId,@RequestBody Map<String, String> param, @AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info("controller debateId: {}", debateId);
         log.info("controller reply : {}", param.get("reply"));

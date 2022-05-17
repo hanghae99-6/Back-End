@@ -4,32 +4,39 @@ import com.sparta.demo.dto.debate.*;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
+import com.sparta.demo.model.DebateEvidence;
 import com.sparta.demo.model.EnterUser;
+import com.sparta.demo.repository.DebateEvidenceRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
 @Slf4j
-//@RequiredArgsConstructor
 public class DebateService {
 
     private final DebateRepository debateRepository;
     private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
     private final EnterUserRepository enterUserRepository;
+    private final DebateEvidenceRepository debateEvidenceRepository;
 
-
-    public DebateService(DebateRepository debateRepository, EnterUserRepository enterUserRepository) {
+    @Autowired
+    public DebateService(DebateRepository debateRepository,
+                         EnterUserRepository enterUserRepository,
+                         DebateEvidenceRepository debateEvidenceRepository) {
         this.debateRepository = debateRepository;
         this.enterUserRepository = enterUserRepository;
+        this.debateEvidenceRepository = debateEvidenceRepository;
 
         categoryEnumMap.put("ALL", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
         categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("생활문화",CategoryEnum.CULTURE);
@@ -71,15 +78,15 @@ public class DebateService {
         }
     }
 
-    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, String username) {
+    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, String userEmail) {
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
         DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
         log.info("debate.isPresent(): {}",debate.isPresent());
         debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
 
-        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(roomId, username);
-        Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(roomId, username);
+        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(roomId, userEmail);
+        Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(roomId, userEmail);
 
         log.info("prosName.isPresent(): {}",debate1.isPresent());
         log.info("consName.isPresent(): {}",debate2.isPresent());
@@ -95,7 +102,7 @@ public class DebateService {
             log.info("found.get(): {}", found.get());
             debateRoomIdUserValidateDto.setSum(true);
             log.info("debate.get().getTopic(): {}",debate.get().getTopic());
-            EnterUser enterUser = new EnterUser(debate.get(),username);
+            EnterUser enterUser = new EnterUser(debate.get(),userEmail);
             enterUserRepository.save(enterUser);
         }
 
@@ -103,13 +110,25 @@ public class DebateService {
     }
 
 
-    public ResponseEntity<String> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
+    public ResponseEntity<Boolean> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
         String userName = userDetails.getUsername();
+        String prosCons = debateInfoDto.getProsCons();
         Optional<Debate> optionalDebate = debateRepository.findByRoomId(roomId);
+        if(!optionalDebate.isPresent()){
+            return ResponseEntity.ok().body(false);
+        }
         Debate debate = optionalDebate.get();
+        List<String> evidences = debateInfoDto.getEvidences();
+        for(String evidence : evidences) {
+            DebateEvidence debateEvidence = new DebateEvidence(roomId, evidence, prosCons);
+            debateEvidenceRepository.save(debateEvidence);
+        }
 
-        EnterUser enterUser = new EnterUser(debate, debateInfoDto, userName);
+        List<DebateEvidence> evidenceList = debateEvidenceRepository.findByRoomIdAndProsCons(roomId, prosCons);
+
+        EnterUser enterUser = new EnterUser(debate, debateInfoDto, userName, evidenceList);
         enterUserRepository.save(enterUser);
-        return ResponseEntity.ok().body("good!");
+        log.info("EnterUser : {}", enterUser.getEvidences());
+        return ResponseEntity.ok().body(true);
     }
 }

@@ -4,13 +4,15 @@ import lombok.Getter;
 
 @Getter
 public enum SideTypeEnum {
-    PROS(1),
-    CONS(2),
-    DEFAULT(0);
+    PROS(1, "SIDE"),
+    CONS(2, "SIDE"),
+    DEFAULT(0, "SIDE");
 
     private final Integer typeNum;
+    private final String name;
 
-    SideTypeEnum(Integer typeNum){
+    SideTypeEnum(Integer typeNum, String name){
         this.typeNum = typeNum;
+        this.name = name;
     }
 }
