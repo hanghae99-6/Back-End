@@ -35,7 +35,8 @@ public class User {
     private String profileImg;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonIgnore
     private List<Debate> debateList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

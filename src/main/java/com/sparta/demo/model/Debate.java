@@ -1,6 +1,7 @@
 package com.sparta.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import com.sparta.demo.enumeration.CategoryEnum;
@@ -26,7 +27,8 @@ public class Debate extends Timestamped{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
 //    @NotNull
-    @JsonBackReference
+//    @JsonBackReference
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false)
@@ -34,9 +36,6 @@ public class Debate extends Timestamped{
 
     @Column(nullable = false)
     private String topic;
-
-//    @Column(nullable = false)
-//    private String catName;
 
     @Column(nullable = false)
     @Enumerated(value=EnumType.STRING)
