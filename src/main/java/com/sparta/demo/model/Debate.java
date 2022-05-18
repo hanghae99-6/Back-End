@@ -6,6 +6,8 @@ import com.sparta.demo.enumeration.CategoryEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -18,6 +20,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @NoArgsConstructor
+@DynamicInsert
 public class Debate extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +64,10 @@ public class Debate extends Timestamped{
     @OneToMany(mappedBy = "debate")
     @JsonIgnore
     private List<Reply> replyList;
+
+    @Column
+    @ColumnDefault("0")
+    private Integer totalReply;
 
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto, User user, CategoryEnum category) {
