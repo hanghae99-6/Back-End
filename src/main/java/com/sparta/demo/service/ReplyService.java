@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -20,6 +21,7 @@ public class ReplyService {
     private final ReplyRepository replyRepository;
     private final DebateRepository debateRepository;
 
+    @Transactional
     public ResponseEntity<ReplyResponseDto> writeReply(Long debateId, String reply, UserDetailsImpl userDetails) {
 
         log.info("service debateId: {}",debateId);
@@ -33,6 +35,12 @@ public class ReplyService {
         Reply newReply = new Reply(reply,debate,userDetails.getUser());
 
         replyRepository.save(newReply);
+
+        if(debate.getTotalReply() == null){
+            debate.setTotalReply(1);
+        }else{
+            debate.setTotalReply(debate.getTotalReply() + 1);
+        }
 
         ReplyResponseDto replyResponseDto = new ReplyResponseDto(newReply);
 
