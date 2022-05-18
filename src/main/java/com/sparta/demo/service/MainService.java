@@ -67,17 +67,17 @@ public class MainService {
 
         List<Debate> debateList = debateRepository.findAllByOrderByCreatedAtDesc();
 
-        ArrayList<Debate> arr = new ArrayList<>();
-        Random random = new Random();
-        for(int i=0; i<6;i++){
-            int ran = random.nextInt(debateList.size());
-            arr.add(debateList.get(ran));
-            // 8개 이상일 경우만 중복 허용 x
-//            for (int j = 0; j < i; j++) {
-//                if (arr.get(i).getDebateId()==arr.get(j).getDebateId()) i--;
-//                else break;
-//            }
+        Set<Integer> debateNum = new HashSet<>();
+        while(debateNum.size()<6){
+            debateNum.add((int)(Math.random() * debateList.size()));
+        }
+        Integer[] debates = new Integer[6];
+        debateNum.toArray(debates);
+        log.info("debateNum: {}", debateNum);
 
+        List<Debate> arr = new ArrayList<>();
+        for(int i=0; i<6;i++){
+            arr.add(debateList.get(debates[i]));
         }
         MainResponseDto mainResponseDto = new MainResponseDto(arr);
         return ResponseEntity.ok().body(mainResponseDto);
@@ -96,19 +96,26 @@ public class MainService {
         else {
             log.info("카테고리: " + category);
             List<Debate> debateList = debateRepository.findAllByCategoryEnum(category);
-            ArrayList<Debate> arr2 = new ArrayList<>();
-
-            Random random = new Random();
-            for(int i=0; i<6;i++){
-                int ran = random.nextInt(debateList.size());
-                arr2.add(debateList.get(ran));
-                // 6개 이상일 경우만 중복 허용 x
-//                for (int j = 0; j < i; j++) {
-//                    if (arr2.get(i).equals(arr2.get(j))) i--;
-//                    else break;
-//                }
+            List<Debate> arr = new ArrayList<>();
+            if(debateList.size()<6){                // 카테고리 별 토론 정보가 6개 미만 일시 중복허용
+                Random random = new Random();
+                for(int i=0; i<6;i++){
+                    int ran = random.nextInt(debateList.size());
+                    arr.add(debateList.get(ran));
+                }
+            } else{
+                Set<Integer> debateNum = new HashSet<>();
+                while(debateNum.size()<6){
+                    debateNum.add((int)(Math.random() * debateList.size()));
+                }
+                Integer[] debates = new Integer[6];
+                debateNum.toArray(debates);
+                log.info("debateNum: {}", debateNum);
+                for(int i=0; i<6;i++){
+                    arr.add(debateList.get(debates[i]));
+                }
             }
-            MainResponseDto mainResponseDto = new MainResponseDto(arr2);
+            MainResponseDto mainResponseDto = new MainResponseDto(arr);
             return ResponseEntity.ok().body(mainResponseDto);
         }
     }
