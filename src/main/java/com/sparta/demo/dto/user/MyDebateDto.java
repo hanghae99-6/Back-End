@@ -7,11 +7,12 @@ import lombok.Data;
 public class MyDebateDto {
     private Debate debate;
     private int totalReply;
-    private long totalDebateCnt;
+//    private long totalDebateCnt;
+    private int side;
 
-    public MyDebateDto(Debate debate, int totalReply, int totalDebateCnt) {
+    public MyDebateDto(Debate debate, int totalReply, int side) {
         this.debate = debate;
-        this.totalReply = totalReply;
-        this.totalDebateCnt = totalDebateCnt;
+        this.totalReply = totalReply; // 내가 참여한 토론에 작성된 총 댓글 수
+        this.side = side;
     }
 }
