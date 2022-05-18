@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @NoArgsConstructor
+@DynamicInsert
 public class Debate extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

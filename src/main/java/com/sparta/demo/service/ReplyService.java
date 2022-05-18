@@ -36,11 +36,7 @@ public class ReplyService {
 
         replyRepository.save(newReply);
 
-        if(debate.getTotalReply() == null){
-            debate.setTotalReply(1);
-        }else{
-            debate.setTotalReply(debate.getTotalReply() + 1);
-        }
+        debate.setTotalReply(debate.getTotalReply() + 1);
 
         ReplyResponseDto replyResponseDto = new ReplyResponseDto(newReply);
 
