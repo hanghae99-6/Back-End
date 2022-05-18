@@ -18,4 +18,12 @@ public class OneClickResponseDto {
         this.agreeNum = oneClick.getAgreeNum();
         this.oppoNum = oneClick.getOppoNum();
     }
+
+    public OneClickResponseDto(OneClick oneClick0) {
+        this.oneClickId = oneClick0.getOneClickId();
+        this.oneClickTopic = oneClick0.getOneClickTopic();
+        this.oneClickState = oneClick0.getOneClickState();
+        this.agreeNum = oneClick0.getAgreeNum();
+        this.oppoNum = oneClick0.getOppoNum();
+    }
 }

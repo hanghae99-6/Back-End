@@ -47,7 +47,7 @@ public class MainController {
     }
 
     @PutMapping("/one-click")
-    public ResponseEntity<OneClick> sumOneClick(@RequestBody OneClickRequestDto oneClickRequestDto,
+    public ResponseEntity<List<OneClickResponseDto>> sumOneClick(@RequestBody OneClickRequestDto oneClickRequestDto,
                                                 HttpServletRequest request) {
         return mainService.sumOneClick(oneClickRequestDto, request);
     }
