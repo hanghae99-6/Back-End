@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -38,9 +40,9 @@ public class ReplyService {
 
         debate.setTotalReply(debate.getTotalReply() + 1);
 
-        ReplyResponseDto replyResponseDto = new ReplyResponseDto(newReply);
+        List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debateId);
 
-        log.info("service replyResponseDto.getReply(): {}",replyResponseDto.getReply());
+        ReplyResponseDto replyResponseDto = new ReplyResponseDto(replyList);
 
         return ResponseEntity.ok().body(replyResponseDto);
     }
