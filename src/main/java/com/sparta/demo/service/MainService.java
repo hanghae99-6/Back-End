@@ -57,11 +57,6 @@ public class MainService {
         categoryEnumMap.put("IT과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
     }
 
-    public ResponseEntity<List<OneClick>> getOneClick() {
-        List<OneClick> oneClicks = oneClickRepository.findAll();
-        return ResponseEntity.ok().body(oneClicks);
-    }
-
     // 메인 페이지 - 전체 카테고리의 hot peech
     public ResponseEntity<MainResponseDto> getMain(){
 
