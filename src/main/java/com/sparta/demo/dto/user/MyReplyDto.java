@@ -13,14 +13,13 @@ public class MyReplyDto {
     private CategoryEnum categoryEnum;
     private String content;
     private List<Likes> likesList;
-    private int totalReplyCnt;
+//    private int totalReplyCnt;
 
-    public MyReplyDto(String reply, List<Likes> likesList, String topic, CategoryEnum categoryEnum, String content, int totalReplyCnt) {
+    public MyReplyDto(String reply, List<Likes> likesList, String topic, CategoryEnum categoryEnum, String content) {
         this.reply = reply;
         this.likesList = likesList;
         this.topic = topic;
         this.categoryEnum = categoryEnum;
         this.content = content;
-        this.totalReplyCnt = totalReplyCnt;
     }
 }

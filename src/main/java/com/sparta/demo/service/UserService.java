@@ -94,13 +94,19 @@ public class UserService {
 
         List<MyDebateDto> myDebateDtoList = new ArrayList<>();
 
+        int side = 0;
         for (int i = 0; i < debate.size(); i++) {
             List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debate.get(i).getDebateId());
             int totalReply = replyList.size();
 //            Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.get(i).getDebateId());
 //            Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.get(i).getDebateId());
 
-            MyDebateDto myDebateDto = new MyDebateDto(debate.get(i), totalReply, debate.size());
+            // 자신이 참여한 토론 중 자신이 찬성측인지 반대측인지. 찬성측이면 side =1 반대측이면 side =2.
+            if(debate.get(i).getProsName().equals(user.get().getEmail())){
+                side = 1 ;
+            } else side = 2;
+
+            MyDebateDto myDebateDto = new MyDebateDto(debate.get(i), totalReply, side);
             myDebateDtoList.add(myDebateDto);
         }
 
@@ -128,7 +134,7 @@ public class UserService {
             String content = debate.getContent();
             List<Likes> likesList = replyList.get(i).getLikesList();
 
-            MyReplyDto myReplyDto = new MyReplyDto(reply, likesList, topic, categoryEnum, content, replyList.size());
+            MyReplyDto myReplyDto = new MyReplyDto(reply, likesList, topic, categoryEnum, content);
             myReplyDtoList.add(myReplyDto);
         }
 
