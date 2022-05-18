@@ -35,9 +35,6 @@ public class LikesService {
 
         Optional<Likes> found = likesRepository.findByReply_ReplyIdAndIp(replyLikesRequestDto.getReplyId(),ip);
 
-        Long badCnt;
-        Long likesCnt;
-
         if(found.isPresent()){
             if(found.get().getStatus() == replyLikesRequestDto.getStatus()){
                 found.get().setStatus(0);
