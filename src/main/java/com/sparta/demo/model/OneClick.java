@@ -25,7 +25,7 @@ public class OneClick {
     private int oppoNum;
 
     @Column
-    private int oneClickState;
+    private int oneClickState= 2;
 
     // TODO : Builder 객체로 들어오면 위 멤버변수를 각각 빌더 메소드 값으로 바꾼 OneClick 객체를 생성
     private OneClick(Builder builder) {

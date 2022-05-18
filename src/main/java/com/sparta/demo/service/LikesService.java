@@ -29,6 +29,8 @@ public class LikesService {
     @Transactional
     public ResponseEntity<ReplyLikesResponseDto> getLikes(ReplyLikesRequestDto replyLikesRequestDto, HttpServletRequest request) {
         String ip = getIp.getIp(request);
+        log.info("getLikes IP : {}", ip);
+        log.info("replyLikesRequestDto.getReplyId() : {}", replyLikesRequestDto.getReplyId());
         Reply reply = replyRepository.findByReplyId(replyLikesRequestDto.getReplyId()).orElseThrow(() -> new IllegalStateException("존재하지 않는 댓글입니다."));
 
         Optional<Likes> found = likesRepository.findByReply_ReplyIdAndIp(replyLikesRequestDto.getReplyId(),ip);

@@ -133,7 +133,7 @@ public class MainService {
         String userIp = GetIp.getIp(request);
 
         for(OneClick oneClick : oneClicks) {
-            int oneClickState = 0;
+            int oneClickState = 2;
             List<OneClickUser> oneClickUsers = oneClickUserRepository.findByOneClickId(oneClick.getOneClickId());
             for(OneClickUser oneClickUser : oneClickUsers){
                 if (userIp.equals(oneClickUser.getUserIp())) {
@@ -175,9 +175,11 @@ public class MainService {
         List<OneClickUser> clickUsers = oneClickUserRepository.findByOneClickIdAndSideTypeEnum(oneClickId, sideTypeEnum);
         if(sideTypeEnum == SideTypeEnum.PROS) {
             oneClick.setAgreeNum(clickUsers.size());
+            oneClick.setOneClickState(0);
             oneClickRepository.save(oneClick);
         } else {
             oneClick.setOppoNum(clickUsers.size());
+            oneClick.setOneClickState(1);
             oneClickRepository.save(oneClick);
         }
         return ResponseEntity.ok().body(oneClick);
