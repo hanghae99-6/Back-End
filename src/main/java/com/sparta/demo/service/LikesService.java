@@ -29,31 +29,40 @@ public class LikesService {
     @Transactional
     public ResponseEntity<ReplyLikesResponseDto> getLikes(ReplyLikesRequestDto replyLikesRequestDto, HttpServletRequest request) {
         String ip = getIp.getIp(request);
+        log.info("getLikes IP : {}", ip);
+        log.info("replyLikesRequestDto.getReplyId() : {}", replyLikesRequestDto.getReplyId());
         Reply reply = replyRepository.findByReplyId(replyLikesRequestDto.getReplyId()).orElseThrow(() -> new IllegalStateException("존재하지 않는 댓글입니다."));
 
         Optional<Likes> found = likesRepository.findByReply_ReplyIdAndIp(replyLikesRequestDto.getReplyId(),ip);
 
-        Long badCnt;
-        Long likesCnt;
-
         if(found.isPresent()){
             if(found.get().getStatus() == replyLikesRequestDto.getStatus()){
                 found.get().setStatus(0);
+                switch (replyLikesRequestDto.getStatus()){
+                    case 1: reply.setLikesCnt(reply.getLikesCnt() -1);
+                            break;
+                    case 2: reply.setBadCnt(reply.getBadCnt() -1);
+                            break;
+                }
             }else{
                 found.get().setStatus(replyLikesRequestDto.getStatus());
+                switch (replyLikesRequestDto.getStatus()){
+                    case 1: reply.setLikesCnt(reply.getLikesCnt()+1);
+                        break;
+                    case 2: reply.setBadCnt(reply.getBadCnt() +1);
+                        break;
+                }
             }
-            badCnt = likesRepository.countAllByReply_ReplyIdAndStatus(replyLikesRequestDto.getReplyId(),2);
-            likesCnt = likesRepository.countAllByReply_ReplyIdAndStatus(replyLikesRequestDto.getReplyId(), 1);
-            found.get().setBadCnt(badCnt);
-            found.get().setLikesCnt(likesCnt);
             return ResponseEntity.ok().body(new ReplyLikesResponseDto(found));
         }else {
             Likes likes = new Likes(replyLikesRequestDto, ip, reply);
             likesRepository.save(likes);
-            badCnt = likesRepository.countAllByReply_ReplyIdAndStatus(replyLikesRequestDto.getReplyId(),2);
-            likesCnt = likesRepository.countAllByReply_ReplyIdAndStatus(replyLikesRequestDto.getReplyId(), 1);
-            likes.setBadCnt(badCnt);
-            likes.setLikesCnt(likesCnt);
+            switch (replyLikesRequestDto.getStatus()){
+                case 1: reply.setLikesCnt(reply.getLikesCnt()+1);
+                    break;
+                case 2: reply.setBadCnt(reply.getBadCnt() +1);
+                    break;
+            }
             return ResponseEntity.ok().body(new ReplyLikesResponseDto(Optional.of(likes)));
         }
 

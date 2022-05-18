@@ -1,14 +1,16 @@
 package com.sparta.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +20,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @NoArgsConstructor
+@DynamicInsert
 public class Debate extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +28,8 @@ public class Debate extends Timestamped{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-//    @NotNull
-    @JsonBackReference
+    @NotNull
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false)
@@ -34,9 +37,6 @@ public class Debate extends Timestamped{
 
     @Column(nullable = false)
     private String topic;
-
-//    @Column(nullable = false)
-//    private String catName;
 
     @Column(nullable = false)
     @Enumerated(value=EnumType.STRING)
@@ -52,7 +52,7 @@ public class Debate extends Timestamped{
     private String content;
 
     @OneToMany(mappedBy = "debate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     private List<EnterUser> enterUserList;
 
     @Column
@@ -61,8 +61,13 @@ public class Debate extends Timestamped{
     @Column
     private Long totalCons;
 
-//    @OneToMany(mappedBy = "debate")
-//    private List<Reply> replyList;
+    @OneToMany(mappedBy = "debate")
+    @JsonIgnore
+    private List<Reply> replyList;
+
+    @Column
+    @ColumnDefault("0")
+    private Integer totalReply;
 
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto, User user, CategoryEnum category) {

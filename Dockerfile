@@ -2,6 +2,13 @@ FROM openjdk:8-jdk-alpine
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java", "-jar", "/app.jar"]
+#CMD (java \
+#          -Dcom.sun.management.jmxremote \
+#          -Dcom.sun.management.jmxremote.port=9090 \
+#          -Dcom.sun.management.jmxremote.authenticate=false \
+#          -Dcom.sun.management.jmxremote.ssl=false \
+#          -Dcom.sun.management.jmxremote.rmi.port=9090 \
+#          -Djava.rmi.server.hostname=localhost )
 
  #FROM openjdk:8-jdk-alpine
  #open jdk java8 버전의 환경을 구성합니다.

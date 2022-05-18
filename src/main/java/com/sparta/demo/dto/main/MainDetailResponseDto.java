@@ -1,7 +1,7 @@
 package com.sparta.demo.dto.main;
 
 import com.sparta.demo.model.Debate;
-import com.sparta.demo.model.Reply;
+import com.sparta.demo.model.EnterUser;
 import lombok.Data;
 
 import java.util.List;
@@ -9,14 +9,10 @@ import java.util.List;
 @Data
 public class MainDetailResponseDto {
     private Debate debate;
-    private Long totalPros;
-    private Long totalCons;
-    private List<Reply> replyList;
+    private List<EnterUser> enterUserList;
 
-    public MainDetailResponseDto(Debate debate, List<Reply> replyList, Long totalPros, Long totalCons) {
+    public MainDetailResponseDto(Debate debate, List<EnterUser> enterUserList) {
         this.debate = debate;
-        this.replyList = replyList;
-        this.totalCons = totalCons;
-        this.totalPros = totalPros;
+        this.enterUserList = enterUserList;
     }
 }

@@ -3,6 +3,7 @@ package com.sparta.demo.controller;
 import com.sparta.demo.dto.main.MainDetailResponseDto;
 import com.sparta.demo.dto.main.MainResponseDto;
 import com.sparta.demo.dto.main.OneClickRequestDto;
+import com.sparta.demo.dto.main.OneClickResponseDto;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.service.MainService;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +42,12 @@ public class MainController {
     }
 
     @GetMapping("/one-click")
-    public ResponseEntity<List<OneClick>> getOneClick() {
-        return mainService.getOneClick();
+    public ResponseEntity<List<OneClickResponseDto>> getOneClick(HttpServletRequest request) {
+        return mainService.getOneClick(request);
     }
 
     @PutMapping("/one-click")
-    public ResponseEntity<OneClick> sumOneClick(@RequestBody OneClickRequestDto oneClickRequestDto,
+    public ResponseEntity<List<OneClickResponseDto>> sumOneClick(@RequestBody OneClickRequestDto oneClickRequestDto,
                                                 HttpServletRequest request) {
         return mainService.sumOneClick(oneClickRequestDto, request);
     }

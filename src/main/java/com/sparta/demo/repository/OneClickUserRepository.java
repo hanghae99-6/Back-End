@@ -13,4 +13,6 @@ public interface OneClickUserRepository extends JpaRepository<OneClickUser, Long
 
     Optional<OneClickUser> findByUserIpAndOneClickId(String userIp, Long oneClickId);
 
+    List<OneClickUser> findByOneClickId(Long oneClickId);
+
 }

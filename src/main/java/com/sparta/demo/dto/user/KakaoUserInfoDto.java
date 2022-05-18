@@ -11,17 +11,17 @@ public class KakaoUserInfoDto {
     private String profileImg;
     private String email;
 
-
-    public KakaoUserInfoDto(String nickname, String profileImg, String email){
+    public KakaoUserInfoDto(Long id, String nickname, String profileImg, String email){
+        this.id = id;
         this.nickname = nickname;
         this.profileImg = profileImg;
         this.email = email;
     }
 
-    public KakaoUserInfoDto(Long id, String nickname, String profileImg, String email) {
-        this.id = id;
+    public KakaoUserInfoDto(String nickname, String profileImg, String email){
         this.nickname = nickname;
         this.profileImg = profileImg;
         this.email = email;
+
     }
 }

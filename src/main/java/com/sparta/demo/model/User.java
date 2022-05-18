@@ -1,5 +1,6 @@
 package com.sparta.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class User {
     @Column(nullable = false)
     private String nickName; // 카톡 닉네임이 곧 유저네임
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -32,18 +34,12 @@ public class User {
     @Column
     private String profileImg;
 
-    @Column(unique = true)
-    private Long kakaoId;
-
-    @Column(unique = true)
-    private Long naverId;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     private List<Debate> debateList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     private List<Reply> replyList;
 
 

@@ -154,6 +154,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        skipPathList.add("GET,/**");
         skipPathList.add("GET,/main/**");
         skipPathList.add("PUT,/main/**");
+        skipPathList.add("POST,/main/debate/vote");
+        skipPathList.add("POST,/main/reply/likes");
         // 시큐리티 없이 테스트
 //        skipPathList.add("GET,/**");
 //        skipPathList.add("POST,/**");

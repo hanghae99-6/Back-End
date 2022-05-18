@@ -2,14 +2,12 @@ package com.sparta.demo.repository;
 
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.model.Debate;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface DebateRepository extends JpaRepository<Debate, Long> {
+public interface  DebateRepository extends JpaRepository<Debate, Long> {
     Optional<Debate> findByRoomId(String roomId);
 //    List<Debate> findAllByOrderByCreatedAtDesc();
 //    List<Debate> findAllByCatNameOrderByCreatedAt(String categoryName);
@@ -28,4 +26,5 @@ public interface DebateRepository extends JpaRepository<Debate, Long> {
     Optional<Debate> findByRoomIdAndConsName(String roomId, String username);
 
     List<Debate> findAllByProsNameOrConsName(String userEmailPros, String userEmailCons);
+//    Page<Debate> findAllByProsNameOrConsName(String userEmailPros, String userEmailCons, Pageable pageable);
 }

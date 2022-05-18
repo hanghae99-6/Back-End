@@ -69,6 +69,7 @@ public class KakaoUserService {
         body.add("client_id", kakaoClientId);
 //        body.add("redirect_uri", "https://godnjs13579.web.app/user/kakao/callback");
         body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
+//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -178,5 +179,4 @@ public class KakaoUserService {
         System.out.println("token값:"+ token);
         return TOKEN_TYPE + " " + token;
     }
-
 }

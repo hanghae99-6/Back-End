@@ -1,6 +1,7 @@
 package com.sparta.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateInfoDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,12 +21,14 @@ public class EnterUser extends Timestamped{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "debateId")
-//    @NotNull
-    @JsonBackReference
+    @JsonIgnore
     private Debate debate;
 
     @Column
-    private String userName;
+    private String userEmail;
+
+    @Column
+    private String userImage;
 
     @Column
     private String type;
@@ -36,14 +39,15 @@ public class EnterUser extends Timestamped{
     @OneToMany
     private List<DebateEvidence> evidences;
 
-    public EnterUser(Debate debate, String username) {
+    public EnterUser(Debate debate, String userEmail) {
         this.debate = debate;
-        this.userName = username;
+        this.userEmail = userEmail;
     }
 
-    public EnterUser(Debate debate, DebateInfoDto debateInfoDto, String userName, List<DebateEvidence> evidences) {
+    public EnterUser(Debate debate, DebateInfoDto debateInfoDto, String userEmail, List<DebateEvidence> evidences, String userImage) {
         this.debate = debate;
-        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userImage = userImage;
         this.type = debateInfoDto.getProsCons();
         this.opinion = debateInfoDto.getOpinion();
         this.evidences = evidences;
