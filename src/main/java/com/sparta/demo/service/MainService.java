@@ -54,7 +54,7 @@ public class MainService {
         sideTypeEnumMap.put(0, SideTypeEnum.PROS);
         sideTypeEnumMap.put(1, SideTypeEnum.CONS);
 
-        categoryEnumMap.put("ALL", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
+        categoryEnumMap.put("전체", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
         categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("문화예술",CategoryEnum.CULTURE);
         categoryEnumMap.put("IT과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
     }
@@ -64,45 +64,55 @@ public class MainService {
         return ResponseEntity.ok().body(oneClicks);
     }
 
+    // 메인 페이지 - 전체 카테고리의 hot peech
     public ResponseEntity<MainResponseDto> getMain(){
-//        Pageable pageable = Pageable.ofSize(4);
 
         List<Debate> debateList = debateRepository.findAllByOrderByCreatedAtDesc();
 
         ArrayList<Debate> arr = new ArrayList<>();
         Random random = new Random();
-        for(int i=0; i<8;i++){
+        for(int i=0; i<6;i++){
             int ran = random.nextInt(debateList.size());
             arr.add(debateList.get(ran));
-//            for(int j=0; j<i; j++){               // 8 개 이상일 경우 중복 허용 안하기.
-//                if(arr.get(i)==arr.get(j)) i--;
-//            }
+            // 8개 이상일 경우만 중복 허용 x
+            for (int j = 0; j < i; j++) {
+                if (arr.get(i).getDebateId()==arr.get(j).getDebateId()) i--;
+                else break;
+            }
+
         }
-
         MainResponseDto mainResponseDto = new MainResponseDto(arr);
-
         return ResponseEntity.ok().body(mainResponseDto);
     }
 
-    public ResponseEntity<MainResponseDto> getCatMain(String catName){
+    // 카테고리 별 wepeech 6개 랜덤하게 보여주기기
+     public ResponseEntity<MainResponseDto> getCatMain(String catName){
 
         log.info("catName 확인: " + catName);
         CategoryEnum category = CategoryEnum.valueOf(String.valueOf(categoryEnumMap.get(catName)));
 
-        log.info("카테고리: " + category);
-
-        List<Debate> debateList = debateRepository.findAllByCategoryEnum(category);
-
-        ArrayList<Debate> arr2 = new ArrayList<>();
-        Random random = new Random();
-        for(int i=0; i<8;i++){
-            int ran = random.nextInt(debateList.size());
-            arr2.add(debateList.get(ran));
+        // 카테고리가 전체 or 그 외 인지 구별
+        if (category.toString().equals("All")){
+            return getMain();
         }
+        else {
+            log.info("카테고리: " + category);
+            List<Debate> debateList = debateRepository.findAllByCategoryEnum(category);
+            ArrayList<Debate> arr2 = new ArrayList<>();
 
-        MainResponseDto mainResponseDto = new MainResponseDto(arr2);
-
-        return ResponseEntity.ok().body(mainResponseDto);
+            Random random = new Random();
+            for(int i=0; i<6;i++){
+                int ran = random.nextInt(debateList.size());
+                arr2.add(debateList.get(ran));
+                // 6개 이상일 경우만 중복 허용 x
+//                for (int j = 0; j < i; j++) {
+//                    if (arr2.get(i).equals(arr2.get(j))) i--;
+//                    else break;
+//                }
+            }
+            MainResponseDto mainResponseDto = new MainResponseDto(arr2);
+            return ResponseEntity.ok().body(mainResponseDto);
+        }
     }
 
 
