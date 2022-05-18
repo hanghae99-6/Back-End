@@ -27,8 +27,6 @@ public class OneClickUser {
     @Column
     private SideTypeEnum sideTypeEnum;
 
-
-
     public OneClickUser(String userIp, SideTypeEnum sideTypeEnum, Long oneClickId) {
         this.userIp = userIp;
         this.sideTypeEnum = sideTypeEnum;
