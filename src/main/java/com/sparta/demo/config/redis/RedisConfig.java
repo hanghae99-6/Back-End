@@ -1,4 +1,4 @@
-package com.sparta.demo.config;
+package com.sparta.demo.config.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -49,8 +49,8 @@ public class MainService {
         this.oneClickRepository = oneClickRepository;
         this.oneClickUserRepository = oneClickUserRepository;
 
-        sideTypeEnumMap.put(0, SideTypeEnum.PROS);
-        sideTypeEnumMap.put(1, SideTypeEnum.CONS);
+        sideTypeEnumMap.put(1, SideTypeEnum.PROS);
+        sideTypeEnumMap.put(2, SideTypeEnum.CONS);
 
         categoryEnumMap.put("전체", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
         categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("문화예술",CategoryEnum.CULTURE);
@@ -136,11 +136,11 @@ public class MainService {
         String userIp = GetIp.getIp(request);
 
         for(OneClick oneClick : oneClicks) {
-            int oneClickState = 2;
+            int oneClickState = 0;
             List<OneClickUser> oneClickUsers = oneClickUserRepository.findByOneClickId(oneClick.getOneClickId());
             for(OneClickUser oneClickUser : oneClickUsers){
                 if (userIp.equals(oneClickUser.getUserIp())) {
-                    oneClickState = (oneClickUser.getSideTypeEnum() == SideTypeEnum.PROS)? 0 : 1;
+                    oneClickState = (oneClickUser.getSideTypeEnum() == SideTypeEnum.PROS)? 1 : 2;
                     break;
                 }
             }
@@ -184,12 +184,12 @@ public class MainService {
         if(sideTypeEnum == SideTypeEnum.PROS) {
             oneClick.setAgreeNum(clickUsers.size());
             oneClick.setOppoNum(oneClick.getOppoNum() - 1);
-            oneClick.setOneClickState(0);
+            oneClick.setOneClickState(1);
             oneClickRepository.save(oneClick);
         } else {
             oneClick.setOppoNum(clickUsers.size());
             oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
-            oneClick.setOneClickState(1);
+            oneClick.setOneClickState(2);
             oneClickRepository.save(oneClick);
         }
         // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용

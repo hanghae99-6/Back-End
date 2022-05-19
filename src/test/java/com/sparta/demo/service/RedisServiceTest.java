@@ -62,7 +62,7 @@ class RedisServiceTest {
             assertThat(members).containsOnly("h", "e", "l", "o");
             assertThat(size).isEqualTo(4);
 
-            setOperations.remove(key);
+//            setOperations.remove(key);
         }
 
         @Test
