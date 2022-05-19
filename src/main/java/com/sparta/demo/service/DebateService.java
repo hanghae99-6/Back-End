@@ -92,7 +92,6 @@ public class DebateService {
 
     public ResponseEntity<Boolean> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
 
-        String userEmail = userDetails.getUser().getEmail();
         String userImage = userDetails.getUser().getProfileImg();
         String prosCons = debateInfoDto.getProsCons();
 

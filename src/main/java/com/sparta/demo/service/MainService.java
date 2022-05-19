@@ -10,6 +10,7 @@ import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.model.OneClickUser;
 import com.sparta.demo.repository.DebateRepository;
+import com.sparta.demo.repository.DebateVoteRepository;
 import com.sparta.demo.repository.OneClickRepository;
 import com.sparta.demo.repository.OneClickUserRepository;
 import com.sparta.demo.util.GetIp;
@@ -29,17 +30,20 @@ public class MainService {
     final private DebateRepository debateRepository;
     private final OneClickRepository oneClickRepository;
     private final OneClickUserRepository oneClickUserRepository;
+    private final DebateVoteRepository debateVoteRepository;
     private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
     private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
 
     @Autowired
     public MainService(DebateRepository debateRepository,
                        OneClickRepository oneClickRepository,
-                       OneClickUserRepository oneClickUserRepository) {
+                       OneClickUserRepository oneClickUserRepository,
+                       DebateVoteRepository debateVoteRepository) {
 
         this.debateRepository = debateRepository;
         this.oneClickRepository = oneClickRepository;
         this.oneClickUserRepository = oneClickUserRepository;
+        this.debateVoteRepository = debateVoteRepository;
 
         sideTypeEnumMap.put(1, SideTypeEnum.PROS);
         sideTypeEnumMap.put(2, SideTypeEnum.CONS);
@@ -132,7 +136,7 @@ public class MainService {
         for(OneClick oneClick : oneClicks) {
             int oneClickState = 0;
             List<OneClickUser> oneClickUsers = oneClick.getOneClickUsers();
-            log.info("oneClickUsers.size() : {}", oneClickUsers.size());
+            log.info("getOneClick - oneClickUsers.size() : {}", oneClickUsers.size());
             for(OneClickUser oneClickUser : oneClickUsers){
                 if (userIp.equals(oneClickUser.getUserIp())) {
                     oneClickState = (oneClickUser.getSideTypeEnum() == SideTypeEnum.PROS)? 1 : 2;
@@ -164,7 +168,8 @@ public class MainService {
             log.info("oneClickUser.getUserIp() : {}", oneClickUser.getUserIp());
             if (userIp.equals(oneClickUser.getUserIp())) {
                 if(oneClickUser.getSideTypeEnum() != sideTypeEnum) {
-                    oneClickUserRepository.delete(oneClickUser);
+                    // 부모 entity 인 onclick 에서 기존 원클릭 정보를 삭제
+                    oneClick.getOneClickUsers().remove(oneClickUser);
                     // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 +1, 반대 수에 -1
                     if(sideTypeEnum == SideTypeEnum.PROS) {
                         oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
@@ -173,18 +178,21 @@ public class MainService {
                         oneClick.setOppoNum(oneClick.getOppoNum() + 1);
                         oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
                     }
+
                     oneClickUser.setSideTypeEnum(sideTypeEnum);
+                    oneClick.getOneClickUsers().add(oneClickUser);
                     // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
                     List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
                     return ResponseEntity.ok().body(oneClickResDtoList);
                 } else {
                     log.info("oneClickUser.getSideTypeEnum() : {}", oneClickUser.getSideTypeEnum());
-                    oneClickUserRepository.delete(oneClickUser);
                     if(sideTypeEnum == SideTypeEnum.PROS) {
                         oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
                     } else {
                         oneClick.setOppoNum(oneClick.getOppoNum() - 1);
                     }
+                    oneClick.getOneClickUsers().remove(oneClickUser);
+                    oneClickUserRepository.delete(oneClickUser);
                     // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
                     List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
 
@@ -229,6 +237,10 @@ public class MainService {
         // 기존에 누른게 없다면 userIp 와 찬/반 정보, 토픽 Id 로 OnClickUser 객체 생성 및 저장
         OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum, oneClickId);
         oneClickUserRepository.save(oneClickUser);
+
+        oneClickUsers.add(oneClickUser);
+        oneClick.setOneClickUsers(oneClickUsers);
+
         // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 +1
         if(sideTypeEnum == SideTypeEnum.PROS) {
             oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
