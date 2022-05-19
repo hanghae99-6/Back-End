@@ -15,7 +15,6 @@ public class KakaoUserController {
     private final KakaoUserService kakaoUserService;
     private final String AUTH_HEADER = "Authorization";
 
-////    @ApiOperation("카카오 로그인")
     @GetMapping("/user/kakao/callback")
     public void kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         System.out.println("컨트롤러 입장 확인");
