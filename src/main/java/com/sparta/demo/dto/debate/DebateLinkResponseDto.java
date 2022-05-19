@@ -9,4 +9,7 @@ public class DebateLinkResponseDto {
 
     private String roomId;
 
+    public DebateLinkResponseDto(String roomId) {
+        this.roomId = roomId;
+    }
 }

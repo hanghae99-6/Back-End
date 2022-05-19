@@ -35,6 +35,7 @@ public class MainController {
         return mainService.getCatMain(catName);
     }
 
+    // 상세보기
     @GetMapping("/detail/{debateId}")
     public ResponseEntity<MainDetailResponseDto> getMainDetail(@PathVariable Long debateId) throws IOException {
         log.info("controller debateId: {}", debateId);

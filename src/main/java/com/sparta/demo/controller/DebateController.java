@@ -36,7 +36,6 @@ public class DebateController {
     }
     @GetMapping("/{roomId}/check")
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        log.info("room check 까지 들어왔다.");
         log.info("userDetails.getUser() : {}", userDetails.getUser());
         log.info("userDetails.getUser().getEmail() : {}", userDetails.getUser().getEmail());
         return debateService.checkRoomIdUser(roomId, userDetails.getUser().getEmail());

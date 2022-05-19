@@ -38,25 +38,22 @@ public class DebateService {
         this.enterUserRepository = enterUserRepository;
         this.debateEvidenceRepository = debateEvidenceRepository;
 
+        // categoryEnum 을 Map 형태로 정의 해서 String 으로 들어온 key 값에 대한 Enum 값 정의
         categoryEnumMap.put("ALL", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
         categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("생활문화",CategoryEnum.CULTURE);
         categoryEnumMap.put("IT/과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
     }
 
-
-    // todo : 프론트에서 로그인 기능까지 합칠 경우
     public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
-//    public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto) {
 
-        log.info("userDetails.getUser().getUserName() : {}", userDetails.getUser().getUserName());
+        // String 값으로 들어온 category 이름을 위의 map 정의에서 key 값으로 삼아서 Enum 형태로 변환
+        // 변환하는 이유: entity에 정의 된 값이 Enum 값이기 때문에 String 값으로는 저장이 불가능
         CategoryEnum category = CategoryEnum.valueOf(String.valueOf(categoryEnumMap.get(debateLinkRequestDto.getCategoryName())));
-
-
+        // Dto 로 들어온 값과 category로 debate entity에 값 저장
         Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser(), category);
-        Debate newDebate = debateRepository.save(debate);
-
-        DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto();
-        debateLinkResponseDto.setRoomId(newDebate.getRoomId());
+        debateRepository.save(debate);
+        // 저장된 debate의 roomId를 responseDto에 담음
+        DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto(debate.getRoomId());
 
         return ResponseEntity.ok().body(debateLinkResponseDto);
     }
@@ -66,42 +63,16 @@ public class DebateService {
         return ResponseEntity.ok().body(new DebateRoomResponseDto(debate));
     }
 
-
-
-    // StompHandler에서 필요한 메서드 모음(삭제하거나 이동 예정)
-    public String getRoomId(String destination) {
-        int lastIndex = destination.lastIndexOf('/');
-        if (lastIndex != -1) {
-            return destination.substring(lastIndex + 1);
-        } else {
-            return "";
-        }
-    }
-
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, String userEmail) {
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
         DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
-        log.info("debate.isPresent(): {}",debate.isPresent());
         debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
 
-        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsName(roomId, userEmail);
-        Optional<Debate> debate2 = debateRepository.findByRoomIdAndConsName(roomId, userEmail);
+        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsNameOrConsName(roomId, userEmail, userEmail);
+        debateRoomIdUserValidateDto.setUser(debate1.isPresent());
 
-        log.info("prosName.isPresent(): {}",debate1.isPresent());
-        log.info("consName.isPresent(): {}",debate2.isPresent());
-
-        if(debate1.isPresent() || debate2.isPresent()) {
-            debateRoomIdUserValidateDto.setUser(true);
-        }
-
-
-        Optional<Integer> found = enterUserRepository.countAllByDebate_RoomId(roomId);
-
-        if(found.get()<2){
-            log.info("found.get(): {}", found.get());
-            debateRoomIdUserValidateDto.setSum(true);
-            log.info("debate.get().getTopic(): {}",debate.get().getTopic());
+        if(debate1.isPresent()){
             EnterUser enterUser = new EnterUser(debate.get(),userEmail);
             enterUserRepository.save(enterUser);
         }
