@@ -150,6 +150,7 @@ public class CrawlingService {
         return ResponseEntity.ok().body(crawlingDto);
     }
 
+    // 3. 매거진
     @Transactional
     public ResponseEntity<CrawlingDto> getMagazine() throws IOException{
         CrawlingDto crawlingDto = new CrawlingDto();

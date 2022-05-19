@@ -27,11 +27,13 @@ public class MainController {
 
     private final MainService mainService;
 
+    @ApiOperation(value = "메인페이지 핫피치 보여주기", notes = "메인페이지 핫피치 랜덤 6개 보여주기")
     @GetMapping("/")
     public ResponseEntity<MainResponseDto> getMain() throws IOException {
         return mainService.getMain();
     }
 
+    @ApiOperation(value = "카테고리별 토론 내역 보기", notes = "카테고리별 토론 내역 보기")
     @GetMapping("/category/{catName}")
     public ResponseEntity<MainResponseDto> getCatMain(@PathVariable String catName) throws IOException {
         log.info("controller catName: {}", catName);

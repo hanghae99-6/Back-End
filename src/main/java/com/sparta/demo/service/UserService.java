@@ -96,10 +96,7 @@ public class UserService {
 
         int side = 0;
         for (int i = 0; i < debate.size(); i++) {
-            List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debate.get(i).getDebateId());
-            int totalReply = replyList.size();
-//            Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.get(i).getDebateId());
-//            Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.get(i).getDebateId());
+            int totalReply = debate.get(i).getTotalReply();
 
             // 자신이 참여한 토론 중 자신이 찬성측인지 반대측인지. 찬성측이면 side =1 반대측이면 side =2.
             if(debate.get(i).getProsName().equals(user.get().getEmail())){
@@ -112,7 +109,6 @@ public class UserService {
 
         return ResponseEntity.ok().body(myDebateDtoList);
     }
-
 
     // 3. 프로필 페이지 - 내가 쓴 댓글
     @Transactional
