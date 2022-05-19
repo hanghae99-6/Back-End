@@ -69,6 +69,11 @@ public class ReplyService {
             }
             // reply들을 ReplyResponseDto에 집어 넣는 작업
             ReplyResponseDto replyResponseDto = new ReplyResponseDto(reply, status);
+
+            log.info("getReply Method reply.getLikesCnt : {}", reply.getLikesCnt());
+            log.info("getReply Method reply.getBadCnt : {}", reply.getBadCnt());
+
+
             // replyResponse를 List 형태로 만드는 작업
             replyResponseDtoList.add(replyResponseDto);
         }

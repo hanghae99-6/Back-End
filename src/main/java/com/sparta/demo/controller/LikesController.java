@@ -2,6 +2,7 @@ package com.sparta.demo.controller;
 
 import com.sparta.demo.dto.reply.ReplyLikesRequestDto;
 import com.sparta.demo.dto.reply.ReplyLikesResponseDto;
+import com.sparta.demo.dto.reply.ReplyResponseDto;
 import com.sparta.demo.service.LikesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -20,8 +22,8 @@ public class LikesController {
     private final LikesService likesService;
 
     @PostMapping("/main/reply/likes")
-    public ResponseEntity<ReplyLikesResponseDto> getLikes(@RequestBody ReplyLikesRequestDto replyLikesRequestDto,
-                                                          HttpServletRequest request){
+    public ResponseEntity<List<ReplyResponseDto>> getLikes(@RequestBody ReplyLikesRequestDto replyLikesRequestDto,
+                                                           HttpServletRequest request){
         return likesService.getLikes(replyLikesRequestDto,request);
     }
 }

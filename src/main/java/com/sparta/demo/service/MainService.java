@@ -7,10 +7,11 @@ import com.sparta.demo.dto.main.OneClickResponseDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
-import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.model.OneClickUser;
-import com.sparta.demo.repository.*;
+import com.sparta.demo.repository.DebateRepository;
+import com.sparta.demo.repository.OneClickRepository;
+import com.sparta.demo.repository.OneClickUserRepository;
 import com.sparta.demo.util.GetIp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,6 @@ import java.util.*;
 public class MainService {
 
     final private DebateRepository debateRepository;
-    final private ReplyRepository replyRepository;
-    final private DebateVoteRepository debateVoteRepository;
-    final private EnterUserRepository enterUserRepository;
     private final OneClickRepository oneClickRepository;
     private final OneClickUserRepository oneClickUserRepository;
     private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
@@ -36,16 +34,10 @@ public class MainService {
 
     @Autowired
     public MainService(DebateRepository debateRepository,
-                       ReplyRepository replyRepository,
-                       DebateVoteRepository debateVoteRepository,
-                       EnterUserRepository enterUserRepository,
                        OneClickRepository oneClickRepository,
                        OneClickUserRepository oneClickUserRepository) {
 
         this.debateRepository = debateRepository;
-        this.replyRepository = replyRepository;
-        this.debateVoteRepository = debateVoteRepository;
-        this.enterUserRepository = enterUserRepository;
         this.oneClickRepository = oneClickRepository;
         this.oneClickUserRepository = oneClickUserRepository;
 
@@ -135,7 +127,8 @@ public class MainService {
 
         for(OneClick oneClick : oneClicks) {
             int oneClickState = 0;
-            List<OneClickUser> oneClickUsers = oneClickUserRepository.findByOneClickId(oneClick.getOneClickId());
+            List<OneClickUser> oneClickUsers = oneClick.getOneClickUsers();
+            log.info("oneClickUsers.size() : {}", oneClickUsers.size());
             for(OneClickUser oneClickUser : oneClickUsers){
                 if (userIp.equals(oneClickUser.getUserIp())) {
                     oneClickState = (oneClickUser.getSideTypeEnum() == SideTypeEnum.PROS)? 1 : 2;
@@ -161,28 +154,82 @@ public class MainService {
         OneClick oneClick = oneClickRepository.findById(oneClickId).orElseThrow(
                 () -> new IllegalStateException("없는 토픽입니다.")
         );
+        List<OneClickUser> oneClickUsers = oneClick.getOneClickUsers();
+        log.info("oneClickUsers.size() : {}", oneClickUsers.size());
+        for (OneClickUser oneClickUser : oneClickUsers){
+            log.info("oneClickUser.getUserIp() : {}", oneClickUser.getUserIp());
+            if (userIp.equals(oneClickUser.getUserIp())) {
+                if(oneClickUser.getSideTypeEnum() != sideTypeEnum) {
+                    oneClickUserRepository.delete(oneClickUser);
+                    // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 +1, 반대 수에 -1
+                    if(sideTypeEnum == SideTypeEnum.PROS) {
+                        oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
+                        oneClick.setOppoNum(oneClick.getOppoNum() - 1);
+                    } else {
+                        oneClick.setOppoNum(oneClick.getOppoNum() + 1);
+                        oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
+                    }
+                    oneClickUser.setSideTypeEnum(sideTypeEnum);
+                    // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
+                    List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
+                    return ResponseEntity.ok().body(oneClickResDtoList);
+                } else {
+                    log.info("oneClickUser.getSideTypeEnum() : {}", oneClickUser.getSideTypeEnum());
+                    oneClickUserRepository.delete(oneClickUser);
+                    if(sideTypeEnum == SideTypeEnum.PROS) {
+                        oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
+                    } else {
+                        oneClick.setOppoNum(oneClick.getOppoNum() - 1);
+                    }
+                    // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
+                    List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
 
-        // oneClickUser 에 유저 IP와 oneClickId로 찾는다.
-        Optional<OneClickUser> optionalOneClickUser = oneClickUserRepository.findByUserIpAndOneClickId(userIp, oneClickId);
-        // 있다면 찬성인지 반대인지 확인하고 현재 유저가 선택한 side 와 다르다면(찬성을 눌렀던 사람이 반대를 누름) 기존 정보를 삭제
-        // 같은 side 를 눌렀다면 중복 투표 에러 발생
-        if(optionalOneClickUser.isPresent()) {
-            if(optionalOneClickUser.get().getSideTypeEnum() != sideTypeEnum) {
-                oneClickUserRepository.delete(optionalOneClickUser.get());
-            } else {
-                throw new IllegalArgumentException("투표는 중복되지 않습니다.");
+                    return ResponseEntity.ok().body(oneClickResDtoList);
+                }
             }
         }
+//        // oneClickUser 에 유저 IP와 oneClickId로 찾는다.
+//        Optional<OneClickUser> optionalOneClickUser = oneClickUserRepository.findByUserIpAndOneClickId(userIp, oneClickId);
+//        // 있다면 찬성인지 반대인지 확인하고 현재 유저가 선택한 side 와 다르다면(찬성을 눌렀던 사람이 반대를 누름) 기존 정보를 삭제
+//        // 같은 side 를 눌렀다면 중복 투표 에러 발생
+//        if(optionalOneClickUser.isPresent()) {
+//            if(optionalOneClickUser.get().getSideTypeEnum() != sideTypeEnum) {
+//                oneClickUserRepository.delete(optionalOneClickUser.get());
+//                // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 +1, 반대 수에 -1
+//                if(sideTypeEnum == SideTypeEnum.PROS) {
+//                    oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
+//                    oneClick.setOppoNum(oneClick.getOppoNum() - 1);
+//                } else {
+//                    oneClick.setOppoNum(oneClick.getOppoNum() + 1);
+//                    oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
+//                }
+//                OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum, oneClickId);
+//                oneClickUserRepository.save(oneClickUser);
+//                // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
+//                List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
+//
+//                return ResponseEntity.ok().body(oneClickResDtoList);
+//            } else {
+//                oneClickUserRepository.delete(optionalOneClickUser.get());
+//                if(sideTypeEnum == SideTypeEnum.PROS) {
+//                    oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
+//                } else {
+//                    oneClick.setOppoNum(oneClick.getOppoNum() - 1);
+//                }
+//                // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
+//                List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
+//
+//                return ResponseEntity.ok().body(oneClickResDtoList);
+//            }
+//        }
         // 기존에 누른게 없다면 userIp 와 찬/반 정보, 토픽 Id 로 OnClickUser 객체 생성 및 저장
         OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum, oneClickId);
         oneClickUserRepository.save(oneClickUser);
-        // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 찬성을 선택한 유저 수를 set 하고 상태는 0으로 Set 한 후 해당 상태를 저장한다.
+        // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 +1
         if(sideTypeEnum == SideTypeEnum.PROS) {
             oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
-            oneClick.setOppoNum(oneClick.getOppoNum() - 1);
         } else {
             oneClick.setOppoNum(oneClick.getOppoNum() + 1);
-            oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
         }
         // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
         List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
