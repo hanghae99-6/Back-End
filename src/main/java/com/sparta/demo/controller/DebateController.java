@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// todo: 그냥 컨트롤러 쓰는 건 약간 영문을 모르겠네요?
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/debate")
 public class DebateController {

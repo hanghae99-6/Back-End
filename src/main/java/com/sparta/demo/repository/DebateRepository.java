@@ -12,16 +12,12 @@ public interface  DebateRepository extends JpaRepository<Debate, Long> {
 
     Optional<Debate> findByDebateId(Long debateId);
 
-
     List<Debate> findAllByCategoryEnum(CategoryEnum categoryName);
 
     List<Debate> findAllByOrderByCreatedAtDesc();
 
     Optional<Debate> findByRoomIdAndProsName(String roomId, String username);
-
     Optional<Debate> findByRoomIdAndConsName(String roomId, String username);
 
     List<Debate> findAllByProsNameOrConsName(String userEmailPros, String userEmailCons);
-
-    Optional<Debate> findByRoomIdAndProsNameOrConsName(String roomId, String userEmailPros, String userEmailCons);
 }

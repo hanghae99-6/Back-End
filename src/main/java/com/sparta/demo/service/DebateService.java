@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class DebateService {
 
     private final DebateRepository debateRepository;
     private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
+    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
     private final EnterUserRepository enterUserRepository;
     private final DebateEvidenceRepository debateEvidenceRepository;
 
@@ -37,6 +39,9 @@ public class DebateService {
         this.debateRepository = debateRepository;
         this.enterUserRepository = enterUserRepository;
         this.debateEvidenceRepository = debateEvidenceRepository;
+
+        sideTypeEnumMap.put(1, SideTypeEnum.PROS);
+        sideTypeEnumMap.put(2, SideTypeEnum.CONS);
 
         // categoryEnum 을 Map 형태로 정의 해서 String 으로 들어온 key 값에 대한 Enum 값 정의
         categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
@@ -53,7 +58,6 @@ public class DebateService {
         Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser(), category);
         debateRepository.save(debate);
         // 저장된 debate의 roomId를 responseDto에 담음
-        // todo: response value를 Map으로 가능한지, json 타입으로 내려지는지 확인
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto(debate.getRoomId());
 
         return ResponseEntity.ok().body(debateLinkResponseDto);
@@ -64,20 +68,23 @@ public class DebateService {
         return ResponseEntity.ok().body(new DebateRoomResponseDto(debate));
     }
 
+    @Transactional
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, String userEmail) {
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
         DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
         debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
 
-        // todo: pros인지 cons인지 확인후에 EnterUser에 집어 넣는 방법찾기
-        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsNameOrConsName(roomId, userEmail, userEmail);
-        debateRoomIdUserValidateDto.setUser(debate1.isPresent());
+        Optional<Debate> prosCheck = debateRepository.findByRoomIdAndProsName(roomId,userEmail);
+        Optional<Debate> consCheck = debateRepository.findByRoomIdAndConsName(roomId,userEmail);
 
-        if(debate1.isPresent()){
-            EnterUser enterUser = new EnterUser(debate.get(),userEmail);
-            enterUserRepository.save(enterUser);
+
+        if(prosCheck.isPresent()){
+            enterUserRepository.save(new EnterUser(debate.get(),userEmail, SideTypeEnum.PROS));
+        }else if(consCheck.isPresent()){
+           enterUserRepository.save(new EnterUser(debate.get(),userEmail, SideTypeEnum.CONS));
         }
+        debateRoomIdUserValidateDto.setUser(prosCheck.isPresent() || consCheck.isPresent());
 
         return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
     }
@@ -100,7 +107,7 @@ public class DebateService {
 
         List<DebateEvidence> evidenceList = debateEvidenceRepository.findByRoomIdAndProsCons(roomId, prosCons);
 
-        EnterUser enterUser = new EnterUser(debate, debateInfoDto, userEmail, evidenceList, userImage);
+        EnterUser enterUser = new EnterUser(debate, debateInfoDto, evidenceList, userImage);
         enterUserRepository.save(enterUser);
         log.info("EnterUser : {}", enterUser.getEvidences());
         return ResponseEntity.ok().body(true);
