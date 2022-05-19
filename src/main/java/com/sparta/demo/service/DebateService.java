@@ -39,9 +39,9 @@ public class DebateService {
         this.debateEvidenceRepository = debateEvidenceRepository;
 
         // categoryEnum 을 Map 형태로 정의 해서 String 으로 들어온 key 값에 대한 Enum 값 정의
-        categoryEnumMap.put("ALL", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
-        categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("생활문화",CategoryEnum.CULTURE);
-        categoryEnumMap.put("IT/과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
+        categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
+        categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("문화예술",CategoryEnum.CULTURE);
+        categoryEnumMap.put("IT과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
     }
 
     public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
@@ -53,6 +53,7 @@ public class DebateService {
         Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser(), category);
         debateRepository.save(debate);
         // 저장된 debate의 roomId를 responseDto에 담음
+        // todo: response value를 Map으로 가능한지, json 타입으로 내려지는지 확인
         DebateLinkResponseDto debateLinkResponseDto = new DebateLinkResponseDto(debate.getRoomId());
 
         return ResponseEntity.ok().body(debateLinkResponseDto);
@@ -69,6 +70,7 @@ public class DebateService {
         DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
         debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
 
+        // todo: pros인지 cons인지 확인후에 EnterUser에 집어 넣는 방법찾기
         Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsNameOrConsName(roomId, userEmail, userEmail);
         debateRoomIdUserValidateDto.setUser(debate1.isPresent());
 

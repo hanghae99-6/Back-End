@@ -40,6 +40,7 @@ public class LikesService {
                 switch (replyLikesRequestDto.getStatus()){
                     case 1: reply.setLikesCnt(reply.getLikesCnt() -1);
                             break;
+                            // todo: 로직 다시 확인
                     case 2: reply.setBadCnt(reply.getBadCnt() -1);
                             break;
                 }
@@ -47,12 +48,16 @@ public class LikesService {
                 found.get().setStatus(replyLikesRequestDto.getStatus());
                 switch (replyLikesRequestDto.getStatus()){
                     case 1: reply.setLikesCnt(reply.getLikesCnt()+1);
+                            reply.setBadCnt(reply.getBadCnt() -1);
                         break;
                     case 2: reply.setBadCnt(reply.getBadCnt() +1);
+                            reply.setLikesCnt(reply.getLikesCnt() -1);
                         break;
                 }
             }
-            return ResponseEntity.ok().body(new ReplyLikesResponseDto(found));
+            ReplyLikesResponseDto replyLikesResponseDto = new ReplyLikesResponseDto(found);
+            likesRepository.delete(found.get());
+            return ResponseEntity.ok().body(replyLikesResponseDto);
         }else {
             Likes likes = new Likes(replyLikesRequestDto, ip, reply);
             likesRepository.save(likes);

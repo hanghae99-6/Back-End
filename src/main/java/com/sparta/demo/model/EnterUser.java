@@ -3,6 +3,7 @@ package com.sparta.demo.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateInfoDto;
+import com.sparta.demo.enumeration.SideTypeEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
