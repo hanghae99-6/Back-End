@@ -1,5 +1,6 @@
 package com.sparta.demo.dto.main;
 
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.OneClick;
 import lombok.Getter;
 

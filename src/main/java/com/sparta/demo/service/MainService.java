@@ -126,7 +126,7 @@ public class MainService {
         return ResponseEntity.ok().body(mainDetailResponseDto);
     }
 
-    // 원클릭 토픽 가져오기
+    // 원클릭 찬반 토론 가져오기
     public ResponseEntity<List<OneClickResponseDto>> getOneClick(HttpServletRequest request) {
 
         List<OneClick> oneClicks = oneClickRepository.findAll();
@@ -176,19 +176,13 @@ public class MainService {
         // 기존에 누른게 없다면 userIp 와 찬/반 정보, 토픽 Id 로 OnClickUser 객체 생성 및 저장
         OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum, oneClickId);
         oneClickUserRepository.save(oneClickUser);
-        // 토픽에서 유저가 선택한 side 를 선택한 유저 리스트를 불러온다.
-        List<OneClickUser> clickUsers = oneClickUserRepository.findByOneClickIdAndSideTypeEnum(oneClickId, sideTypeEnum);
         // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 찬성을 선택한 유저 수를 set 하고 상태는 0으로 Set 한 후 해당 상태를 저장한다.
         if(sideTypeEnum == SideTypeEnum.PROS) {
-            oneClick.setAgreeNum(clickUsers.size());
+            oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
             oneClick.setOppoNum(oneClick.getOppoNum() - 1);
-            oneClick.setOneClickState(1);
-            oneClickRepository.save(oneClick);
         } else {
-            oneClick.setOppoNum(clickUsers.size());
+            oneClick.setOppoNum(oneClick.getOppoNum() + 1);
             oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
-            oneClick.setOneClickState(2);
-            oneClickRepository.save(oneClick);
         }
         // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
         List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();

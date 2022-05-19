@@ -82,9 +82,11 @@ public class DebateService {
 
 
     public ResponseEntity<Boolean> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
+
         String userEmail = userDetails.getUser().getEmail();
         String userImage = userDetails.getUser().getProfileImg();
         String prosCons = debateInfoDto.getProsCons();
+
         Optional<Debate> optionalDebate = debateRepository.findByRoomId(roomId);
         if(!optionalDebate.isPresent()){
             return ResponseEntity.ok().body(false);
@@ -103,4 +105,5 @@ public class DebateService {
         log.info("EnterUser : {}", enterUser.getEvidences());
         return ResponseEntity.ok().body(true);
     }
+
 }

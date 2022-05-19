@@ -6,6 +6,7 @@ import com.sparta.demo.dto.main.OneClickRequestDto;
 import com.sparta.demo.dto.main.OneClickResponseDto;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.service.MainService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/main")
+@Api(value = "mainPage 관리 API", tags = {"Main"})
 public class MainController {
 
     private final MainService mainService;
@@ -36,7 +38,7 @@ public class MainController {
         return mainService.getCatMain(catName);
     }
 
-    // 상세보기
+    @ApiOperation(value = "핫피치 상세보기", notes = "<strong>상세보기</strong> debateId를 통해서 확인가능")
     @GetMapping("/detail/{debateId}")
     public ResponseEntity<MainDetailResponseDto> getMainDetail(@PathVariable Long debateId) throws IOException {
         log.info("controller debateId: {}", debateId);
@@ -49,6 +51,7 @@ public class MainController {
         return mainService.getOneClick(request);
     }
 
+    @ApiOperation(value = "원클릭 찬반 선택하기")
     @PutMapping("/one-click")
     public ResponseEntity<List<OneClickResponseDto>> sumOneClick(@RequestBody OneClickRequestDto oneClickRequestDto,
                                                 HttpServletRequest request) {

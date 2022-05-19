@@ -43,8 +43,8 @@ public class DebateController {
 
     @PostMapping("/{roomId}")
     public ResponseEntity<Boolean> saveDebateInfo(@PathVariable String roomId,
-                                                    @RequestBody DebateInfoDto debateInfoDto,
-                                                 @AuthenticationPrincipal UserDetailsImpl userDetails
+                                                  @RequestBody DebateInfoDto debateInfoDto,
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails
                                                  ) {
         log.info("evidence : {}", debateInfoDto.getEvidences().get(0));
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);

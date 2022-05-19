@@ -65,8 +65,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
         web
                 .ignoring()
-                .antMatchers("/h2-console/**")
-                .antMatchers("/auth/**");
+                .antMatchers("/auth/**")
+                .antMatchers("/swagger-resources/**",
+                        "/v2/api-docs",
+                        "/webjars/**",
+                        "/swagger-ui.html/**");
     }
 
     @Override
@@ -144,28 +147,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         List<String> skipPathList = new ArrayList<>();
 
         // 회원 관리 API 허용
-//        skipPathList.add("GET,/user/**");
-//        skipPathList.add("POST,/user/**");
         skipPathList.add("GET,/oauth/**");
         skipPathList.add("GET,/user/kakao/**");
         skipPathList.add("GET,/user/kakao/callback");
 
         skipPathList.add("GET,/image/**");
-//        skipPathList.add("GET,/**");
         skipPathList.add("GET,/main/**");
         skipPathList.add("PUT,/main/**");
         skipPathList.add("POST,/main/debate/vote");
         skipPathList.add("POST,/main/reply/likes");
-        // 시큐리티 없이 테스트
-//        skipPathList.add("GET,/**");
-//        skipPathList.add("POST,/**");
-//        skipPathList.add("DELETE,/**");
-//        skipPathList.add("POST,/debate/{roomId}");
-//        skipPathList.add("GET,/debate/**");
-
         skipPathList.add("GET,/favicon.ico");
-
-
 
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(

@@ -34,7 +34,7 @@ public class SwaggerConfig {
                 .apiInfo(getApiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.ant("/api/**"))
+                .paths(PathSelectors.ant("/**"))
                 .build()
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
@@ -72,8 +72,8 @@ public class SwaggerConfig {
 
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
-                .title("[HOMEDONG] REST API")
-                .description("[HOMEDONG] BackEnd REST API Details")
+                .title("[WEPEECH] REST API")
+                .description("[WEPEECH] BackEnd REST API Details")
                 .version("1.0")
                 .build();
     }
