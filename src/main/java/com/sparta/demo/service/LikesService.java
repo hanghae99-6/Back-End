@@ -24,11 +24,10 @@ public class LikesService {
 
     private final LikesRepository likesRepository;
     private final ReplyRepository replyRepository;
-    private final GetIp getIp;
 
     @Transactional
     public ResponseEntity<ReplyLikesResponseDto> getLikes(ReplyLikesRequestDto replyLikesRequestDto, HttpServletRequest request) {
-        String ip = getIp.getIp(request);
+        String ip = GetIp.getIp(request);
         log.info("getLikes IP : {}", ip);
         log.info("replyLikesRequestDto.getReplyId() : {}", replyLikesRequestDto.getReplyId());
         Reply reply = replyRepository.findByReplyId(replyLikesRequestDto.getReplyId()).orElseThrow(() -> new IllegalStateException("존재하지 않는 댓글입니다."));

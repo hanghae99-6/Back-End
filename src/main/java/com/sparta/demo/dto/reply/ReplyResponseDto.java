@@ -1,15 +1,28 @@
 package com.sparta.demo.dto.reply;
 
 import com.sparta.demo.model.Reply;
+import com.sparta.demo.model.User;
 import lombok.Data;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 public class ReplyResponseDto {
-    private List<Reply> replyList;
+    private User user;
+    private Long replyId;
+    private String reply;
+    private Long badCnt;
+    private Long likesCnt;
+    private LocalDateTime createdAt;
+    private int status;
 
-    public ReplyResponseDto(List<Reply> replyList) {
-        this.replyList = replyList;
+    public ReplyResponseDto(Reply newReply,int status){
+        this.user = newReply.getUser();
+        this.replyId = newReply.getReplyId();
+        this.reply = newReply.getReply();
+        this.badCnt = newReply.getBadCnt();
+        this.likesCnt = newReply.getBadCnt();
+        this.createdAt = newReply.getCreatedAt();
+        this.status = status;
     }
 }
