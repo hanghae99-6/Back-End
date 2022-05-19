@@ -21,7 +21,7 @@ public class ReplyResponseDto {
         this.replyId = newReply.getReplyId();
         this.reply = newReply.getReply();
         this.badCnt = newReply.getBadCnt();
-        this.likesCnt = newReply.getBadCnt();
+        this.likesCnt = newReply.getLikesCnt();
         this.createdAt = newReply.getCreatedAt();
         this.status = status;
     }
