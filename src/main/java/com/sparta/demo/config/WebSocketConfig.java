@@ -1,4 +1,4 @@
-package com.sparta.demo.signal.config;
+package com.sparta.demo.config;
 
 //import com.sparta.demo.signal.handler.StompHandler;
 //import com.sparta.demo.signal.socket.SocketHandler;
