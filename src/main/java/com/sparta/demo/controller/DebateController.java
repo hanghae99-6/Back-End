@@ -30,10 +30,12 @@ public class DebateController {
         return debateService.createLink(debateLinkRequestDto, userDetails);
     }
 
+    // 토론방 내에서 필요한 내용
     @GetMapping("/{roomId}")
     public ResponseEntity<DebateRoomResponseDto> getRoom(@PathVariable String roomId){
         return debateService.getRoom(roomId);
     }
+
     @GetMapping("/{roomId}/check")
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info("userDetails.getUser() : {}", userDetails.getUser());
