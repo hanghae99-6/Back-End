@@ -6,6 +6,7 @@ import com.sparta.demo.dto.main.OneClickRequestDto;
 import com.sparta.demo.dto.main.OneClickResponseDto;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.service.MainService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,7 @@ public class MainController {
         return mainService.getMainDetail(debateId);
     }
 
+    @ApiOperation(value = "원클릭 찬반 토론 가져오기")
     @GetMapping("/one-click")
     public ResponseEntity<List<OneClickResponseDto>> getOneClick(HttpServletRequest request) {
         return mainService.getOneClick(request);
