@@ -179,11 +179,16 @@ public class CrawlingService {
             Elements post = doc2.getElementsByAttributeValue("class", "post-content");
 
             String imgUrl = post.select("img").get(0).attr("src");
-            String content = post.text().substring(0,200);
 
-            Crawling magazine = new Crawling(articleUrl, title, imgUrl, content, todayDate, type);
+            Elements authorText = doc2.getElementsByAttributeValue("class", "has-text-align-right"); // 기사 작성자
+            String author = authorText.get(0).text();
 
-            log.info("crawling info: {},{},{},{}", articleUrl, title, imgUrl, content);
+            String content = post.text();
+            String content1 = content.substring(author.length(),200);
+            String content2 = content.substring(200,400);
+
+            Crawling magazine = new Crawling(articleUrl, title, imgUrl, content1, content2, todayDate, type, author);
+
             crawlingRepository.save(magazine);
 
             crawlingDto.setCrawling(magazine);
@@ -191,6 +196,8 @@ public class CrawlingService {
             log.info("title: {}", crawlingDto.getCrawling().getTitle());
             log.info("imgUrl: {}", crawlingDto.getCrawling().getImgUrl());
             log.info("content: {}", crawlingDto.getCrawling().getContent());
+            log.info("content: {}", crawlingDto.getCrawling().getContent2());
+            log.info("content: {}", crawlingDto.getCrawling().getAuthor());
         }
         else {
             crawlingDto.setCrawling(crawlingRepository.findByDateAndType(todayDate, type));
