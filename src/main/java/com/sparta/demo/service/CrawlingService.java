@@ -30,6 +30,7 @@ public class CrawlingService {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
     String todayDate = now.format(formatter);
 
+    // 1. 네이버 뉴스 크롤링
     @Transactional
     public ResponseEntity<CrawlingDto> getNaverNews() throws IOException {
 
@@ -51,9 +52,7 @@ public class CrawlingService {
                 Document doc = Jsoup.connect(url).get();
                 Elements elements = doc.getElementsByAttributeValue("class", "list_body newsflash_body");
 
-//                Element element = elements.get(0);
                 Elements photoElements = elements.get(0).getElementsByAttributeValue("class", "photo");
-//            System.out.println("photoElements size: "+ photoElements.size());
 
                 for (int i = 0; i < photoElements.size(); i++) {
 
@@ -80,10 +79,9 @@ public class CrawlingService {
 
                         Crawling naverNews = new Crawling(articleUrl, title, imgUrl, content, todayDate, type);
 
-                        log.info("crawling info: {},{},{},{}", articleUrl, title, imgUrl, content);
                         crawlingRepository.save(naverNews);
-
                         naverNewsDto.setCrawling(naverNews);
+
                         log.info("articleUrl: {}", naverNewsDto.getCrawling().getArticleUrl());
                         log.info("title: {}", naverNewsDto.getCrawling().getTitle());
                         log.info("imgUrl: {}", naverNewsDto.getCrawling().getImgUrl());
@@ -91,7 +89,6 @@ public class CrawlingService {
                         cnt++; break;
                     }
                 }
-
                 if(cnt==0) page++;
                 else break;
             }
@@ -104,6 +101,7 @@ public class CrawlingService {
         return ResponseEntity.ok().body(naverNewsDto);
     }
 
+    // 2. 한국디베이트신문 칼럼페이지 크롤링
     @Transactional
     public ResponseEntity<CrawlingDto> getColumn() throws IOException {
 
@@ -119,8 +117,6 @@ public class CrawlingService {
             Document doc = Jsoup.connect(url).get();
             Elements elements = doc.getElementsByAttributeValue("class", "ArtList_Title");
 
-//        Element element = elements.get(0);
-
             Elements aElements = elements.get(0).select("a");
 
             String articleUrl = aElements.attr("href"); //기사링크
@@ -135,7 +131,6 @@ public class CrawlingService {
             String imgUrl = imgElement.attr("src");
 
             String content = elements2.text().substring(0,200);
-//            content = content.split("<")[0];
 
             Crawling debateColumn = new Crawling(articleUrl, title, imgUrl, content, todayDate, type);
 
@@ -155,6 +150,7 @@ public class CrawlingService {
         return ResponseEntity.ok().body(crawlingDto);
     }
 
+    // 3. 매거진
     @Transactional
     public ResponseEntity<CrawlingDto> getMagazine() throws IOException{
         CrawlingDto crawlingDto = new CrawlingDto();
