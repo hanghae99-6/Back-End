@@ -1,6 +1,5 @@
 package com.sparta.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateInfoDto;
 import com.sparta.demo.enumeration.SideTypeEnum;
@@ -32,7 +31,7 @@ public class EnterUser extends Timestamped{
     private String userImage;
 
     @Column
-    private String type;
+    private SideTypeEnum side;
 
     @Column
     private String opinion;
@@ -40,16 +39,15 @@ public class EnterUser extends Timestamped{
     @OneToMany
     private List<DebateEvidence> evidences;
 
-    public EnterUser(Debate debate, String userEmail) {
+    public EnterUser(Debate debate, String userEmail, SideTypeEnum side) {
         this.debate = debate;
         this.userEmail = userEmail;
+        this.side = side;
     }
 
-    public EnterUser(Debate debate, DebateInfoDto debateInfoDto, String userEmail, List<DebateEvidence> evidences, String userImage) {
+    public EnterUser(Debate debate, DebateInfoDto debateInfoDto, List<DebateEvidence> evidences, String userImage) {
         this.debate = debate;
-        this.userEmail = userEmail;
         this.userImage = userImage;
-        this.type = debateInfoDto.getProsCons();
         this.opinion = debateInfoDto.getOpinion();
         this.evidences = evidences;
     }

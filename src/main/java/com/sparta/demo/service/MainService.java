@@ -108,14 +108,18 @@ public class MainService {
     }
 
 
-    public ResponseEntity<MainDetailResponseDto> getMainDetail(Long debateId) {
+    public ResponseEntity<MainDetailResponseDto> getMainDetail(Long debateId, HttpServletRequest request) {
+
+        String ip = GetIp.getIp(request);
         log.info("service debateId: {}", debateId);
         Debate debate = debateRepository.findByDebateId(debateId).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
 
-        MainDetailResponseDto mainDetailResponseDto = new MainDetailResponseDto(debate, debate.getEnterUserList());
-
-        log.info("debate.getTopic: {}", debate.getTopic());
-        return ResponseEntity.ok().body(mainDetailResponseDto);
+        SideTypeEnum side = debateVoteRepository.getSideByDebateIdAndIp(debateId,ip);
+        if(side == null){
+            side = SideTypeEnum.DEFAULT;
+        }
+        log.info("detail service side: {}", side);
+        return ResponseEntity.ok().body(new MainDetailResponseDto(debate, debate.getEnterUserList(), side));
     }
 
     // 원클릭 찬반 토론 가져오기

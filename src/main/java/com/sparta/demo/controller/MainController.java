@@ -42,9 +42,9 @@ public class MainController {
 
     @ApiOperation(value = "핫피치 상세보기", notes = "<strong>상세보기</strong> debateId를 통해서 확인가능")
     @GetMapping("/detail/{debateId}")
-    public ResponseEntity<MainDetailResponseDto> getMainDetail(@PathVariable Long debateId) {
+    public ResponseEntity<MainDetailResponseDto> getMainDetail(@PathVariable Long debateId, HttpServletRequest request) {
         log.info("controller debateId: {}", debateId);
-        return mainService.getMainDetail(debateId);
+        return mainService.getMainDetail(debateId, request);
     }
 
     @ApiOperation(value = "원클릭 찬반 토론 가져오기")

@@ -49,31 +49,35 @@ public class DebateVoteService {
         if(found.isPresent()){
             if(found.get().getSide() == side){
                 found.get().setSide(SideTypeEnum.DEFAULT);
+                switch (side){
+                    case PROS: debate.setTotalPros(debate.getTotalPros() -1);
+                        break;
+                    case CONS: debate.setTotalCons(debate.getTotalCons() -1);
+                        break;
+                }
                 debateVoteRepository.delete(found.get());
             }else{
                 found.get().setSide(side);
+                switch (side){
+                    case PROS: debate.setTotalPros(debate.getTotalPros() +1);
+                               debate.setTotalCons(debate.getTotalCons() -1);
+                        break;
+                    case CONS: debate.setTotalPros(debate.getTotalPros() -1);
+                               debate.setTotalCons(debate.getTotalCons() +1);
+                        break;
+                }
             }
-            setTotals(debate);
             return ResponseEntity.ok().body(new DebateVoteResponseDto(found, debate));
         }else {
             DebateVote debateVote = new DebateVote(debate,ip, side);
             debateVoteRepository.save(debateVote);
-            setTotals(debate);
+            switch (side){
+                case PROS: debate.setTotalPros(debate.getTotalPros() +1);
+                    break;
+                case CONS: debate.setTotalCons(debate.getTotalCons() +1);
+                    break;
+            }
             return ResponseEntity.ok().body(new DebateVoteResponseDto(Optional.of(debateVote),debate));
         }
-
-        // todo: 상세페이지에 들어갔을 때 Ip 주소에 따라서 추천여부(side) 확인해서 내려줘야하는 부분 추가
-    }
-
-
-    // 찬반 총 투표수 debate에 저장
-    // todo: + - 계산으로 변경하는 방안 고민
-    private void setTotals(Debate debate) {
-        Long totalCons;
-        Long totalPros;
-        totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getDebateId());
-        totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getDebateId());
-        debate.setTotalCons(totalCons);
-        debate.setTotalPros(totalPros);
     }
 }
