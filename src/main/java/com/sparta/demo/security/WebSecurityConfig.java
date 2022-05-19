@@ -66,7 +66,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web
                 .ignoring()
                 .antMatchers("/h2-console/**")
-                .antMatchers("/auth/**");
+                .antMatchers("/auth/**")
+                .antMatchers("/swagger-resources/**",
+                        "/swagger-ui/**",
+                        "/v2/api-docs",
+                        "/webjars/**",
+                        "/swagger-ui.html");
     }
 
     @Override
@@ -162,6 +167,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        skipPathList.add("DELETE,/**");
 //        skipPathList.add("POST,/debate/{roomId}");
 //        skipPathList.add("GET,/debate/**");
+
+        skipPathList.add("GET,/webjars/**");
+        skipPathList.add("GET,/swagger-resources/**");
+        skipPathList.add("GET,/swagger-ui/**");
+        skipPathList.add("GET,/v2/api-docs");
+        skipPathList.add("GET,/webjars/**");
+        skipPathList.add("GET,/swagger-ui.html");
 
         skipPathList.add("GET,/favicon.ico");
 
