@@ -1,5 +1,6 @@
 package com.sparta.demo.controller;
 
+import com.sparta.demo.dto.reply.ReplyRequestDto;
 import com.sparta.demo.dto.reply.ReplyResponseDto;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.ReplyService;
@@ -23,13 +24,12 @@ public class ReplyController {
 
     @PostMapping("/main/{debateId}/reply")
     public ResponseEntity<List<ReplyResponseDto>> writeReply(@PathVariable Long debateId,
-                                                             @RequestBody Map<String, String> param,
+                                                             @RequestBody ReplyRequestDto replyRequestDto,
                                                              @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                              HttpServletRequest request){
         log.info("controller debateId: {}", debateId);
-        log.info("controller reply : {}", param.get("reply"));
         log.info("controller userDetails.getUsername : {}", userDetails.getUsername());
-        return replyService.writeReply(debateId, param.get("reply"), userDetails, request);
+        return replyService.writeReply(debateId, replyRequestDto, userDetails, request);
     }
 
     @GetMapping("/main/{debateId}/reply")

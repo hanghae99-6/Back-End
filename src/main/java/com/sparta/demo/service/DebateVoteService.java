@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-//@RequiredArgsConstructor
 public class DebateVoteService {
 
     private final DebateRepository debateRepository;

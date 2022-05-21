@@ -69,6 +69,11 @@ public class Debate extends Timestamped{
     @ColumnDefault("0")
     private Integer totalReply;
 
+    @Column
+    @Setter
+    @ColumnDefault("0")
+    private Long visitCnt;
+
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto, User user, CategoryEnum category) {
         // 얘는 홈트 어쩌고 그거 그대로 긁어온건데 뭔지 모르겠네요

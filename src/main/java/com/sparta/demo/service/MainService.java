@@ -111,7 +111,7 @@ public class MainService {
         }
     }
 
-
+    @Transactional
     public ResponseEntity<MainDetailResponseDto> getMainDetail(Long debateId, HttpServletRequest request) {
 
         String ip = GetIp.getIp(request);
@@ -123,6 +123,8 @@ public class MainService {
             side = SideTypeEnum.DEFAULT;
         }
         log.info("detail service side: {}", side);
+
+        debate.setVisitCnt(debate.getVisitCnt()+1L);
         return ResponseEntity.ok().body(new MainDetailResponseDto(debate, debate.getEnterUserList(), side));
     }
 

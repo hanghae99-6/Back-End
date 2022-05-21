@@ -1,7 +1,6 @@
 package com.sparta.demo.controller;
 
 import com.sparta.demo.dto.reply.ReplyLikesRequestDto;
-import com.sparta.demo.dto.reply.ReplyLikesResponseDto;
 import com.sparta.demo.dto.reply.ReplyResponseDto;
 import com.sparta.demo.service.LikesService;
 import lombok.RequiredArgsConstructor;

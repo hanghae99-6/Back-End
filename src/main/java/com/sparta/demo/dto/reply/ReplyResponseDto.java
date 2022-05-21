@@ -1,5 +1,6 @@
 package com.sparta.demo.dto.reply;
 
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Reply;
 import com.sparta.demo.model.User;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class ReplyResponseDto {
     private Long likesCnt;
     private LocalDateTime createdAt;
     private int status;
+    private SideTypeEnum side;
 
     public ReplyResponseDto(Reply newReply,int status){
         this.user = newReply.getUser();
@@ -24,5 +26,6 @@ public class ReplyResponseDto {
         this.likesCnt = newReply.getLikesCnt();
         this.createdAt = newReply.getCreatedAt();
         this.status = status;
+        this.side = newReply.getSide();
     }
 }
