@@ -51,7 +51,7 @@ public class DebateService {
 
         // String 값으로 들어온 category 이름을 위의 map 정의에서 key 값으로 삼아서 Enum 형태로 변환
         // 변환하는 이유: entity에 정의 된 값이 Enum 값이기 때문에 String 값으로는 저장이 불가능
-        CategoryEnum category = CategoryEnum.valueOf(String.valueOf(categoryEnumMap.get(debateLinkRequestDto.getCategoryName())));
+        CategoryEnum category = categoryEnumMap.get(debateLinkRequestDto.getCategoryName());
         // Dto 로 들어온 값과 category로 debate entity에 값 저장
         Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser(), category);
         debateRepository.save(debate);
