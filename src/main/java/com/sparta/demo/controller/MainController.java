@@ -1,9 +1,6 @@
 package com.sparta.demo.controller;
 
-import com.sparta.demo.dto.main.MainDetailResponseDto;
-import com.sparta.demo.dto.main.MainResponseDto;
-import com.sparta.demo.dto.main.OneClickRequestDto;
-import com.sparta.demo.dto.main.OneClickResponseDto;
+import com.sparta.demo.dto.main.*;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.service.MainService;
 import io.swagger.annotations.Api;
@@ -29,15 +26,15 @@ public class MainController {
 
     @ApiOperation(value = "메인페이지 핫피치 보여주기", notes = "메인페이지 핫피치 랜덤 6개 보여주기")
     @GetMapping("/")
-    public ResponseEntity<MainResponseDto> getMain(){
-        return mainService.getMain();
+    public ResponseEntity<List<MainCategoryResDto>> getMainAll(){
+        return mainService.getMainAll();
     }
 
     @ApiOperation(value = "카테고리별 토론 내역 보기", notes = "카테고리별 토론 내역 보기")
     @GetMapping("/category/{catName}")
-    public ResponseEntity<MainResponseDto> getCatMain(@PathVariable String catName){
+    public ResponseEntity<List<MainCategoryResDto>> getCategoryMain(@PathVariable String catName){
         log.info("controller catName: {}", catName);
-        return mainService.getCatMain(catName);
+        return mainService.getCategoryMain(catName);
     }
 
     @ApiOperation(value = "핫피치 상세보기", notes = "<strong>상세보기</strong> debateId를 통해서 확인가능")

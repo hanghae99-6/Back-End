@@ -1,9 +1,6 @@
 package com.sparta.demo.service;
 
-import com.sparta.demo.dto.main.MainDetailResponseDto;
-import com.sparta.demo.dto.main.MainResponseDto;
-import com.sparta.demo.dto.main.OneClickRequestDto;
-import com.sparta.demo.dto.main.OneClickResponseDto;
+import com.sparta.demo.dto.main.*;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
@@ -49,61 +46,66 @@ public class MainService {
         categoryEnumMap.put("IT과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
     }
 
-    // 메인 페이지 - 전체 카테고리의 hot peech
-    public ResponseEntity<MainResponseDto> getMain(){
+    // 메인 페이지 - 전체 카테고리의 HOTPEECH 목록
+    public ResponseEntity<List<MainCategoryResDto>> getMainAll() {
 
         List<Debate> debateList = debateRepository.findAllByOrderByCreatedAtDesc();
 
         Set<Integer> debateNum = new HashSet<>();
-        while(debateNum.size()<6){
-            debateNum.add((int)(Math.random() * debateList.size()));
+        while (debateNum.size() < 6) {
+            debateNum.add((int) (Math.random() * debateList.size()));
         }
         Integer[] debates = new Integer[6];
         debateNum.toArray(debates);
         log.info("debateNum: {}", debateNum);
 
-        List<Debate> arr = new ArrayList<>();
-        for(int i=0; i<6;i++){
-            arr.add(debateList.get(debates[i]));
+        List<MainCategoryResDto> catList = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            Debate debate = debateList.get(debates[i]);
+            MainCategoryResDto mainCategoryResDto = new MainCategoryResDto(debate);
+            catList.add(mainCategoryResDto);
         }
-        MainResponseDto mainResponseDto = new MainResponseDto(arr);
-        return ResponseEntity.ok().body(mainResponseDto);
+
+        return ResponseEntity.ok().body(catList);
     }
 
-    // 카테고리 별 wepeech 6개 랜덤하게 보여주기기
-     public ResponseEntity<MainResponseDto> getCatMain(String catName){
+    // 카테고리 별 HOTPEECH 6개 랜덤하게 보여주기
+    public ResponseEntity<List<MainCategoryResDto>> getCategoryMain(String catName) {
 
         log.info("catName 확인: " + catName);
         CategoryEnum category = CategoryEnum.valueOf(String.valueOf(categoryEnumMap.get(catName)));
 
         // 카테고리가 전체 or 그 외 인지 구별
-        if (category.toString().equals("All")){
-            return getMain();
-        }
-        else {
+        if (category.toString().equals("All")) {
+            return getMainAll();
+        } else {
             log.info("카테고리: " + category);
             List<Debate> debateList = debateRepository.findAllByCategoryEnum(category);
-            List<Debate> arr = new ArrayList<>();
-            if(debateList.size()<6){                // 카테고리 별 토론 정보가 6개 미만 일시 중복허용
+            List<MainCategoryResDto> catList = new ArrayList<>();
+            if (debateList.size() < 6) {                // 카테고리 별 토론 정보가 6개 미만 일시 중복허용
                 Random random = new Random();
-                for(int i=0; i<6;i++){
+                for (int i = 0; i < 6; i++) {
                     int ran = random.nextInt(debateList.size());
-                    arr.add(debateList.get(ran));
+                    Debate debate = debateList.get(ran);
+                    MainCategoryResDto mainCategoryResDto = new MainCategoryResDto(debate);
+                    catList.add(mainCategoryResDto);
                 }
-            } else{
+            } else {
                 Set<Integer> debateNum = new HashSet<>();
-                while(debateNum.size()<6){
-                    debateNum.add((int)(Math.random() * debateList.size()));
+                while (debateNum.size() < 6) {
+                    debateNum.add((int) (Math.random() * debateList.size()));
                 }
                 Integer[] debates = new Integer[6];
                 debateNum.toArray(debates);
                 log.info("debateNum: {}", debateNum);
-                for(int i=0; i<6;i++){
-                    arr.add(debateList.get(debates[i]));
+                for (int i = 0; i < 6; i++) {
+                    Debate debate = debateList.get(debates[i]);
+                    MainCategoryResDto mainCategoryResDto = new MainCategoryResDto(debate);
+                    catList.add(mainCategoryResDto);
                 }
             }
-            MainResponseDto mainResponseDto = new MainResponseDto(arr);
-            return ResponseEntity.ok().body(mainResponseDto);
+
+            return ResponseEntity.ok().body(catList);
         }
     }
 
@@ -216,5 +218,7 @@ public class MainService {
 
         return ResponseEntity.ok().body(oneClickResDtoList);
     }
+
+
 }
 
