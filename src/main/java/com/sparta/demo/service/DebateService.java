@@ -11,42 +11,30 @@ import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.validator.DebateValidator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class DebateService {
 
     private final DebateRepository debateRepository;
-    private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
     private final EnterUserRepository enterUserRepository;
     private final DebateEvidenceRepository debateEvidenceRepository;
-
-    @Autowired
-    public DebateService(DebateRepository debateRepository,
-                         EnterUserRepository enterUserRepository,
-                         DebateEvidenceRepository debateEvidenceRepository) {
-        this.debateRepository = debateRepository;
-        this.enterUserRepository = enterUserRepository;
-        this.debateEvidenceRepository = debateEvidenceRepository;
-
-        // categoryEnum 을 Map 형태로 정의 해서 String 으로 들어온 key 값에 대한 Enum 값 정의
-        categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
-        categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("문화예술",CategoryEnum.CULTURE);
-        categoryEnumMap.put("IT과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
-    }
 
     public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
 
         // String 값으로 들어온 category 이름을 위의 map 정의에서 key 값으로 삼아서 Enum 형태로 변환
         // 변환하는 이유: entity에 정의 된 값이 Enum 값이기 때문에 String 값으로는 저장이 불가능
-        CategoryEnum category = categoryEnumMap.get(debateLinkRequestDto.getCategoryName());
+        CategoryEnum category = CategoryEnum.nameOf(debateLinkRequestDto.getCategoryName());
         // Dto 로 들어온 값과 category로 debate entity에 값 저장
         Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser(), category);
         debateRepository.save(debate);

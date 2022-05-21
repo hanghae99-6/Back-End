@@ -1,6 +1,9 @@
 package com.sparta.demo.service;
 
-import com.sparta.demo.dto.main.*;
+import com.sparta.demo.dto.main.MainCategoryResDto;
+import com.sparta.demo.dto.main.MainDetailResponseDto;
+import com.sparta.demo.dto.main.OneClickRequestDto;
+import com.sparta.demo.dto.main.OneClickResponseDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
@@ -11,8 +14,8 @@ import com.sparta.demo.repository.DebateVoteRepository;
 import com.sparta.demo.repository.OneClickRepository;
 import com.sparta.demo.repository.OneClickUserRepository;
 import com.sparta.demo.util.GetIp;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class MainService {
 
@@ -28,23 +32,6 @@ public class MainService {
     private final OneClickRepository oneClickRepository;
     private final OneClickUserRepository oneClickUserRepository;
     private final DebateVoteRepository debateVoteRepository;
-    private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
-
-    @Autowired
-    public MainService(DebateRepository debateRepository,
-                       OneClickRepository oneClickRepository,
-                       OneClickUserRepository oneClickUserRepository,
-                       DebateVoteRepository debateVoteRepository) {
-
-        this.debateRepository = debateRepository;
-        this.oneClickRepository = oneClickRepository;
-        this.oneClickUserRepository = oneClickUserRepository;
-        this.debateVoteRepository = debateVoteRepository;
-
-        categoryEnumMap.put("전체", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
-        categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("문화예술",CategoryEnum.CULTURE);
-        categoryEnumMap.put("IT과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
-    }
 
     // 메인 페이지 - 전체 카테고리의 HOTPEECH 목록
     public ResponseEntity<List<MainCategoryResDto>> getMainAll() {
@@ -73,7 +60,7 @@ public class MainService {
     public ResponseEntity<List<MainCategoryResDto>> getCategoryMain(String catName) {
 
         log.info("catName 확인: " + catName);
-        CategoryEnum category = CategoryEnum.valueOf(String.valueOf(categoryEnumMap.get(catName)));
+        CategoryEnum category = CategoryEnum.nameOf(catName);
 
         // 카테고리가 전체 or 그 외 인지 구별
         if (category.toString().equals("All")) {

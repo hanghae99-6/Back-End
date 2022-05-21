@@ -8,6 +8,7 @@ import com.sparta.demo.model.DebateVote;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.DebateVoteRepository;
 import com.sparta.demo.util.GetIp;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,16 +20,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class DebateVoteService {
 
     private final DebateRepository debateRepository;
     private final DebateVoteRepository debateVoteRepository;
-
-    @Autowired
-    public DebateVoteService(DebateRepository debateRepository, DebateVoteRepository debateVoteRepository, GetIp getIp) {
-        this.debateRepository = debateRepository;
-        this.debateVoteRepository = debateVoteRepository;
-    }
 
     @Transactional
     public ResponseEntity<DebateVoteResponseDto> getVote(DebateVoteRequestDto debateVoteRequestDto, HttpServletRequest request) {

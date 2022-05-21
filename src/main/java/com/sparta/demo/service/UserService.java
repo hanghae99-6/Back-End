@@ -42,7 +42,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final DebateRepository debateRepository;
     private final ReplyRepository replyRepository;
-    private final DebateVoteRepository debateVoteRepository;
 
     // 1. 닉네임 수정
     @Transactional

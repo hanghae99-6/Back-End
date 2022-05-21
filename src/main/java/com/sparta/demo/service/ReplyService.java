@@ -10,6 +10,7 @@ import com.sparta.demo.repository.LikesRepository;
 import com.sparta.demo.repository.ReplyRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.util.GetIp;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,17 +24,12 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ReplyService {
 
     private final ReplyRepository replyRepository;
     private final DebateRepository debateRepository;
     private final LikesRepository likesRepository;
-
-    public ReplyService(ReplyRepository replyRepository, DebateRepository debateRepository, LikesRepository likesRepository) {
-        this.replyRepository = replyRepository;
-        this.debateRepository = debateRepository;
-        this.likesRepository = likesRepository;
-    }
 
     @Transactional
     public ResponseEntity<List<ReplyResponseDto>> writeReply(Long debateId, ReplyRequestDto replyRequestDto, UserDetailsImpl userDetails, HttpServletRequest request) {
