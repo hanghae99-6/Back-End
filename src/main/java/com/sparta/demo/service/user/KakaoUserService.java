@@ -9,6 +9,7 @@ import com.sparta.demo.repository.UserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,8 +26,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class KakaoUserService {
@@ -38,12 +41,12 @@ public class KakaoUserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public String kakaoLogin(String code) throws JsonProcessingException {
+    public void kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
         System.out.println("인가 코드 : " + code);
-        System.out.println("엑세스 토큰 : " + accessToken);
+        log.info("엑세스 토큰: {}", accessToken);
 
         // 2. "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
         KakaoUserInfoDto kakaoUserInfo = getkakaoUserInfo(accessToken);
@@ -52,8 +55,7 @@ public class KakaoUserService {
         User kakaoUser = registerkakaoUserIfNeeded(kakaoUserInfo);
 
         // 4. 로그인 JWT 토큰 발행
-        System.out.println("jwt token:"+ jwtTokenCreate(kakaoUser));
-        return jwtTokenCreate(kakaoUser);
+        jwtTokenCreate(kakaoUser, response);
     }
 
 
@@ -164,7 +166,7 @@ public class KakaoUserService {
         return kakaoUser;
     }
 
-    private String jwtTokenCreate(User kakaoUser) {
+    private void jwtTokenCreate(User kakaoUser, HttpServletResponse response) {
         String TOKEN_TYPE = "BEARER";
 
         UserDetails userDetails = new UserDetailsImpl(kakaoUser);
@@ -178,6 +180,7 @@ public class KakaoUserService {
         final String token = JwtTokenUtils.generateJwtToken(userDetails1);
 
         System.out.println("token값:"+ token);
-        return TOKEN_TYPE + " " + token;
+        response.addHeader("Authorization", "BEARER" + " " + token);
+//        return TOKEN_TYPE + " " + token;
     }
 }
