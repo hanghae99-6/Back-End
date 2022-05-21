@@ -31,7 +31,6 @@ public class MainService {
     private final OneClickRepository oneClickRepository;
     private final OneClickUserRepository oneClickUserRepository;
     private final DebateVoteRepository debateVoteRepository;
-    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
     private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
 
     @Autowired
@@ -44,9 +43,6 @@ public class MainService {
         this.oneClickRepository = oneClickRepository;
         this.oneClickUserRepository = oneClickUserRepository;
         this.debateVoteRepository = debateVoteRepository;
-
-        sideTypeEnumMap.put(1, SideTypeEnum.PROS);
-        sideTypeEnumMap.put(2, SideTypeEnum.CONS);
 
         categoryEnumMap.put("전체", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
         categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("문화예술",CategoryEnum.CULTURE);
@@ -160,7 +156,7 @@ public class MainService {
         int side = oneClickRequestDto.getSide();
         Long oneClickId = oneClickRequestDto.getOneClickId();
 
-        SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(side); // enum 값으로 변형
+        SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(side); // enum 값으로 변형
 
         OneClick oneClick = oneClickRepository.findById(oneClickId).orElseThrow( // oneClickTopic 으로 OneClick 객체를 찾아옴
                 () -> new IllegalStateException("없는 토픽입니다.")

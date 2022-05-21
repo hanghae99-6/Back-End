@@ -26,7 +26,6 @@ public class DebateService {
 
     private final DebateRepository debateRepository;
     private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
-    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
     private final EnterUserRepository enterUserRepository;
     private final DebateEvidenceRepository debateEvidenceRepository;
 
@@ -38,9 +37,6 @@ public class DebateService {
         this.enterUserRepository = enterUserRepository;
         this.debateEvidenceRepository = debateEvidenceRepository;
 
-        sideTypeEnumMap.put(1, SideTypeEnum.PROS);
-        sideTypeEnumMap.put(2, SideTypeEnum.CONS);
-
         // categoryEnum 을 Map 형태로 정의 해서 String 으로 들어온 key 값에 대한 Enum 값 정의
         categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
         categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("문화예술",CategoryEnum.CULTURE);
@@ -51,7 +47,7 @@ public class DebateService {
 
         // String 값으로 들어온 category 이름을 위의 map 정의에서 key 값으로 삼아서 Enum 형태로 변환
         // 변환하는 이유: entity에 정의 된 값이 Enum 값이기 때문에 String 값으로는 저장이 불가능
-        CategoryEnum category = CategoryEnum.valueOf(String.valueOf(categoryEnumMap.get(debateLinkRequestDto.getCategoryName())));
+        CategoryEnum category = categoryEnumMap.get(debateLinkRequestDto.getCategoryName());
         // Dto 로 들어온 값과 category로 debate entity에 값 저장
         Debate debate = Debate.create(debateLinkRequestDto, userDetails.getUser(), category);
         debateRepository.save(debate);
@@ -91,7 +87,7 @@ public class DebateService {
     public ResponseEntity<Boolean> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
 
         int sideNum = (debateInfoDto.getProsCons().equals("찬성"))? 1 : 2;
-        SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(sideNum);
+        SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(sideNum);
 
         EnterUser validEnterUser = enterUserRepository.findBySideAndDebate_RoomId(sideTypeEnum, roomId).orElseThrow(
                 () -> new IllegalArgumentException("토론방이 없습니다.")
