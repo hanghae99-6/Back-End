@@ -11,7 +11,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.List;
 
-@Setter
 @Getter
 @Entity
 @NoArgsConstructor
@@ -31,13 +30,16 @@ public class EnterUser extends Timestamped{
     @Column
     private String userImage;
 
+    @Setter
     @Column
     @Enumerated(value=EnumType.STRING)
     private SideTypeEnum side;
 
+    @Setter
     @Column
     private String opinion;
 
+    @Setter
     @OneToMany
     private List<DebateEvidence> evidences;
 
