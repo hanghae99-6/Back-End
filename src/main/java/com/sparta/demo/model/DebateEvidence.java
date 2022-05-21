@@ -14,18 +14,10 @@ public class DebateEvidence {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long debateEvidenceId;
 
-    @Column(nullable = false)
-    private String roomId;
-
     @Column
     private String evidence;
 
-    @Column
-    private String prosCons;
-
-    public DebateEvidence(String roomId, String evidence, String prosCons) {
-        this.roomId = roomId;
+    public DebateEvidence(String evidence) {
         this.evidence = evidence;
-        this.prosCons = prosCons;
     }
 }

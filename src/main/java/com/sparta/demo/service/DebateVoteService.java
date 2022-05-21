@@ -19,19 +19,16 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-//@RequiredArgsConstructor
 public class DebateVoteService {
 
     private final DebateRepository debateRepository;
     private final DebateVoteRepository debateVoteRepository;
-    private final GetIp getIp;
     private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
 
     @Autowired
     public DebateVoteService(DebateRepository debateRepository, DebateVoteRepository debateVoteRepository, GetIp getIp) {
         this.debateRepository = debateRepository;
         this.debateVoteRepository = debateVoteRepository;
-        this.getIp = getIp;
 
         sideTypeEnumMap.put(1,SideTypeEnum.PROS);
         sideTypeEnumMap.put(2,SideTypeEnum.CONS);
@@ -40,39 +37,46 @@ public class DebateVoteService {
 
     @Transactional
     public ResponseEntity<DebateVoteResponseDto> getVote(DebateVoteRequestDto debateVoteRequestDto, HttpServletRequest request) {
-        String ip = getIp.getIp(request);
+        String ip = GetIp.getIp(request);
         Debate debate = debateRepository.findByDebateId(debateVoteRequestDto.getDebateId()).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
 
         Optional<DebateVote> found = debateVoteRepository.findByDebate_DebateIdAndIp(debateVoteRequestDto.getDebateId(),ip);
 
-        SideTypeEnum side = SideTypeEnum.valueOf(String.valueOf(sideTypeEnumMap.get(debateVoteRequestDto.getSide())));
+        SideTypeEnum side = sideTypeEnumMap.get(debateVoteRequestDto.getSide());
         System.out.println("side: "+side);
 
         if(found.isPresent()){
             if(found.get().getSide() == side){
                 found.get().setSide(SideTypeEnum.DEFAULT);
+                switch (side){
+                    case PROS: debate.setTotalPros(debate.getTotalPros() -1);
+                        break;
+                    case CONS: debate.setTotalCons(debate.getTotalCons() -1);
+                        break;
+                }
                 debateVoteRepository.delete(found.get());
             }else{
                 found.get().setSide(side);
+                switch (side){
+                    case PROS: debate.setTotalPros(debate.getTotalPros() +1);
+                               debate.setTotalCons(debate.getTotalCons() -1);
+                        break;
+                    case CONS: debate.setTotalPros(debate.getTotalPros() -1);
+                               debate.setTotalCons(debate.getTotalCons() +1);
+                        break;
+                }
             }
-            setTotals(debate);
             return ResponseEntity.ok().body(new DebateVoteResponseDto(found, debate));
         }else {
             DebateVote debateVote = new DebateVote(debate,ip, side);
             debateVoteRepository.save(debateVote);
-            setTotals(debate);
+            switch (side){
+                case PROS: debate.setTotalPros(debate.getTotalPros() +1);
+                    break;
+                case CONS: debate.setTotalCons(debate.getTotalCons() +1);
+                    break;
+            }
             return ResponseEntity.ok().body(new DebateVoteResponseDto(Optional.of(debateVote),debate));
         }
-    }
-
-
-    // 찬반 총 투표수 debate에 저장
-    private void setTotals(Debate debate) {
-        Long totalCons;
-        Long totalPros;
-        totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getDebateId());
-        totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getDebateId());
-        debate.setTotalCons(totalCons);
-        debate.setTotalPros(totalPros);
     }
 }

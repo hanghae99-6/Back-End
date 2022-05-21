@@ -1,13 +1,14 @@
 package com.sparta.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 public class OneClick {
@@ -18,14 +19,17 @@ public class OneClick {
     @Column(nullable = false)
     private String oneClickTopic;
 
+    @Setter
     @Column
     private int agreeNum;
 
+    @Setter
     @Column
     private int oppoNum;
 
-    @Column
-    private int oneClickState= 2;
+    @Setter
+    @OneToMany
+    private List<OneClickUser> oneClickUsers;
 
     // TODO : Builder 객체로 들어오면 위 멤버변수를 각각 빌더 메소드 값으로 바꾼 OneClick 객체를 생성
     private OneClick(Builder builder) {

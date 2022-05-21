@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// todo: 그냥 컨트롤러 쓰는 건 약간 영문을 모르겠네요?
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/debate")
 public class DebateController {
@@ -30,10 +29,12 @@ public class DebateController {
         return debateService.createLink(debateLinkRequestDto, userDetails);
     }
 
+    // 토론방 내에서 필요한 내용
     @GetMapping("/{roomId}")
     public ResponseEntity<DebateRoomResponseDto> getRoom(@PathVariable String roomId){
         return debateService.getRoom(roomId);
     }
+
     @GetMapping("/{roomId}/check")
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info("userDetails.getUser() : {}", userDetails.getUser());
@@ -43,8 +44,8 @@ public class DebateController {
 
     @PostMapping("/{roomId}")
     public ResponseEntity<Boolean> saveDebateInfo(@PathVariable String roomId,
-                                                    @RequestBody DebateInfoDto debateInfoDto,
-                                                 @AuthenticationPrincipal UserDetailsImpl userDetails
+                                                  @RequestBody DebateInfoDto debateInfoDto,
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails
                                                  ) {
         log.info("evidence : {}", debateInfoDto.getEvidences().get(0));
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);

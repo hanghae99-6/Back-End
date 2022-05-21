@@ -1,6 +1,8 @@
 package com.sparta.demo.service;
 
+import com.sparta.demo.dto.reply.ReplyRequestDto;
 import com.sparta.demo.dto.reply.ReplyResponseDto;
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.Reply;
 import com.sparta.demo.repository.DebateRepository;
@@ -8,7 +10,6 @@ import com.sparta.demo.repository.LikesRepository;
 import com.sparta.demo.repository.ReplyRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.util.GetIp;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,27 +17,41 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ReplyService {
 
     private final ReplyRepository replyRepository;
     private final DebateRepository debateRepository;
     private final LikesRepository likesRepository;
+    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
+
+    public ReplyService(ReplyRepository replyRepository, DebateRepository debateRepository, LikesRepository likesRepository) {
+        this.replyRepository = replyRepository;
+        this.debateRepository = debateRepository;
+        this.likesRepository = likesRepository;
+
+        sideTypeEnumMap.put(1,SideTypeEnum.PROS);
+        sideTypeEnumMap.put(2,SideTypeEnum.CONS);
+        sideTypeEnumMap.put(0,SideTypeEnum.DEFAULT);
+    }
 
     @Transactional
-    public ResponseEntity<List<ReplyResponseDto>> writeReply(Long debateId, String reply, UserDetailsImpl userDetails, HttpServletRequest request) {
+    public ResponseEntity<List<ReplyResponseDto>> writeReply(Long debateId, ReplyRequestDto replyRequestDto, UserDetailsImpl userDetails, HttpServletRequest request) {
 
+        String reply = replyRequestDto.getReply();
+        SideTypeEnum side = sideTypeEnumMap.get(replyRequestDto.getSide());
         log.info("service debateId: {}",debateId);
         log.info("service reply: {}",reply);
         log.info("service userDetails.getUsername: {}",userDetails.getUsername());
         // debateId 유효성 검사
         Debate debate = debateRepository.findByDebateId(debateId).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
         // reply entity에 저장
-        Reply newReply = new Reply(reply,debate,userDetails.getUser());
+        Reply newReply = new Reply(reply,debate,userDetails.getUser(), side);
         replyRepository.save(newReply);
         // debate에 totalReply(댓글 개수) 하나 더하기
         debate.setTotalReply(debate.getTotalReply() + 1);
@@ -69,6 +84,11 @@ public class ReplyService {
             }
             // reply들을 ReplyResponseDto에 집어 넣는 작업
             ReplyResponseDto replyResponseDto = new ReplyResponseDto(reply, status);
+
+            log.info("getReply Method reply.getLikesCnt : {}", reply.getLikesCnt());
+            log.info("getReply Method reply.getBadCnt : {}", reply.getBadCnt());
+
+
             // replyResponse를 List 형태로 만드는 작업
             replyResponseDtoList.add(replyResponseDto);
         }

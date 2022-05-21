@@ -1,7 +1,9 @@
 package com.sparta.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.demo.enumeration.SideTypeEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,11 +47,16 @@ public class Reply extends Timestamped {
     @JsonIgnore
     private List<Likes> likesList;
 
+    @Column
+    @Enumerated(value=EnumType.STRING)
+    private SideTypeEnum side;
 
-    public Reply(String reply, Debate debate, User user) {
+
+    public Reply(String reply, Debate debate, User user, SideTypeEnum side) {
         this.reply = reply;
         this.debate = debate;
         this.user = user;
+        this.side = side;
     }
 }
 

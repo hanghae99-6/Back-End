@@ -10,16 +10,15 @@ import com.sparta.demo.repository.DebateEvidenceRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
+import com.sparta.demo.validator.DebateValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import javax.transaction.Transactional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -27,6 +26,7 @@ public class DebateService {
 
     private final DebateRepository debateRepository;
     private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
+    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
     private final EnterUserRepository enterUserRepository;
     private final DebateEvidenceRepository debateEvidenceRepository;
 
@@ -38,10 +38,13 @@ public class DebateService {
         this.enterUserRepository = enterUserRepository;
         this.debateEvidenceRepository = debateEvidenceRepository;
 
+        sideTypeEnumMap.put(1, SideTypeEnum.PROS);
+        sideTypeEnumMap.put(2, SideTypeEnum.CONS);
+
         // categoryEnum 을 Map 형태로 정의 해서 String 으로 들어온 key 값에 대한 Enum 값 정의
-        categoryEnumMap.put("ALL", CategoryEnum.All); categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
-        categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("생활문화",CategoryEnum.CULTURE);
-        categoryEnumMap.put("IT/과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
+        categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
+        categoryEnumMap.put("사회",CategoryEnum.SOCIETY); categoryEnumMap.put("일상",CategoryEnum.DAILY); categoryEnumMap.put("문화예술",CategoryEnum.CULTURE);
+        categoryEnumMap.put("IT과학",CategoryEnum.SCIENCE); categoryEnumMap.put("해외토픽",CategoryEnum.GLOBAL); categoryEnumMap.put("기타",CategoryEnum.ETC);
     }
 
     public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
@@ -63,44 +66,52 @@ public class DebateService {
         return ResponseEntity.ok().body(new DebateRoomResponseDto(debate));
     }
 
+    @Transactional
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, String userEmail) {
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
         DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
         debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
 
-        Optional<Debate> debate1 = debateRepository.findByRoomIdAndProsNameOrConsName(roomId, userEmail, userEmail);
-        debateRoomIdUserValidateDto.setUser(debate1.isPresent());
+        Optional<Debate> prosCheck = debateRepository.findByRoomIdAndProsName(roomId,userEmail);
+        Optional<Debate> consCheck = debateRepository.findByRoomIdAndConsName(roomId,userEmail);
 
-        if(debate1.isPresent()){
-            EnterUser enterUser = new EnterUser(debate.get(),userEmail);
-            enterUserRepository.save(enterUser);
+
+        if(prosCheck.isPresent()){
+            enterUserRepository.save(new EnterUser(debate.get(),userEmail, SideTypeEnum.PROS));
+        }else if(consCheck.isPresent()){
+           enterUserRepository.save(new EnterUser(debate.get(),userEmail, SideTypeEnum.CONS));
         }
+        debateRoomIdUserValidateDto.setUser(prosCheck.isPresent() || consCheck.isPresent());
 
         return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
     }
 
-
+    @Transactional
     public ResponseEntity<Boolean> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
-        String userEmail = userDetails.getUser().getEmail();
-        String userImage = userDetails.getUser().getProfileImg();
-        String prosCons = debateInfoDto.getProsCons();
-        Optional<Debate> optionalDebate = debateRepository.findByRoomId(roomId);
-        if(!optionalDebate.isPresent()){
-            return ResponseEntity.ok().body(false);
-        }
-        Debate debate = optionalDebate.get();
-        List<String> evidences = debateInfoDto.getEvidences();
-        for(String evidence : evidences) {
-            DebateEvidence debateEvidence = new DebateEvidence(roomId, evidence, prosCons);
+
+        int sideNum = (debateInfoDto.getProsCons().equals("찬성"))? 1 : 2;
+        SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(sideNum);
+
+        EnterUser validEnterUser = enterUserRepository.findBySideAndDebate_RoomId(sideTypeEnum, roomId).orElseThrow(
+                () -> new IllegalArgumentException("토론방이 없습니다.")
+        );
+
+        DebateValidator.validateDebate(validEnterUser, userDetails, sideTypeEnum); // 유효성 검사 실행
+
+        List<String> evidenceList = debateInfoDto.getEvidences();
+        List<DebateEvidence> evidences = new ArrayList<>();
+
+        for (String evidence : evidenceList) {
+            DebateEvidence debateEvidence = new DebateEvidence(evidence);
             debateEvidenceRepository.save(debateEvidence);
+            evidences.add(debateEvidence);
         }
 
-        List<DebateEvidence> evidenceList = debateEvidenceRepository.findByRoomIdAndProsCons(roomId, prosCons);
+        validEnterUser.setEvidences(evidences);
+        validEnterUser.setOpinion(debateInfoDto.getOpinion());
 
-        EnterUser enterUser = new EnterUser(debate, debateInfoDto, userEmail, evidenceList, userImage);
-        enterUserRepository.save(enterUser);
-        log.info("EnterUser : {}", enterUser.getEvidences());
         return ResponseEntity.ok().body(true);
     }
+
 }
