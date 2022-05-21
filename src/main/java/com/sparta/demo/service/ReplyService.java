@@ -36,6 +36,9 @@ public class ReplyService {
 
         String reply = replyRequestDto.getReply();
         SideTypeEnum side = SideTypeEnum.typeOf(replyRequestDto.getSide());
+        if(side == SideTypeEnum.DEFAULT){
+            throw new NullPointerException("찬반 값이 입력되지 않았습니다.");
+        }
         log.info("service debateId: {}",debateId);
         log.info("service reply: {}",reply);
         log.info("service userDetails.getUsername: {}",userDetails.getUsername());
