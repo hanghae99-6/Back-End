@@ -11,7 +11,6 @@ import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.validator.DebateValidator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
