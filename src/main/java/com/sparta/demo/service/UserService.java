@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -123,14 +124,10 @@ public class UserService {
         List<MyReplyDto> myReplyDtoList = new ArrayList<>();
 
         for (int i = 0; i < replyList.size(); i++) {
-            String reply = replyList.get(i).getReply();
+            Reply reply = replyList.get(i);
             Debate debate = replyList.get(i).getDebate();
-            String topic = debate.getTopic();
-            CategoryEnum categoryEnum = debate.getCategoryEnum();
-            String content = debate.getContent();
-            List<Likes> likesList = replyList.get(i).getLikesList();
 
-            MyReplyDto myReplyDto = new MyReplyDto(reply, likesList, topic, categoryEnum, content);
+            MyReplyDto myReplyDto = new MyReplyDto(reply, debate);
             myReplyDtoList.add(myReplyDto);
         }
 
