@@ -28,23 +28,18 @@ public class ReplyService {
     private final ReplyRepository replyRepository;
     private final DebateRepository debateRepository;
     private final LikesRepository likesRepository;
-    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
 
     public ReplyService(ReplyRepository replyRepository, DebateRepository debateRepository, LikesRepository likesRepository) {
         this.replyRepository = replyRepository;
         this.debateRepository = debateRepository;
         this.likesRepository = likesRepository;
-
-        sideTypeEnumMap.put(1,SideTypeEnum.PROS);
-        sideTypeEnumMap.put(2,SideTypeEnum.CONS);
-        sideTypeEnumMap.put(0,SideTypeEnum.DEFAULT);
     }
 
     @Transactional
     public ResponseEntity<List<ReplyResponseDto>> writeReply(Long debateId, ReplyRequestDto replyRequestDto, UserDetailsImpl userDetails, HttpServletRequest request) {
 
         String reply = replyRequestDto.getReply();
-        SideTypeEnum side = sideTypeEnumMap.get(replyRequestDto.getSide());
+        SideTypeEnum side = SideTypeEnum.typeOf(replyRequestDto.getSide());
         log.info("service debateId: {}",debateId);
         log.info("service reply: {}",reply);
         log.info("service userDetails.getUsername: {}",userDetails.getUsername());

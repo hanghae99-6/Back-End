@@ -23,16 +23,11 @@ public class DebateVoteService {
 
     private final DebateRepository debateRepository;
     private final DebateVoteRepository debateVoteRepository;
-    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
 
     @Autowired
     public DebateVoteService(DebateRepository debateRepository, DebateVoteRepository debateVoteRepository, GetIp getIp) {
         this.debateRepository = debateRepository;
         this.debateVoteRepository = debateVoteRepository;
-
-        sideTypeEnumMap.put(1,SideTypeEnum.PROS);
-        sideTypeEnumMap.put(2,SideTypeEnum.CONS);
-        sideTypeEnumMap.put(0,SideTypeEnum.DEFAULT);
     }
 
     @Transactional
@@ -42,8 +37,12 @@ public class DebateVoteService {
 
         Optional<DebateVote> found = debateVoteRepository.findByDebate_DebateIdAndIp(debateVoteRequestDto.getDebateId(),ip);
 
-        SideTypeEnum side = sideTypeEnumMap.get(debateVoteRequestDto.getSide());
+        SideTypeEnum side = SideTypeEnum.typeOf(debateVoteRequestDto.getSide());
         System.out.println("side: "+side);
+
+        if(side == null) {
+            throw new NullPointerException("찬성 또는 반대 값이 없습니다.");
+        }
 
         if(found.isPresent()){
             if(found.get().getSide() == side){

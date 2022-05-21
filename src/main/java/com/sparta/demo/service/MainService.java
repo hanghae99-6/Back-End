@@ -153,12 +153,10 @@ public class MainService {
     public ResponseEntity<List<OneClickResponseDto>> sumOneClick(OneClickRequestDto oneClickRequestDto, HttpServletRequest request) {
 
         String userIp = GetIp.getIp(request);
-        int side = oneClickRequestDto.getSide();
-        Long oneClickId = oneClickRequestDto.getOneClickId();
 
-        SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(side); // enum 값으로 변형
+        SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(oneClickRequestDto.getSide()); // enum 값으로 변형
 
-        OneClick oneClick = oneClickRepository.findById(oneClickId).orElseThrow( // oneClickTopic 으로 OneClick 객체를 찾아옴
+        OneClick oneClick = oneClickRepository.findById(oneClickRequestDto.getOneClickId()).orElseThrow( // oneClickTopic 으로 OneClick 객체를 찾아옴
                 () -> new IllegalStateException("없는 토픽입니다.")
         );
         List<OneClickUser> oneClickUsers = oneClick.getOneClickUsers();
@@ -199,7 +197,7 @@ public class MainService {
             }
         }
         // 선택한게 없는 상태면 userIp 와 찬/반 정보, 토픽 Id 로 OnClickUser 객체 생성 및 저장
-        OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum, oneClickId);
+        OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum, oneClickRequestDto.getOneClickId());
         oneClickUserRepository.save(oneClickUser);
 
         oneClickUsers.add(oneClickUser);
