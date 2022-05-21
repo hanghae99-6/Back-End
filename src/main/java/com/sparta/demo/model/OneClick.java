@@ -9,7 +9,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 public class OneClick {
@@ -20,12 +19,15 @@ public class OneClick {
     @Column(nullable = false)
     private String oneClickTopic;
 
+    @Setter
     @Column
     private int agreeNum;
 
+    @Setter
     @Column
     private int oppoNum;
 
+    @Setter
     @OneToMany
     private List<OneClickUser> oneClickUsers;
 

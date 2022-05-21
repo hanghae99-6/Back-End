@@ -149,6 +149,7 @@ public class MainService {
         return ResponseEntity.ok().body(oneClickResList);
     }
 
+    // TODO : if 문 줄이기
     // 원클릭 토픽 찬반 선택하기
     @Transactional
     public ResponseEntity<List<OneClickResponseDto>> sumOneClick(OneClickRequestDto oneClickRequestDto, HttpServletRequest request) {
@@ -156,10 +157,10 @@ public class MainService {
         String userIp = GetIp.getIp(request);
         int side = oneClickRequestDto.getSide();
         Long oneClickId = oneClickRequestDto.getOneClickId();
-        // enum 값으로 변형
-        SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(side);
-        // oneClickTopic 으로 OneClick 객체를 찾아옴
-        OneClick oneClick = oneClickRepository.findById(oneClickId).orElseThrow(
+
+        SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(side); // enum 값으로 변형
+
+        OneClick oneClick = oneClickRepository.findById(oneClickId).orElseThrow( // oneClickTopic 으로 OneClick 객체를 찾아옴
                 () -> new IllegalStateException("없는 토픽입니다.")
         );
         List<OneClickUser> oneClickUsers = oneClick.getOneClickUsers();
@@ -168,10 +169,10 @@ public class MainService {
             log.info("oneClickUser.getUserIp() : {}", oneClickUser.getUserIp());
             if (userIp.equals(oneClickUser.getUserIp())) {
                 if(oneClickUser.getSideTypeEnum() != sideTypeEnum) {
-                    // 부모 entity 인 onclick 에서 기존 원클릭 정보를 삭제
-                    oneClick.getOneClickUsers().remove(oneClickUser);
-                    // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 +1, 반대 수에 -1
-                    if(sideTypeEnum == SideTypeEnum.PROS) {
+
+                    oneClick.getOneClickUsers().remove(oneClickUser); // 부모 entity 인 onclick 에서 기존 원클릭 정보를 삭제
+
+                    if (sideTypeEnum == SideTypeEnum.PROS) { // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 +1, 반대 수에 -1
                         oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
                         oneClick.setOppoNum(oneClick.getOppoNum() - 1);
                     } else {
@@ -184,57 +185,22 @@ public class MainService {
                     // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
                     List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
                     return ResponseEntity.ok().body(oneClickResDtoList);
-                } else {
-                    log.info("oneClickUser.getSideTypeEnum() : {}", oneClickUser.getSideTypeEnum());
-                    if(sideTypeEnum == SideTypeEnum.PROS) {
-                        oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
-                    } else {
-                        oneClick.setOppoNum(oneClick.getOppoNum() - 1);
-                    }
-                    oneClick.getOneClickUsers().remove(oneClickUser);
-                    oneClickUserRepository.delete(oneClickUser);
-                    // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
-                    List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
-
-                    return ResponseEntity.ok().body(oneClickResDtoList);
                 }
+                log.info("oneClickUser.getSideTypeEnum() : {}", oneClickUser.getSideTypeEnum());
+                if(sideTypeEnum == SideTypeEnum.PROS) {
+                    oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
+                } else {
+                    oneClick.setOppoNum(oneClick.getOppoNum() - 1);
+                }
+                oneClick.getOneClickUsers().remove(oneClickUser);
+                oneClickUserRepository.delete(oneClickUser);
+                // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
+                List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
+
+                return ResponseEntity.ok().body(oneClickResDtoList);
             }
         }
-//        // oneClickUser 에 유저 IP와 oneClickId로 찾는다.
-//        Optional<OneClickUser> optionalOneClickUser = oneClickUserRepository.findByUserIpAndOneClickId(userIp, oneClickId);
-//        // 있다면 찬성인지 반대인지 확인하고 현재 유저가 선택한 side 와 다르다면(찬성을 눌렀던 사람이 반대를 누름) 기존 정보를 삭제
-//        // 같은 side 를 눌렀다면 중복 투표 에러 발생
-//        if(optionalOneClickUser.isPresent()) {
-//            if(optionalOneClickUser.get().getSideTypeEnum() != sideTypeEnum) {
-//                oneClickUserRepository.delete(optionalOneClickUser.get());
-//                // 유저가 선택한게 찬성이라면 토픽의 찬성 수에 +1, 반대 수에 -1
-//                if(sideTypeEnum == SideTypeEnum.PROS) {
-//                    oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
-//                    oneClick.setOppoNum(oneClick.getOppoNum() - 1);
-//                } else {
-//                    oneClick.setOppoNum(oneClick.getOppoNum() + 1);
-//                    oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
-//                }
-//                OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum, oneClickId);
-//                oneClickUserRepository.save(oneClickUser);
-//                // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
-//                List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
-//
-//                return ResponseEntity.ok().body(oneClickResDtoList);
-//            } else {
-//                oneClickUserRepository.delete(optionalOneClickUser.get());
-//                if(sideTypeEnum == SideTypeEnum.PROS) {
-//                    oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
-//                } else {
-//                    oneClick.setOppoNum(oneClick.getOppoNum() - 1);
-//                }
-//                // 원클릭 찬반 토론 전체 데이터를 보내기 위해 GetOneClick 메소드 사용
-//                List<OneClickResponseDto> oneClickResDtoList = getOneClick(request).getBody();
-//
-//                return ResponseEntity.ok().body(oneClickResDtoList);
-//            }
-//        }
-        // 기존에 누른게 없다면 userIp 와 찬/반 정보, 토픽 Id 로 OnClickUser 객체 생성 및 저장
+        // 선택한게 없는 상태면 userIp 와 찬/반 정보, 토픽 Id 로 OnClickUser 객체 생성 및 저장
         OneClickUser oneClickUser = new OneClickUser(userIp, sideTypeEnum, oneClickId);
         oneClickUserRepository.save(oneClickUser);
 

@@ -3,6 +3,7 @@ package com.sparta.demo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateInfoDto;
 import com.sparta.demo.enumeration.SideTypeEnum;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +32,7 @@ public class EnterUser extends Timestamped{
     private String userImage;
 
     @Column
+    @Enumerated(value=EnumType.STRING)
     private SideTypeEnum side;
 
     @Column
@@ -45,9 +47,8 @@ public class EnterUser extends Timestamped{
         this.side = side;
     }
 
-    public EnterUser(Debate debate, DebateInfoDto debateInfoDto, List<DebateEvidence> evidences, String userImage) {
-        this.debate = debate;
-        this.userImage = userImage;
+    @Builder
+    public EnterUser(DebateInfoDto debateInfoDto, List<DebateEvidence> evidences) {
         this.opinion = debateInfoDto.getOpinion();
         this.evidences = evidences;
     }

@@ -10,6 +10,7 @@ import com.sparta.demo.repository.DebateEvidenceRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
+import com.sparta.demo.validator.DebateValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -89,28 +87,30 @@ public class DebateService {
         return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
     }
 
-
+    @Transactional
     public ResponseEntity<Boolean> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
 
-        String userImage = userDetails.getUser().getProfileImg();
-        String prosCons = debateInfoDto.getProsCons();
+        int sideNum = (debateInfoDto.getProsCons().equals("찬성"))? 1 : 2;
+        SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(sideNum);
 
-        Optional<Debate> optionalDebate = debateRepository.findByRoomId(roomId);
-        if(!optionalDebate.isPresent()){
-            return ResponseEntity.ok().body(false);
-        }
-        Debate debate = optionalDebate.get();
-        List<String> evidences = debateInfoDto.getEvidences();
-        for(String evidence : evidences) {
-            DebateEvidence debateEvidence = new DebateEvidence(roomId, evidence, prosCons);
+        EnterUser validEnterUser = enterUserRepository.findBySideAndDebate_RoomId(sideTypeEnum, roomId).orElseThrow(
+                () -> new IllegalArgumentException("토론방이 없습니다.")
+        );
+
+        DebateValidator.validateDebate(validEnterUser, userDetails, sideTypeEnum); // 유효성 검사 실행
+
+        List<String> evidenceList = debateInfoDto.getEvidences();
+        List<DebateEvidence> evidences = new ArrayList<>();
+
+        for (String evidence : evidenceList) {
+            DebateEvidence debateEvidence = new DebateEvidence(evidence);
             debateEvidenceRepository.save(debateEvidence);
+            evidences.add(debateEvidence);
         }
 
-        List<DebateEvidence> evidenceList = debateEvidenceRepository.findByRoomIdAndProsCons(roomId, prosCons);
+        validEnterUser.setEvidences(evidences);
+        validEnterUser.setOpinion(debateInfoDto.getOpinion());
 
-        EnterUser enterUser = new EnterUser(debate, debateInfoDto, evidenceList, userImage);
-        enterUserRepository.save(enterUser);
-        log.info("EnterUser : {}", enterUser.getEvidences());
         return ResponseEntity.ok().body(true);
     }
 

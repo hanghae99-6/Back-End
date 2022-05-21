@@ -27,6 +27,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
     // 스프링 시큐리티
@@ -73,6 +74,10 @@ dependencies {
     // swagger
     implementation("io.springfox:springfox-swagger2:2.9.2")
     implementation("io.springfox:springfox-swagger-ui:2.9.2")
+
+    // Test Code
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 }
 
 test {
