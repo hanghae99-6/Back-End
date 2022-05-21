@@ -26,7 +26,6 @@ public class DebateService {
 
     private final DebateRepository debateRepository;
     private final Map<String, CategoryEnum> categoryEnumMap = new HashMap<>();
-    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
     private final EnterUserRepository enterUserRepository;
     private final DebateEvidenceRepository debateEvidenceRepository;
 
@@ -37,9 +36,6 @@ public class DebateService {
         this.debateRepository = debateRepository;
         this.enterUserRepository = enterUserRepository;
         this.debateEvidenceRepository = debateEvidenceRepository;
-
-        sideTypeEnumMap.put(1, SideTypeEnum.PROS);
-        sideTypeEnumMap.put(2, SideTypeEnum.CONS);
 
         // categoryEnum 을 Map 형태로 정의 해서 String 으로 들어온 key 값에 대한 Enum 값 정의
         categoryEnumMap.put("정치",CategoryEnum.POLITICS); categoryEnumMap.put("경제",CategoryEnum.ECONOMY);
@@ -91,7 +87,7 @@ public class DebateService {
     public ResponseEntity<Boolean> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
 
         int sideNum = (debateInfoDto.getProsCons().equals("찬성"))? 1 : 2;
-        SideTypeEnum sideTypeEnum = sideTypeEnumMap.get(sideNum);
+        SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(sideNum);
 
         EnterUser validEnterUser = enterUserRepository.findBySideAndDebate_RoomId(sideTypeEnum, roomId).orElseThrow(
                 () -> new IllegalArgumentException("토론방이 없습니다.")
