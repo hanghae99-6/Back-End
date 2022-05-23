@@ -3,23 +3,12 @@ package com.sparta.demo.service;
 import com.sparta.demo.dto.user.KakaoUserInfoDto;
 import com.sparta.demo.dto.user.MyDebateDto;
 import com.sparta.demo.dto.user.MyReplyDto;
-import com.sparta.demo.enumeration.CategoryEnum;
-import com.sparta.demo.enumeration.SideTypeEnum;
-import com.sparta.demo.model.Debate;
-import com.sparta.demo.model.Likes;
-import com.sparta.demo.model.Reply;
-import com.sparta.demo.model.User;
-import com.sparta.demo.repository.DebateRepository;
-import com.sparta.demo.repository.DebateVoteRepository;
-import com.sparta.demo.repository.ReplyRepository;
-import com.sparta.demo.repository.UserRepository;
+import com.sparta.demo.model.*;
+import com.sparta.demo.repository.*;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +78,9 @@ public class UserService {
             throw new IllegalArgumentException("유저정보가 없습니다");
         }
         String userEmail = user.get().getEmail();
-        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(userEmail, userEmail);
+
+//        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "createdAt"),userEmail, userEmail);
+        List<Debate> debate = debateRepository.findTop60ByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "createdAt"),userEmail, userEmail);
 
         List<MyDebateDto> myDebateDtoList = new ArrayList<>();
 
@@ -118,7 +108,8 @@ public class UserService {
             throw new IllegalArgumentException("유저정보가 없습니다");
         }
         String userEmail = user.get().getEmail();
-        List<Reply> replyList = replyRepository.findAllByUser_Email(userEmail);
+//        List<Reply> replyList = replyRepository.findAllByUser_Email(Sort.by(Sort.Direction.DESC, "createdAt"), userEmail);
+        List<Reply> replyList = replyRepository.findTop60ByUser_Email(Sort.by(Sort.Direction.DESC, "createdAt"), userEmail);
 
         List<MyReplyDto> myReplyDtoList = new ArrayList<>();
 
