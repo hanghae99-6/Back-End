@@ -7,12 +7,10 @@ import com.sparta.demo.dto.main.OneClickResponseDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
+import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.model.OneClickUser;
-import com.sparta.demo.repository.DebateRepository;
-import com.sparta.demo.repository.DebateVoteRepository;
-import com.sparta.demo.repository.OneClickRepository;
-import com.sparta.demo.repository.OneClickUserRepository;
+import com.sparta.demo.repository.*;
 import com.sparta.demo.util.GetIp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +30,7 @@ public class MainService {
     private final OneClickRepository oneClickRepository;
     private final OneClickUserRepository oneClickUserRepository;
     private final DebateVoteRepository debateVoteRepository;
+    private final EnterUserRepository enterUserRepository;
 
     // 메인 페이지 - 전체 카테고리의 HOTPEECH 목록
     public ResponseEntity<List<MainCategoryResDto>> getMainAll() {
@@ -112,7 +111,9 @@ public class MainService {
         debate.setVisitCnt(debate.getVisitCnt()+1L);
 
         log.info("userImage 0 : {}",debate.getEnterUserList().get(0).getUserImage());
-        return ResponseEntity.ok().body(new MainDetailResponseDto(debate, debate.getEnterUserList(), side));
+
+        List<EnterUser> enterUserList = enterUserRepository.findByDebate_DebateIdOrderBySideDesc(debateId);
+        return ResponseEntity.ok().body(new MainDetailResponseDto(debate, enterUserList, side));
     }
 
     // 원클릭 찬반 토론 가져오기
