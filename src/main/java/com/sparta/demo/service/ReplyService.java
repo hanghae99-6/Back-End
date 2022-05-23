@@ -12,6 +12,7 @@ import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.util.GetIp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,9 +62,9 @@ public class ReplyService {
         String ip = GetIp.getIp(request);
         System.out.println(ip);
         // debateId 유효성 검사
-        Debate debate = debateRepository.findByDebateId(debateId).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
+        debateRepository.findByDebateId(debateId).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
         // 해당 debate에 연관 되어 있는 reply 모두 불러와서 List 형태로 집어넣음
-        List<Reply> replyList = debate.getReplyList();
+        List<Reply> replyList = replyRepository.findTop60ByDebate_DebateId(Sort.by(Sort.Direction.DESC, "createdAt"),debateId);
         // return을 위한 List<ReplyResponseDto> 초기화
         List<ReplyResponseDto> replyResponseDtoList = new ArrayList<>();
         // 반복문을 통해서 위에 불러온 replyList 내의 reply들을 ReplyResponseDto에 집어 넣는 작업
