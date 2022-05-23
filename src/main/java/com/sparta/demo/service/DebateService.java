@@ -76,6 +76,10 @@ public class DebateService {
         int sideNum = (debateInfoDto.getProsCons().equals("찬성"))? 1 : 2;
         SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(sideNum);
 
+        log.info("saveDebateInfo - sideNum : {}", sideNum);
+        log.info("sideTypeEnum : {}", sideTypeEnum);
+        log.info("roomId : {}", roomId);
+
         EnterUser validEnterUser = enterUserRepository.findBySideAndDebate_RoomId(sideTypeEnum, roomId).orElseThrow(
                 () -> new IllegalArgumentException("토론방이 없습니다.")
         );
