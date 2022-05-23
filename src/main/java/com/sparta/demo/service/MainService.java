@@ -134,7 +134,6 @@ public class MainService {
         return ResponseEntity.ok().body(oneClickResList);
     }
 
-    // TODO : if 문 줄이기
     // 원클릭 토픽 찬반 선택하기
     @Transactional
     public ResponseEntity<List<OneClickResponseDto>> sumOneClick(OneClickRequestDto oneClickRequestDto, HttpServletRequest request) {

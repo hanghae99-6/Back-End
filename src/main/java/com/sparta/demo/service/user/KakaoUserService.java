@@ -70,9 +70,9 @@ public class KakaoUserService {
         // 클라이언트 아이디, url 확인
         body.add("client_id", kakaoClientId);
 //        body.add("redirect_uri", "https://godnjs13579.web.app/user/kakao/callback");
-//        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
+        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
 //        body.add("redirect_uri", "https://www.wepeech.com/user/kakao/callback");
-        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
+//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
