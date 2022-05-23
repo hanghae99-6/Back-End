@@ -5,6 +5,7 @@ import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.DebateService;
+import com.sparta.demo.validator.ErrorResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +44,9 @@ public class DebateController {
     }
 
     @PostMapping("/{roomId}")
-    public ResponseEntity<Boolean> saveDebateInfo(@PathVariable String roomId,
-                                                  @RequestBody DebateInfoDto debateInfoDto,
-                                                  @AuthenticationPrincipal UserDetailsImpl userDetails
+    public ErrorResult saveDebateInfo(@PathVariable String roomId,
+                                      @RequestBody DebateInfoDto debateInfoDto,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails
                                                  ) {
         log.info("evidence : {}", debateInfoDto.getEvidences().get(0));
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);

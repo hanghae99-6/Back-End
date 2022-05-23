@@ -11,6 +11,7 @@ import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.validator.DebateValidator;
+import com.sparta.demo.validator.ErrorResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -71,18 +72,20 @@ public class DebateService {
     }
 
     @Transactional
-    public ResponseEntity<Boolean> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
+    public ErrorResult saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
 
         int sideNum = (debateInfoDto.getProsCons().equals("찬성"))? 1 : 2;
         SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(sideNum);
 
-        log.info("saveDebateInfo - sideNum : {}", sideNum);
-        log.info("sideTypeEnum : {}", sideTypeEnum);
-        log.info("roomId : {}", roomId);
-
-        EnterUser validEnterUser = enterUserRepository.findBySideAndDebate_RoomId(sideTypeEnum, roomId).orElseThrow(
-                () -> new IllegalArgumentException("토론방이 없습니다.")
-        );
+        Optional<Debate> validRoomId = debateRepository.findByRoomId(roomId);
+        if(!validRoomId.isPresent()) {
+            return new ErrorResult(false, "fail");
+        }
+        Optional<EnterUser> enterUser = enterUserRepository.findBySideAndDebate_RoomId(sideTypeEnum, roomId);
+        if(!enterUser.isPresent()) {
+            return new ErrorResult(false, "unMatch");
+        }
+        EnterUser validEnterUser = enterUser.get();
 
         DebateValidator.validateDebate(validEnterUser, userDetails, sideTypeEnum); // 유효성 검사 실행
 
@@ -98,7 +101,7 @@ public class DebateService {
         validEnterUser.setEvidences(evidences);
         validEnterUser.setOpinion(debateInfoDto.getOpinion());
 
-        return ResponseEntity.ok().body(true);
+        return new ErrorResult(true, "success");
     }
 
 }
