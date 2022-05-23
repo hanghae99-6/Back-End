@@ -1,12 +1,17 @@
 package com.sparta.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
-import lombok.AllArgsConstructor;
+import com.sparta.demo.enumeration.CategoryEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.UUID;
 
 // 홈트에서 room 레퍼런스로 참고
@@ -14,19 +19,18 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-//@AllArgsConstructor
 @NoArgsConstructor
+@DynamicInsert
 public class Debate extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long debateId;
 
-
-    // 시작 하기 권한, 저장 권한 주기 위한 user table 연관 맵핑
-    // 지금은 유저 없이 진행하기 때문에 가려뒀습니다.
-//    @ManyToOne
-//    @JoinColumn(name = "userId")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
+    @NotNull
+    @JsonIgnore
+    private User user;
 
     @Column(nullable = false)
     private String roomId;
@@ -35,41 +39,55 @@ public class Debate extends Timestamped{
     private String topic;
 
     @Column(nullable = false)
-    private String catName;
+    @Enumerated(value=EnumType.STRING)
+    private CategoryEnum categoryEnum;
 
-
-    // 이 부분을 유저로 받아와야할 지 고민해봤으면 좋겠습니다.
-    // 지금은 user entity 없이 만드는 거라고 생각해서 그냥 String 값을 해두었습니다.
-    // 추후에 user로 바꾸면 나중에 내가 참여한 토론 등에서 찾기 좀 쉽지 않을까요?(잘모르겠지만요)
     @Column(nullable = false)
     private String prosName;
 
     @Column(nullable = false)
     private String consName;
 
+    @Column
+    private String content;
+
+    @OneToMany(mappedBy = "debate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<EnterUser> enterUserList;
 
     @Column
-    private int speechCnt;
+    private Long totalPros;
 
     @Column
-    private int speechMinute;
+    private Long totalCons;
 
-//    public Debate() {
-//
-//    }
+    @OneToMany(mappedBy = "debate")
+    @JsonIgnore
+    private List<Reply> replyList;
 
-    public static Debate create(DebateLinkRequestDto debateLinkRequestDto) {
+    @Column
+    @ColumnDefault("0")
+    private Integer totalReply;
+
+    @Column
+    @Setter
+    @ColumnDefault("0")
+    private Long visitCnt;
+
+
+    public static Debate create(DebateLinkRequestDto debateLinkRequestDto, User user, CategoryEnum category) {
         // 얘는 홈트 어쩌고 그거 그대로 긁어온건데 뭔지 모르겠네요
         // 여기서 왜인지 모르겠는데 this. 이 안먹힙니다. 그래서 생성자안에 이렇게 넣어둔것 같아요... 고칠 수 있으면 고치고싶네요ㅠ
         // todo: static(전역적으로 사용할 때) 인 경우 this를 못 쓰는걸로 알고 있습니다.
         Debate debate = new Debate();
+        debate.user = user;
         debate.roomId = UUID.randomUUID().toString();
         debate.topic = debateLinkRequestDto.getTopic();
-        debate.catName = debateLinkRequestDto.getCategoryName();
+        debate.categoryEnum = category;
         debate.prosName = debateLinkRequestDto.getProsName();
         debate.consName = debateLinkRequestDto.getConsName();
-        debate.speechCnt = debateLinkRequestDto.getSpeechCnt();
-        debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
+        debate.content = debateLinkRequestDto.getContent();
         return debate;
     }
+
 }
