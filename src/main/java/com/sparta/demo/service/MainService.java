@@ -110,6 +110,8 @@ public class MainService {
         log.info("detail service side: {}", side);
 
         debate.setVisitCnt(debate.getVisitCnt()+1L);
+
+        log.info("userImage 0 : {}",debate.getEnterUserList().get(0).getUserImage());
         return ResponseEntity.ok().body(new MainDetailResponseDto(debate, debate.getEnterUserList(), side));
     }
 

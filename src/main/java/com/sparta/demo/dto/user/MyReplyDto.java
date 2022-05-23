@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @RequiredArgsConstructor
 public class MyReplyDto{
+    private Long debateId;
     private String reply;
     private String topic;
     private CategoryEnum categoryEnum;
@@ -23,6 +24,7 @@ public class MyReplyDto{
 
 
     public MyReplyDto(Reply reply, Debate debate){
+        this.debateId = debate.getDebateId();
         this.reply = reply.getReply();
         this.topic = debate.getTopic();
         this.categoryEnum = debate.getCategoryEnum();
