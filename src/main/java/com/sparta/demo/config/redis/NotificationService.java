@@ -18,11 +18,12 @@ public class NotificationService {
         this.emitterRepository = emitterRepository;
     }
 
-    public SseEmitter subscribe(Long userId, String lastEventId) {
+    public SseEmitter subscribe(Long roomId, String lastEventId) {
+
         // 1
         // 데이터의 id 값을 ${userId}_${System.currentTimeMillis()} 형태로 두면 데이터가 유실된 시점을
         // 파악할 수 있으므로 저장된 key 값 비교를 통해 유실된 데이터만 재전송 할 수 있게 된다.
-        String id = userId + "_" + System.currentTimeMillis();
+        String id = roomId + "_" + System.currentTimeMillis();
         log.info("subscribe key : {}", id);
 
         // 2
@@ -38,14 +39,14 @@ public class NotificationService {
         // 연결 요청에 의해 SseEmitter 가 생성되면 더미 데이터를 보내줘야한다.
         // sse 연결이 이뤄진 후, 하나의 데이터도 전송되지 않는다면 SseEmitter 의 유효 시간이 끝나는 순간
         // 503 응답이 발생하는 문제가 있다. 따라서 연결시 바로 더미 데이터를 한 번 보내준다.
-        sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
+        sendToClient(emitter, id, "EventStream Created. [userId=" + roomId + "]");
 
         // 4
         // 1번 부분과 관련이 있는 부분이다.
         // Last-Event-ID 값이 헤더에 있는 경우, 저장된 데이터 캐시에서 id 값과 Last-Event-ID 값을 통해
         // 유실된 데이터들만 다시 보내준다.
         if (!lastEventId.isEmpty()) {
-            Map<String, Object> events = emitterRepository.findAllEventCacheStartWithId(String.valueOf(userId));
+            Map<String, Object> events = emitterRepository.findAllEventCacheStartWithId(String.valueOf(roomId));
             events.entrySet().stream()
                     .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
                     .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));

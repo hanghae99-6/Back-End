@@ -18,13 +18,13 @@ public class NotificationController {
     /**
      * @title 로그인 한 유저 sse 연결
      */
-    @GetMapping(value = "/subscribe/{id}", produces = "text/event-stream")
-    public SseEmitter subscribe(@PathVariable Long id,
+    @GetMapping(value = "/subscribe/{roomId}", produces = "text/event-stream")
+    public SseEmitter subscribe(@PathVariable Long roomId,
                                 /*
                                 Last-Event-ID 헤더는 클라이언트가 마지막으로 수신한 데이터 id 값
                                 이를 이용하여 시간 만료 등의 이유로 SSE 연결이 끊어졌을 경우 유실된 데이터를 다시 보내줄 수 있다.
                                 */
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
-        return notificationService.subscribe(id, lastEventId);
+        return notificationService.subscribe(roomId, lastEventId);
     }
 }
