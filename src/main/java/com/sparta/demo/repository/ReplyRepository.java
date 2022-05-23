@@ -2,6 +2,7 @@ package com.sparta.demo.repository;
 
 import com.sparta.demo.model.Reply;
 //import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,5 +15,6 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<Reply> findByReplyId(Long replyId);
 
-    List<Reply> findAllByUser_Email(String email);
+//    List<Reply> findAllByUser_Email(Sort sort, String email);
+    List<Reply> findTop60ByUser_Email(Sort sort, String email);
 }
