@@ -30,6 +30,9 @@ public class EnterUser extends Timestamped{
     @Column
     private String userImage;
 
+    @Column
+    private String userNickName;
+
     @Setter
     @Column
     @Enumerated(value=EnumType.STRING)
@@ -47,6 +50,7 @@ public class EnterUser extends Timestamped{
         this.debate = debate;
         this.userEmail = user.getEmail();
         this.userImage = user.getProfileImg();
+        this.userNickName = user.getNickName();
         this.side = side;
     }
 
