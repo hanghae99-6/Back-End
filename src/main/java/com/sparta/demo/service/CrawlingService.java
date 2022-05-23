@@ -30,6 +30,7 @@ public class CrawlingService {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
     String todayDate = now.format(formatter);
 
+
     // 1. 네이버 뉴스 크롤링
     @Transactional
     public ResponseEntity<CrawlingDto> getNaverNews() throws IOException {
@@ -39,6 +40,7 @@ public class CrawlingService {
 
         CrawlTypeEnum type = CrawlTypeEnum.NEWS;
 
+        if(crawlingRepository.findAll().size()>3) crawlingRepository.deleteAll();
         Crawling crawling = crawlingRepository.findByDateAndType(todayDate, type);
 
         if(crawling == null){
@@ -109,6 +111,7 @@ public class CrawlingService {
 
         CrawlTypeEnum type = CrawlTypeEnum.COLUMN;
 
+        if(crawlingRepository.findAll().size()>3) crawlingRepository.deleteAll();
         Crawling crawlingColumn = crawlingRepository.findByDateAndType(todayDate, type);
 
         if(crawlingColumn==null){
@@ -157,6 +160,7 @@ public class CrawlingService {
 
         CrawlTypeEnum type = CrawlTypeEnum.MAGAZINE;
 
+        if(crawlingRepository.findAll().size()>3) crawlingRepository.deleteAll();
         Crawling crawlingColumn = crawlingRepository.findByDateAndType(todayDate, type);
 
         if(crawlingColumn==null){
@@ -165,16 +169,18 @@ public class CrawlingService {
 
             Elements elements = doc.getElementsByAttributeValue("class", "container-lg");
 
-            Elements aElements2 = elements.get(0).getElementsByAttributeValue("class","text-dark").get(0).select("a");
+//            Elements aElements2 = elements.get(0).getElementsByAttributeValue("class","text-dark").get(0).select("a");
+            Elements aElements2 = elements.get(0).getElementsByAttributeValue("class","loop-item media d-flex align-items-center align-items-md-stretch border-bottom border-light mb-md-5").get(0).select("a");
 
             String articleUrl = aElements2.attr("href"); //기사링크
 
             String title = aElements2.text();
+            String imgUrl = aElements2.select("img").attr("src");
 
             Document doc2 = Jsoup.connect(articleUrl).get();
             Elements post = doc2.getElementsByAttributeValue("class", "post-content");
 
-            String imgUrl = post.select("img").get(0).attr("src");
+//            String imgUrl = post.select("img").get(0).attr("src");
 
             Elements authorText = doc2.getElementsByAttributeValue("class", "has-text-align-right"); // 기사 작성자
             String author = authorText.get(0).text();
@@ -200,4 +206,5 @@ public class CrawlingService {
         }
         return ResponseEntity.ok().body(crawlingDto);
     }
+
 }
