@@ -39,7 +39,7 @@ public class DebateController {
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info("userDetails.getUser() : {}", userDetails.getUser());
         log.info("userDetails.getUser().getEmail() : {}", userDetails.getUser().getEmail());
-        return debateService.checkRoomIdUser(roomId, userDetails.getUser().getEmail());
+        return debateService.checkRoomIdUser(roomId, userDetails.getUser());
     }
 
     @PostMapping("/{roomId}")

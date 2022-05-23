@@ -43,9 +43,10 @@ public class EnterUser extends Timestamped{
     @OneToMany
     private List<DebateEvidence> evidences;
 
-    public EnterUser(Debate debate, String userEmail, SideTypeEnum side) {
+    public EnterUser(Debate debate, User user, SideTypeEnum side) {
         this.debate = debate;
-        this.userEmail = userEmail;
+        this.userEmail = user.getEmail();
+        this.userImage = user.getProfileImg();
         this.side = side;
     }
 
