@@ -110,8 +110,6 @@ public class MainService {
 
         debate.setVisitCnt(debate.getVisitCnt()+1L);
 
-        log.info("userImage 0 : {}",debate.getEnterUserList().get(0).getUserImage());
-
         List<EnterUser> enterUserList = enterUserRepository.findByDebate_DebateIdOrderBySideDesc(debateId);
         return ResponseEntity.ok().body(new MainDetailResponseDto(debate, enterUserList, side));
     }
