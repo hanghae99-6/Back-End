@@ -62,6 +62,7 @@ public class DebateService {
         Optional<Debate> prosCheck = debateRepository.findByRoomIdAndProsName(roomId,user.getEmail());
         Optional<Debate> consCheck = debateRepository.findByRoomIdAndConsName(roomId,user.getEmail());
 
+
         Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(debate.get().getDebateId(), user.getEmail());
 
         if(enterUser.isPresent()){
@@ -71,8 +72,9 @@ public class DebateService {
 
         if(prosCheck.isPresent()){
             enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.PROS));
-        }else if(consCheck.isPresent()){
-           enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.CONS));
+        }
+        else if(consCheck.isPresent()){
+            enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.CONS));
         }
         debateRoomIdUserValidateDto.setUser(prosCheck.isPresent() || consCheck.isPresent());
 
