@@ -63,7 +63,10 @@ public class DebateService {
 
         Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(debate.get().getDebateId(), user.getEmail());
 
-        enterUser.ifPresent(EnterUser::new);
+        if(enterUser.isPresent()){
+            debateRoomIdUserValidateDto.setUser(true);
+            return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
+        }
 
         if(prosCheck.isPresent()){
             enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.PROS));
