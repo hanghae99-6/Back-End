@@ -80,7 +80,7 @@ public class UserService {
         String userEmail = user.get().getEmail();
 
 //        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "createdAt"),userEmail, userEmail);
-        List<Debate> debate = debateRepository.findTop60ByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "createdAt"),userEmail, userEmail);
+        List<Debate> debate = debateRepository.findTop60ByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "debateId"),userEmail, userEmail);
 
         List<MyDebateDto> myDebateDtoList = new ArrayList<>();
 
