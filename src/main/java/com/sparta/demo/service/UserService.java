@@ -80,7 +80,7 @@ public class UserService {
         String userEmail = user.get().getEmail();
 
 //        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "createdAt"),userEmail, userEmail);
-        List<Debate> debate = debateRepository.findTop60ByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "createdAt"),userEmail, userEmail);
+        List<Debate> debate = debateRepository.findTop60ByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "debateId"),userEmail, userEmail);
 
         List<MyDebateDto> myDebateDtoList = new ArrayList<>();
 
@@ -109,7 +109,7 @@ public class UserService {
         }
         String userEmail = user.get().getEmail();
 //        List<Reply> replyList = replyRepository.findAllByUser_Email(Sort.by(Sort.Direction.DESC, "createdAt"), userEmail);
-        List<Reply> replyList = replyRepository.findTop60ByUser_Email(Sort.by(Sort.Direction.DESC, "createdAt"), userEmail);
+        List<Reply> replyList = replyRepository.findTop60ByUser_Email(Sort.by(Sort.Direction.DESC, "replyId"), userEmail);
 
         List<MyReplyDto> myReplyDtoList = new ArrayList<>();
 
