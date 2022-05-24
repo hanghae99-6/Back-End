@@ -59,6 +59,14 @@ public class EnterUser extends Timestamped{
         this.opinion = debateInfoDto.getOpinion();
         this.evidences = evidences;
     }
+
+    public EnterUser(EnterUser enterUser) {
+        this.debate = enterUser.getDebate();
+        this.userEmail = enterUser.getUserEmail();
+        this.userImage = enterUser.getUserImage();
+        this.userNickName = enterUser.getUserNickName();
+        this.side = enterUser.getSide();
+    }
 }
 
 
