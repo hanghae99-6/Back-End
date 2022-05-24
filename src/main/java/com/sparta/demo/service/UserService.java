@@ -109,7 +109,7 @@ public class UserService {
         }
         String userEmail = user.get().getEmail();
 //        List<Reply> replyList = replyRepository.findAllByUser_Email(Sort.by(Sort.Direction.DESC, "createdAt"), userEmail);
-        List<Reply> replyList = replyRepository.findTop60ByUser_Email(Sort.by(Sort.Direction.DESC, "createdAt"), userEmail);
+        List<Reply> replyList = replyRepository.findTop60ByUser_Email(Sort.by(Sort.Direction.DESC, "replyId"), userEmail);
 
         List<MyReplyDto> myReplyDtoList = new ArrayList<>();
 

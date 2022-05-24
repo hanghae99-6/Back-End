@@ -127,7 +127,7 @@
 //
 //        @Test
 //        @DisplayName("Expire Test")
-//        void redisExpireTest() throws InterruptedException {
+//        void redisExpireTest() {
 //            final String key = "a";
 //            final String data = "1";
 //

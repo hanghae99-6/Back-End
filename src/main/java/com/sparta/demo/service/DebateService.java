@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -102,7 +103,7 @@ public class DebateService {
         List<DebateEvidence> evidences = new ArrayList<>();
 
         for (String evidence : evidenceList) {
-            DebateEvidence debateEvidence = new DebateEvidence(evidence);
+            DebateEvidence debateEvidence = new DebateEvidence(evidence, enterUser.get());
             debateEvidenceRepository.save(debateEvidence);
             evidences.add(debateEvidence);
         }
