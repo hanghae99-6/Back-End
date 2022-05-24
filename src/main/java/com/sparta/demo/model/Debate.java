@@ -58,9 +58,11 @@ public class Debate extends Timestamped{
     private List<EnterUser> enterUserList;
 
     @Column
+    @ColumnDefault("0")
     private Long totalPros;
 
     @Column
+    @ColumnDefault("0")
     private Long totalCons;
 
     @OneToMany(mappedBy = "debate")

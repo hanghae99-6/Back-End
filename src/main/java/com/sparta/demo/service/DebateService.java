@@ -62,6 +62,13 @@ public class DebateService {
         Optional<Debate> prosCheck = debateRepository.findByRoomIdAndProsName(roomId,user.getEmail());
         Optional<Debate> consCheck = debateRepository.findByRoomIdAndConsName(roomId,user.getEmail());
 
+        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(debate.get().getDebateId(), user.getEmail());
+
+        if(enterUser.isPresent()){
+            debateRoomIdUserValidateDto.setUser(true);
+            return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
+        }
+
         if(prosCheck.isPresent()){
             enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.PROS));
         }else if(consCheck.isPresent()){
@@ -94,7 +101,7 @@ public class DebateService {
         List<DebateEvidence> evidences = new ArrayList<>();
 
         for (String evidence : evidenceList) {
-            DebateEvidence debateEvidence = new DebateEvidence(evidence);
+            DebateEvidence debateEvidence = new DebateEvidence(evidence, enterUser.get());
             debateEvidenceRepository.save(debateEvidence);
             evidences.add(debateEvidence);
         }
