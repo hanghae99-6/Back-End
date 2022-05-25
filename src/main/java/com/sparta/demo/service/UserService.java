@@ -123,4 +123,11 @@ public class UserService {
 
         return ResponseEntity.ok().body(myReplyDtoList);
     }
+
+    // 4. 프로필 페이지 - 나의 토론 내역 삭제
+    @Transactional
+    public void deleteMydebate(Long debateId, UserDetailsImpl userDetails){
+        User user = userDetails.getUser();
+        debateRepository.deleteByDebateIdAndUser_Email(debateId, user.getEmail());
+    }
 }
