@@ -64,6 +64,7 @@
 //
 //            // then
 //            Set<String> members = setOperations.members(key);
+//            System.out.println(members);
 //            Long size = setOperations.size(key);
 //
 //            assertThat(members).containsOnly("h", "e", "l", "o");
