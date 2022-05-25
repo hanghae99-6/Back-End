@@ -39,8 +39,8 @@ public class MainService {
     private final EnterUserRepository enterUserRepository;
     private final DebateValidator debateValidator;
 
-//    @Autowired
-//    private final RedisTemplate<Long, String> redisTemplate;
+    @Autowired
+    private final RedisTemplate<Long, String> redisTemplate;
 
     // 메인 페이지 - 전체 카테고리의 HOTPEECH 목록
     public ResponseEntity<List<MainCategoryResDto>> getMainAll() {
@@ -120,11 +120,12 @@ public class MainService {
 
 //        SetOperations<Long, String> setOperations = redisTemplate.opsForSet();
 //
-//        Set<String> userIp = setOperations.members(debateId);
-//        if(userIp != null) {
+//        Set<String> set = setOperations.members(debateId);
+//
+//        if(set != null && set.contains(ip)) {
 //            return debateValidator.validEmptyValue(debateId, debate, side);
 //        }
-//
+
 //        setOperations.add(debateId, ip);
 //        redisTemplate.expire(debateId, DEFAULT_TIMEOUT, TimeUnit.HOURS);
 
