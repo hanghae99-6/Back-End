@@ -4,6 +4,7 @@ import com.sparta.demo.dto.reply.ReplyRequestDto;
 import com.sparta.demo.dto.reply.ReplyResponseDto;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.ReplyService;
+import com.sparta.demo.validator.ErrorResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class ReplyController {
 
     private final ReplyService replyService;
 
+    // 리뷰 생성
     @PostMapping("/main/{debateId}/reply")
     public ResponseEntity<List<ReplyResponseDto>> writeReply(@PathVariable Long debateId,
                                                              @RequestBody ReplyRequestDto replyRequestDto,
@@ -32,10 +34,26 @@ public class ReplyController {
         return replyService.writeReply(debateId, replyRequestDto, userDetails, request);
     }
 
+    // 리뷰 조회
     @GetMapping("/main/{debateId}/reply")
     public ResponseEntity<List<ReplyResponseDto>> writeReply(@PathVariable Long debateId, HttpServletRequest request){
         log.info("controller debateId: {}", debateId);
         return replyService.getReply(debateId, request);
+    }
+
+    // 리뷰 수정
+    @PutMapping("/main/reply/{replyId}")
+    public ResponseEntity<ErrorResult> updateReply(@RequestBody ReplyRequestDto replyRequestDto,
+                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                   @PathVariable Long replyId){
+        return replyService.updateReply(replyRequestDto, userDetails, replyId);
+    }
+
+    // 리뷰 삭제
+    @DeleteMapping("/main/reply/{replyId}")
+    public ResponseEntity<ErrorResult> deleteReply(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                            @PathVariable Long replyId){
+        return replyService.deleteReply(userDetails, replyId);
     }
 
 }
