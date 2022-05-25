@@ -129,5 +129,6 @@ public class UserService {
     public void deleteMydebate(Long debateId, UserDetailsImpl userDetails){
         User user = userDetails.getUser();
         debateRepository.deleteByDebateIdAndUser_Email(debateId, user.getEmail());
+        log.info("마이페이지에서 내 토론내역 삭제 완료!");
     }
 }
