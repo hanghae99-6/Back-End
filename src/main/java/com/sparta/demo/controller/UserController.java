@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -46,6 +47,14 @@ public class UserController {
     @GetMapping("/myreply")
     public ResponseEntity<List<MyReplyDto>> getMyReply(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.getMyReply(userDetails);
+    }
+
+    // 프로필 - 3. 내가 쓴 토론 삭제
+    @ApiOperation(value = "유저 페이지- 토론 내역 삭제", notes = "유저 페이지 -토론 내역 삭제")
+    @DeleteMapping("/mydebate/{debateId}")
+    public void deleteMydebate(@PathVariable Long debateId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        log.info("controller debateId: {}", debateId);
+        userService.deleteMydebate(debateId, userDetails);
     }
 
 }
