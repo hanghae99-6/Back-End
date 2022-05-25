@@ -1,11 +1,13 @@
 package com.sparta.demo.controller;
 
+import com.sparta.demo.dto.debate.DebateInfoDto;
 import com.sparta.demo.dto.user.KakaoUserInfoDto;
 import com.sparta.demo.dto.user.MyDebateDto;
 import com.sparta.demo.dto.user.MyReplyDto;
 import com.sparta.demo.dto.user.UserRequestDto;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.UserService;
+import com.sparta.demo.validator.ErrorResult;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,12 +51,29 @@ public class UserController {
         return userService.getMyReply(userDetails);
     }
 
-    // 프로필 - 3. 내가 쓴 토론 삭제
+    // 프로필 - 3. 내가 쓴 토론 수정
+    @ApiOperation(value = "유저 페이지- 토론 내역 수정", notes = "유저 페이지 -토론 내역 수정")
+    @PutMapping("/mydebate/{debateId}")
+    public ResponseEntity<ErrorResult> editMydebate(@PathVariable Long debateId,
+                                                    @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                    @RequestBody DebateInfoDto debateInfoDto){
+        return userService.editMydebate(debateId, userDetails, debateInfoDto);
+    }
+
+
+    // 프로필 - 4. 내가 쓴 토론 삭제
     @ApiOperation(value = "유저 페이지- 토론 내역 삭제", notes = "유저 페이지 -토론 내역 삭제")
     @DeleteMapping("/mydebate/{debateId}")
-    public void deleteMydebate(@PathVariable Long debateId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<ErrorResult> deleteMydebate(@PathVariable Long debateId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info("controller debateId: {}", debateId);
-        userService.deleteMydebate(debateId, userDetails);
+        return userService.deleteMydebate(debateId, userDetails);
+    }
+
+    // 관리자용 - 강제 토론방 삭제
+    @DeleteMapping("/mydebate/admin/{debateId}")
+    public void deleteMydebateForAdmin(@PathVariable Long debateId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        log.info("controller debateId: {}", debateId);
+        userService.deleteMydebateForAdmin(debateId, userDetails);
     }
 
 }
