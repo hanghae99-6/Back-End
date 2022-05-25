@@ -43,7 +43,7 @@ public class EnterUser extends Timestamped{
     private String opinion;
 
     @Setter
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<DebateEvidence> evidences;
 
     public EnterUser(Debate debate, User user, SideTypeEnum side) {

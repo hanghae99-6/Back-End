@@ -65,7 +65,7 @@ public class Debate extends Timestamped{
     @ColumnDefault("0")
     private Long totalCons;
 
-    @OneToMany(mappedBy = "debate")
+    @OneToMany(mappedBy = "debate", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Reply> replyList;
 
@@ -77,6 +77,10 @@ public class Debate extends Timestamped{
     @Setter
     @ColumnDefault("0")
     private Long visitCnt;
+
+    @OneToMany(mappedBy = "debate", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<DebateVote> debateVoteList;
 
 //    @Column
 //    private Timestamp timestamp;
