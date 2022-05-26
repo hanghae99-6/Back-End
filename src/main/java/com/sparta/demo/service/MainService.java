@@ -121,17 +121,17 @@ public class MainService {
         log.info("detail service side: {}", side);
         String redisKey = String.valueOf(debateId);
 
-//        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-//
-//        String userIp = hashOperations.get(redisKey, VISIT_COUNT);
-//
-//        if(userIp != null && userIp.equals(ip)) {
-//            System.out.println("조회수는 딱 한번만 올라갈거에요^^");
-//            return debateValidator.validEmptyValue(debateId, debate, side);
-//        }
-//
-//        hashOperations.put(redisKey, VISIT_COUNT, ip);
-//        redisTemplate.expire(redisKey, DEFAULT_TIMEOUT, TimeUnit.HOURS);
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+
+        String userIp = hashOperations.get(redisKey, VISIT_COUNT);
+
+        if(userIp != null && userIp.equals(ip)) {
+            System.out.println("조회수는 딱 한번만 올라갈거에요^^");
+            return debateValidator.validEmptyValue(debateId, debate, side);
+        }
+
+        hashOperations.put(redisKey, VISIT_COUNT, ip);
+        redisTemplate.expire(redisKey, DEFAULT_TIMEOUT, TimeUnit.HOURS);
 
         debate.setVisitCnt(debate.getVisitCnt()+1L);
 
