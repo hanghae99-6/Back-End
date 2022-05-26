@@ -80,7 +80,7 @@ public class UserService {
         String userEmail = user.get().getEmail();
 
 //        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "createdAt"),userEmail, userEmail);
-        List<Debate> debate = debateRepository.findTop60ByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "createdAt"),userEmail, userEmail);
+        List<Debate> debate = debateRepository.findTop60ByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "debateId"),userEmail, userEmail);
 
         List<MyDebateDto> myDebateDtoList = new ArrayList<>();
 
@@ -109,7 +109,7 @@ public class UserService {
         }
         String userEmail = user.get().getEmail();
 //        List<Reply> replyList = replyRepository.findAllByUser_Email(Sort.by(Sort.Direction.DESC, "createdAt"), userEmail);
-        List<Reply> replyList = replyRepository.findTop60ByUser_Email(Sort.by(Sort.Direction.DESC, "createdAt"), userEmail);
+        List<Reply> replyList = replyRepository.findTop60ByUser_Email(Sort.by(Sort.Direction.DESC, "replyId"), userEmail);
 
         List<MyReplyDto> myReplyDtoList = new ArrayList<>();
 
@@ -122,5 +122,13 @@ public class UserService {
         }
 
         return ResponseEntity.ok().body(myReplyDtoList);
+    }
+
+    // 4. 프로필 페이지 - 나의 토론 내역 삭제
+    @Transactional
+    public void deleteMydebate(Long debateId, UserDetailsImpl userDetails){
+        User user = userDetails.getUser();
+        debateRepository.deleteByDebateIdAndUser_Email(debateId, user.getEmail());
+        log.info("마이페이지에서 내 토론내역 삭제 완료!");
     }
 }

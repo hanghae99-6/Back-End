@@ -64,6 +64,7 @@
 //
 //            // then
 //            Set<String> members = setOperations.members(key);
+//            System.out.println(members);
 //            Long size = setOperations.size(key);
 //
 //            assertThat(members).containsOnly("h", "e", "l", "o");
@@ -127,7 +128,7 @@
 //
 //        @Test
 //        @DisplayName("Expire Test")
-//        void redisExpireTest() throws InterruptedException {
+//        void redisExpireTest() {
 //            final String key = "a";
 //            final String data = "1";
 //

@@ -69,7 +69,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-resources/**",
                         "/v2/api-docs",
                         "/webjars/**",
-                        "/swagger-ui.html/**");
+                        "/swagger-ui.html/**",
+                        "/chat/**");
     }
 
     @Override
@@ -153,7 +154,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         skipPathList.add("GET,/image/**");
         skipPathList.add("GET,/main/**");
-        skipPathList.add("PUT,/main/**");
+        skipPathList.add("PUT,/main/one-click");
         skipPathList.add("POST,/main/debate/vote");
         skipPathList.add("POST,/main/reply/likes");
         skipPathList.add("GET,/favicon.ico");

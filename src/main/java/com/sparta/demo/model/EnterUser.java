@@ -30,6 +30,9 @@ public class EnterUser extends Timestamped{
     @Column
     private String userImage;
 
+    @Column
+    private String userNickName;
+
     @Setter
     @Column
     @Enumerated(value=EnumType.STRING)
@@ -40,12 +43,14 @@ public class EnterUser extends Timestamped{
     private String opinion;
 
     @Setter
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<DebateEvidence> evidences;
 
-    public EnterUser(Debate debate, String userEmail, SideTypeEnum side) {
+    public EnterUser(Debate debate, User user, SideTypeEnum side) {
         this.debate = debate;
-        this.userEmail = userEmail;
+        this.userEmail = user.getEmail();
+        this.userImage = user.getProfileImg();
+        this.userNickName = user.getNickName();
         this.side = side;
     }
 
@@ -53,6 +58,14 @@ public class EnterUser extends Timestamped{
     public EnterUser(DebateInfoDto debateInfoDto, List<DebateEvidence> evidences) {
         this.opinion = debateInfoDto.getOpinion();
         this.evidences = evidences;
+    }
+
+    public EnterUser(EnterUser enterUser) {
+        this.debate = enterUser.getDebate();
+        this.userEmail = enterUser.getUserEmail();
+        this.userImage = enterUser.getUserImage();
+        this.userNickName = enterUser.getUserNickName();
+        this.side = enterUser.getSide();
     }
 }
 

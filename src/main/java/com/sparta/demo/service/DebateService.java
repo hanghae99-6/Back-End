@@ -6,6 +6,7 @@ import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.DebateEvidence;
 import com.sparta.demo.model.EnterUser;
+import com.sparta.demo.model.User;
 import com.sparta.demo.repository.DebateEvidenceRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
@@ -51,20 +52,28 @@ public class DebateService {
     }
 
     @Transactional
-    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, String userEmail) {
+    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, User user) {
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
         DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
         debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
 
-        Optional<Debate> prosCheck = debateRepository.findByRoomIdAndProsName(roomId,userEmail);
-        Optional<Debate> consCheck = debateRepository.findByRoomIdAndConsName(roomId,userEmail);
+        Optional<Debate> prosCheck = debateRepository.findByRoomIdAndProsName(roomId,user.getEmail());
+        Optional<Debate> consCheck = debateRepository.findByRoomIdAndConsName(roomId,user.getEmail());
 
+
+        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(debate.get().getDebateId(), user.getEmail());
+
+        if(enterUser.isPresent()){
+            debateRoomIdUserValidateDto.setUser(true);
+            return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
+        }
 
         if(prosCheck.isPresent()){
-            enterUserRepository.save(new EnterUser(debate.get(),userEmail, SideTypeEnum.PROS));
-        }else if(consCheck.isPresent()){
-           enterUserRepository.save(new EnterUser(debate.get(),userEmail, SideTypeEnum.CONS));
+            enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.PROS));
+        }
+        else if(consCheck.isPresent()){
+            enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.CONS));
         }
         debateRoomIdUserValidateDto.setUser(prosCheck.isPresent() || consCheck.isPresent());
 
@@ -93,7 +102,7 @@ public class DebateService {
         List<DebateEvidence> evidences = new ArrayList<>();
 
         for (String evidence : evidenceList) {
-            DebateEvidence debateEvidence = new DebateEvidence(evidence);
+            DebateEvidence debateEvidence = new DebateEvidence(evidence, enterUser.get());
             debateEvidenceRepository.save(debateEvidence);
             evidences.add(debateEvidence);
         }

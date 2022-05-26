@@ -7,7 +7,6 @@ import lombok.Data;
 public class MyDebateDto {
     private Debate debate;
     private int totalReply;
-//    private long totalDebateCnt;
     private int side;
 
     public MyDebateDto(Debate debate, int totalReply, int side) {
