@@ -1,5 +1,6 @@
 package com.sparta.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,18 +15,16 @@ public class DebateEvidence {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long debateEvidenceId;
 
-    @Column(nullable = false)
-    private String roomId;
-
     @Column
     private String evidence;
 
-    @Column
-    private String prosCons;
+    @ManyToOne
+    @JoinColumn(name = "enterUserId")
+    @JsonIgnore
+    private EnterUser enterUser;
 
-    public DebateEvidence(String roomId, String evidence, String prosCons) {
-        this.roomId = roomId;
+    public DebateEvidence(String evidence, EnterUser enterUser) {
         this.evidence = evidence;
-        this.prosCons = prosCons;
+        this.enterUser = enterUser;
     }
 }

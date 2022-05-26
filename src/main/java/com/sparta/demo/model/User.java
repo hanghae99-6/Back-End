@@ -42,8 +42,6 @@ public class User {
     @JsonIgnore
     private List<Reply> replyList;
 
-
-
     @Builder
     public User(String userName, String nickName, String enPassword, String email, String profileImg) {
         this.userName = userName;

@@ -8,6 +8,7 @@ import com.sparta.demo.model.DebateVote;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.DebateVoteRepository;
 import com.sparta.demo.util.GetIp;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,60 +20,58 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class DebateVoteService {
 
     private final DebateRepository debateRepository;
     private final DebateVoteRepository debateVoteRepository;
-    private final GetIp getIp;
-    private final Map<Integer, SideTypeEnum> sideTypeEnumMap = new HashMap<>();
-
-    @Autowired
-    public DebateVoteService(DebateRepository debateRepository, DebateVoteRepository debateVoteRepository, GetIp getIp) {
-        this.debateRepository = debateRepository;
-        this.debateVoteRepository = debateVoteRepository;
-        this.getIp = getIp;
-
-        sideTypeEnumMap.put(1,SideTypeEnum.PROS);
-        sideTypeEnumMap.put(2,SideTypeEnum.CONS);
-        sideTypeEnumMap.put(0,SideTypeEnum.DEFAULT);
-    }
 
     @Transactional
     public ResponseEntity<DebateVoteResponseDto> getVote(DebateVoteRequestDto debateVoteRequestDto, HttpServletRequest request) {
-        String ip = getIp.getIp(request);
+        String ip = GetIp.getIp(request);
         Debate debate = debateRepository.findByDebateId(debateVoteRequestDto.getDebateId()).orElseThrow(() -> new IllegalStateException("존재하지 않는 토론입니다."));
 
         Optional<DebateVote> found = debateVoteRepository.findByDebate_DebateIdAndIp(debateVoteRequestDto.getDebateId(),ip);
 
-        SideTypeEnum side = SideTypeEnum.valueOf(String.valueOf(sideTypeEnumMap.get(debateVoteRequestDto.getSide())));
+        SideTypeEnum side = SideTypeEnum.typeOf(debateVoteRequestDto.getSide());
         System.out.println("side: "+side);
+
+        if(side == null) {
+            throw new NullPointerException("찬성 또는 반대 값이 없습니다.");
+        }
 
         if(found.isPresent()){
             if(found.get().getSide() == side){
                 found.get().setSide(SideTypeEnum.DEFAULT);
+                switch (side){
+                    case PROS: debate.setTotalPros(debate.getTotalPros() -1);
+                        break;
+                    case CONS: debate.setTotalCons(debate.getTotalCons() -1);
+                        break;
+                }
                 debateVoteRepository.delete(found.get());
             }else{
                 found.get().setSide(side);
+                switch (side){
+                    case PROS: debate.setTotalPros(debate.getTotalPros() +1);
+                               debate.setTotalCons(debate.getTotalCons() -1);
+                        break;
+                    case CONS: debate.setTotalPros(debate.getTotalPros() -1);
+                               debate.setTotalCons(debate.getTotalCons() +1);
+                        break;
+                }
             }
-            setTotals(debate);
             return ResponseEntity.ok().body(new DebateVoteResponseDto(found, debate));
         }else {
             DebateVote debateVote = new DebateVote(debate,ip, side);
             debateVoteRepository.save(debateVote);
-            setTotals(debate);
+            switch (side){
+                case PROS: debate.setTotalPros(debate.getTotalPros() +1);
+                    break;
+                case CONS: debate.setTotalCons(debate.getTotalCons() +1);
+                    break;
+            }
             return ResponseEntity.ok().body(new DebateVoteResponseDto(Optional.of(debateVote),debate));
         }
-    }
-
-
-    // 찬반 총 투표수 debate에 저장
-    private void setTotals(Debate debate) {
-        Long totalCons;
-        Long totalPros;
-        totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.getDebateId());
-        totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.getDebateId());
-        debate.setTotalCons(totalCons);
-        debate.setTotalPros(totalPros);
     }
 }

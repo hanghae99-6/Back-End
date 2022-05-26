@@ -30,6 +30,8 @@ public class CrawlingService {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
     String todayDate = now.format(formatter);
 
+
+    // 1. 네이버 뉴스 크롤링
     @Transactional
     public ResponseEntity<CrawlingDto> getNaverNews() throws IOException {
 
@@ -38,6 +40,7 @@ public class CrawlingService {
 
         CrawlTypeEnum type = CrawlTypeEnum.NEWS;
 
+        if(crawlingRepository.findAll().size()>3) crawlingRepository.deleteAll();
         Crawling crawling = crawlingRepository.findByDateAndType(todayDate, type);
 
         if(crawling == null){
@@ -51,9 +54,7 @@ public class CrawlingService {
                 Document doc = Jsoup.connect(url).get();
                 Elements elements = doc.getElementsByAttributeValue("class", "list_body newsflash_body");
 
-//                Element element = elements.get(0);
                 Elements photoElements = elements.get(0).getElementsByAttributeValue("class", "photo");
-//            System.out.println("photoElements size: "+ photoElements.size());
 
                 for (int i = 0; i < photoElements.size(); i++) {
 
@@ -80,10 +81,9 @@ public class CrawlingService {
 
                         Crawling naverNews = new Crawling(articleUrl, title, imgUrl, content, todayDate, type);
 
-                        log.info("crawling info: {},{},{},{}", articleUrl, title, imgUrl, content);
                         crawlingRepository.save(naverNews);
-
                         naverNewsDto.setCrawling(naverNews);
+
                         log.info("articleUrl: {}", naverNewsDto.getCrawling().getArticleUrl());
                         log.info("title: {}", naverNewsDto.getCrawling().getTitle());
                         log.info("imgUrl: {}", naverNewsDto.getCrawling().getImgUrl());
@@ -91,7 +91,6 @@ public class CrawlingService {
                         cnt++; break;
                     }
                 }
-
                 if(cnt==0) page++;
                 else break;
             }
@@ -104,6 +103,7 @@ public class CrawlingService {
         return ResponseEntity.ok().body(naverNewsDto);
     }
 
+    // 2. 한국디베이트신문 칼럼페이지 크롤링
     @Transactional
     public ResponseEntity<CrawlingDto> getColumn() throws IOException {
 
@@ -111,6 +111,7 @@ public class CrawlingService {
 
         CrawlTypeEnum type = CrawlTypeEnum.COLUMN;
 
+        if(crawlingRepository.findAll().size()>3) crawlingRepository.deleteAll();
         Crawling crawlingColumn = crawlingRepository.findByDateAndType(todayDate, type);
 
         if(crawlingColumn==null){
@@ -118,8 +119,6 @@ public class CrawlingService {
 
             Document doc = Jsoup.connect(url).get();
             Elements elements = doc.getElementsByAttributeValue("class", "ArtList_Title");
-
-//        Element element = elements.get(0);
 
             Elements aElements = elements.get(0).select("a");
 
@@ -135,7 +134,6 @@ public class CrawlingService {
             String imgUrl = imgElement.attr("src");
 
             String content = elements2.text().substring(0,200);
-//            content = content.split("<")[0];
 
             Crawling debateColumn = new Crawling(articleUrl, title, imgUrl, content, todayDate, type);
 
@@ -155,12 +153,14 @@ public class CrawlingService {
         return ResponseEntity.ok().body(crawlingDto);
     }
 
+    // 3. 매거진
     @Transactional
     public ResponseEntity<CrawlingDto> getMagazine() throws IOException{
         CrawlingDto crawlingDto = new CrawlingDto();
 
         CrawlTypeEnum type = CrawlTypeEnum.MAGAZINE;
 
+        if(crawlingRepository.findAll().size()>3) crawlingRepository.deleteAll();
         Crawling crawlingColumn = crawlingRepository.findByDateAndType(todayDate, type);
 
         if(crawlingColumn==null){
@@ -169,21 +169,28 @@ public class CrawlingService {
 
             Elements elements = doc.getElementsByAttributeValue("class", "container-lg");
 
-            Elements aElements2 = elements.get(0).getElementsByAttributeValue("class","text-dark").get(0).select("a");
+//            Elements aElements2 = elements.get(0).getElementsByAttributeValue("class","text-dark").get(0).select("a");
+            Elements aElements2 = elements.get(0).getElementsByAttributeValue("class","loop-item media d-flex align-items-center align-items-md-stretch border-bottom border-light mb-md-5").get(0).select("a");
 
             String articleUrl = aElements2.attr("href"); //기사링크
 
             String title = aElements2.text();
+            String imgUrl = aElements2.select("img").attr("src");
 
             Document doc2 = Jsoup.connect(articleUrl).get();
             Elements post = doc2.getElementsByAttributeValue("class", "post-content");
 
-            String imgUrl = post.select("img").get(0).attr("src");
-            String content = post.text().substring(0,200);
+//            String imgUrl = post.select("img").get(0).attr("src");
 
-            Crawling magazine = new Crawling(articleUrl, title, imgUrl, content, todayDate, type);
+            Elements authorText = doc2.getElementsByAttributeValue("class", "has-text-align-right"); // 기사 작성자
+            String author = authorText.get(0).text();
 
-            log.info("crawling info: {},{},{},{}", articleUrl, title, imgUrl, content);
+            String content = post.text();
+            String content1 = content.substring(author.length(),200);
+            String content2 = content.substring(200,400);
+
+            Crawling magazine = new Crawling(articleUrl, title, imgUrl, content1, content2, todayDate, type, author);
+
             crawlingRepository.save(magazine);
 
             crawlingDto.setCrawling(magazine);
@@ -191,10 +198,13 @@ public class CrawlingService {
             log.info("title: {}", crawlingDto.getCrawling().getTitle());
             log.info("imgUrl: {}", crawlingDto.getCrawling().getImgUrl());
             log.info("content: {}", crawlingDto.getCrawling().getContent());
+            log.info("content: {}", crawlingDto.getCrawling().getContent2());
+            log.info("content: {}", crawlingDto.getCrawling().getAuthor());
         }
         else {
             crawlingDto.setCrawling(crawlingRepository.findByDateAndType(todayDate, type));
         }
         return ResponseEntity.ok().body(crawlingDto);
     }
+
 }

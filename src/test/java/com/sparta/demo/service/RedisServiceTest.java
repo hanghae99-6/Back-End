@@ -1,8 +1,10 @@
 //package com.sparta.demo.service;
 //
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Nested;
-//import org.junit.jupiter.api.Test;
+//import lombok.Builder;
+//import lombok.Getter;
+//import lombok.Setter;
+//import org.assertj.core.api.Assertions;
+//import org.junit.jupiter.api.*;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 //import org.springframework.boot.test.context.SpringBootTest;
@@ -10,13 +12,18 @@
 //import org.springframework.data.redis.core.RedisTemplate;
 //import org.springframework.data.redis.core.SetOperations;
 //import org.springframework.data.redis.core.ValueOperations;
+//import org.springframework.test.context.ActiveProfiles;
 //
 //import java.util.Map;
 //import java.util.Set;
+//import java.util.concurrent.TimeUnit;
 //
 //import static org.assertj.core.api.Assertions.assertThat;
 //
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED) // 실제 DB 사용하고 싶을때 NONE 사용
+//@ActiveProfiles("test")
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // 실제 DB 사용하고 싶을때 NONE 사용
 //@SpringBootTest
 //class RedisServiceTest {
 //
@@ -41,6 +48,8 @@
 //            //then
 //            String value = valueOperations.get(key);
 //            assertThat(value).isEqualTo("hello");
+//
+//            valueOperations.getAndDelete(key);
 //        }
 //
 //        @Test
@@ -55,6 +64,7 @@
 //
 //            // then
 //            Set<String> members = setOperations.members(key);
+//            System.out.println(members);
 //            Long size = setOperations.size(key);
 //
 //            assertThat(members).containsOnly("h", "e", "l", "o");
@@ -81,6 +91,67 @@
 //
 //            Long size = hashOperations.size(key);
 //            assertThat(size).isEqualTo(entries.size());
+//        }
+//    }
+//    @Nested
+//    @DisplayName("Redis expire test")
+//    class ExpireRedisTest {
+//
+//        @Test
+//        @DisplayName("Redis 에 데이터 넣기")
+//        void redisConnectionTest() {
+//            final String key = "a";
+//            final String data = "1";
+//
+//            final ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+//            valueOperations.set(key, data);
+//
+//            final String s = valueOperations.get(key);
+//            Assertions.assertThat(s).isEqualTo(data);
+//        }
+//
+//        @Test
+//        @DisplayName("객체 삽입")
+//        void redisInsertObject() {
+//            final RedisTemplate<String, RedisUserDto> redisTemplate = new RedisTemplate<>();
+//            RedisUserDto redisUserDto = new RedisUserDto("kenux", "password");
+//
+//            final ValueOperations<String, RedisUserDto> valueOperations = redisTemplate.opsForValue();
+//            valueOperations.set(redisUserDto.getId(), redisUserDto);
+//
+//            final RedisUserDto result = valueOperations.get(redisUserDto.getId());
+//            assertThat(result).isNotNull();
+//            assertThat(result.getId()).isEqualTo(redisUserDto.getId());
+//            assertThat(result.getPw()).isEqualTo(redisUserDto.getPw());
+//            System.out.println("result = " + result);
+//        }
+//
+//        @Test
+//        @DisplayName("Expire Test")
+//        void redisExpireTest() {
+//            final String key = "a";
+//            final String data = "1";
+//
+//            final ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+//            valueOperations.set(key, data);
+//            final Boolean expire = redisTemplate.expire(key, 20, TimeUnit.SECONDS);
+////            Thread.sleep(6000); // 실행 중인 스레드를 잠시 멈추게 한다. 주어진 시간동안 일시정지 되었다가 다시 실행 대기 상태로 돌아간다.
+//            final String s = valueOperations.get(key);
+//            assertThat(expire).isTrue();
+//            assertThat(s).isNull();
+//        }
+//    }
+//
+//    @Getter
+//    @Setter
+//    @Builder
+//    static class RedisUserDto {
+//        private String id;
+//        private String pw;
+//
+//        public RedisUserDto(String kenux, String password) {
+//            this.id = kenux;
+//            this.pw = password;
 //        }
 //    }
 //}

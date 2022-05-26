@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface DebateEvidenceRepository extends JpaRepository<DebateEvidence, Long> {
-    List<DebateEvidence> findByRoomIdAndProsCons(String roomId, String prosCons);
 }

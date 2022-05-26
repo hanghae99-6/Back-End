@@ -6,13 +6,14 @@ import com.sparta.demo.dto.user.MyReplyDto;
 import com.sparta.demo.dto.user.UserRequestDto;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -21,14 +22,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/user/profile")
 public class UserController {
+
     private final UserService userService;
 
-    @GetMapping("/")
-    public void helloWorld() {
-        log.info("접속 : {}", "로그");
-    }
-
     // 닉네임 변경
+    @ApiOperation(value = "유저 닉네임 수정", notes = "유저 닉네임 수정")
     @PutMapping("/nick-name")
     public ResponseEntity<KakaoUserInfoDto> updateUserInfo(@RequestBody UserRequestDto userRequestDto,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -37,6 +35,7 @@ public class UserController {
     }
 
     // 프로필 - 1. 토론 내역
+    @ApiOperation(value = "유저 페이지- 토론 내역 조회", notes = "유저 페이지- 토론 내역 조회")
     @GetMapping("/mydebate")
     public ResponseEntity<List<MyDebateDto>> getMyDebate(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.getMyDebate(userDetails);
@@ -44,11 +43,18 @@ public class UserController {
 
 
     // 프로필 - 2. 내가 쓴 댓글
+    @ApiOperation(value = "유저 페이지- 내가 쓴 댓글 조회", notes = "유저 페이지- 내가 쓴 댓글 조회")
     @GetMapping("/myreply")
     public ResponseEntity<List<MyReplyDto>> getMyReply(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.getMyReply(userDetails);
     }
 
-    // 프로필 - 3. 공통 (총 토론 개수, 댓글 개수)
-//    @GetMapping("/mytotal")
+    // 프로필 - 3. 내가 쓴 토론 삭제
+    @ApiOperation(value = "유저 페이지- 토론 내역 삭제", notes = "유저 페이지 -토론 내역 삭제")
+    @DeleteMapping("/mydebate/{debateId}")
+    public void deleteMydebate(@PathVariable Long debateId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        log.info("controller debateId: {}", debateId);
+        userService.deleteMydebate(debateId, userDetails);
+    }
+
 }

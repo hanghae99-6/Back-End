@@ -56,12 +56,14 @@ public class Debate extends Timestamped{
     private List<EnterUser> enterUserList;
 
     @Column
+    @ColumnDefault("0")
     private Long totalPros;
 
     @Column
+    @ColumnDefault("0")
     private Long totalCons;
 
-    @OneToMany(mappedBy = "debate")
+    @OneToMany(mappedBy = "debate", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Reply> replyList;
 
@@ -69,8 +71,20 @@ public class Debate extends Timestamped{
     @ColumnDefault("0")
     private Integer totalReply;
 
+    @Column
+    @Setter
+    @ColumnDefault("0")
+    private Long visitCnt;
+
+    @OneToMany(mappedBy = "debate", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<DebateVote> debateVoteList;
+
+//    @Column
+//    private Timestamp timestamp;
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto, User user, CategoryEnum category) {
+//        LocalDateTime localDateTime = LocalDateTime.now();
         // 얘는 홈트 어쩌고 그거 그대로 긁어온건데 뭔지 모르겠네요
         // 여기서 왜인지 모르겠는데 this. 이 안먹힙니다. 그래서 생성자안에 이렇게 넣어둔것 같아요... 고칠 수 있으면 고치고싶네요ㅠ
         // todo: static(전역적으로 사용할 때) 인 경우 this를 못 쓰는걸로 알고 있습니다.
@@ -82,6 +96,7 @@ public class Debate extends Timestamped{
         debate.prosName = debateLinkRequestDto.getProsName();
         debate.consName = debateLinkRequestDto.getConsName();
         debate.content = debateLinkRequestDto.getContent();
+//        debate.timestamp = Timestamp.valueOf(localDateTime);
         return debate;
     }
 

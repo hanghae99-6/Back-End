@@ -3,23 +3,12 @@ package com.sparta.demo.service;
 import com.sparta.demo.dto.user.KakaoUserInfoDto;
 import com.sparta.demo.dto.user.MyDebateDto;
 import com.sparta.demo.dto.user.MyReplyDto;
-import com.sparta.demo.enumeration.CategoryEnum;
-import com.sparta.demo.enumeration.SideTypeEnum;
-import com.sparta.demo.model.Debate;
-import com.sparta.demo.model.Likes;
-import com.sparta.demo.model.Reply;
-import com.sparta.demo.model.User;
-import com.sparta.demo.repository.DebateRepository;
-import com.sparta.demo.repository.DebateVoteRepository;
-import com.sparta.demo.repository.ReplyRepository;
-import com.sparta.demo.repository.UserRepository;
+import com.sparta.demo.model.*;
+import com.sparta.demo.repository.*;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,7 +30,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final DebateRepository debateRepository;
     private final ReplyRepository replyRepository;
-    private final DebateVoteRepository debateVoteRepository;
 
     // 1. 닉네임 수정
     @Transactional
@@ -90,16 +78,15 @@ public class UserService {
             throw new IllegalArgumentException("유저정보가 없습니다");
         }
         String userEmail = user.get().getEmail();
-        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(userEmail, userEmail);
+
+//        List<Debate> debate = debateRepository.findAllByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "createdAt"),userEmail, userEmail);
+        List<Debate> debate = debateRepository.findTop60ByProsNameOrConsName(Sort.by(Sort.Direction.DESC, "debateId"),userEmail, userEmail);
 
         List<MyDebateDto> myDebateDtoList = new ArrayList<>();
 
         int side = 0;
         for (int i = 0; i < debate.size(); i++) {
-            List<Reply> replyList = replyRepository.findAllByDebate_DebateId(debate.get(i).getDebateId());
-            int totalReply = replyList.size();
-//            Long totalCons = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.CONS, debate.get(i).getDebateId());
-//            Long totalPros = debateVoteRepository.countAllBySideAndDebate_DebateId(SideTypeEnum.PROS, debate.get(i).getDebateId());
+            int totalReply = debate.get(i).getTotalReply();
 
             // 자신이 참여한 토론 중 자신이 찬성측인지 반대측인지. 찬성측이면 side =1 반대측이면 side =2.
             if(debate.get(i).getProsName().equals(user.get().getEmail())){
@@ -113,7 +100,6 @@ public class UserService {
         return ResponseEntity.ok().body(myDebateDtoList);
     }
 
-
     // 3. 프로필 페이지 - 내가 쓴 댓글
     @Transactional
     public ResponseEntity<List<MyReplyDto>> getMyReply(UserDetailsImpl userDetails) {
@@ -122,22 +108,27 @@ public class UserService {
             throw new IllegalArgumentException("유저정보가 없습니다");
         }
         String userEmail = user.get().getEmail();
-        List<Reply> replyList = replyRepository.findAllByUser_Email(userEmail);
+//        List<Reply> replyList = replyRepository.findAllByUser_Email(Sort.by(Sort.Direction.DESC, "createdAt"), userEmail);
+        List<Reply> replyList = replyRepository.findTop60ByUser_Email(Sort.by(Sort.Direction.DESC, "replyId"), userEmail);
 
         List<MyReplyDto> myReplyDtoList = new ArrayList<>();
 
         for (int i = 0; i < replyList.size(); i++) {
-            String reply = replyList.get(i).getReply();
+            Reply reply = replyList.get(i);
             Debate debate = replyList.get(i).getDebate();
-            String topic = debate.getTopic();
-            CategoryEnum categoryEnum = debate.getCategoryEnum();
-            String content = debate.getContent();
-            List<Likes> likesList = replyList.get(i).getLikesList();
 
-            MyReplyDto myReplyDto = new MyReplyDto(reply, likesList, topic, categoryEnum, content);
+            MyReplyDto myReplyDto = new MyReplyDto(reply, debate);
             myReplyDtoList.add(myReplyDto);
         }
 
         return ResponseEntity.ok().body(myReplyDtoList);
+    }
+
+    // 4. 프로필 페이지 - 나의 토론 내역 삭제
+    @Transactional
+    public void deleteMydebate(Long debateId, UserDetailsImpl userDetails){
+        User user = userDetails.getUser();
+        debateRepository.deleteByDebateIdAndUser_Email(debateId, user.getEmail());
+        log.info("마이페이지에서 내 토론내역 삭제 완료!");
     }
 }

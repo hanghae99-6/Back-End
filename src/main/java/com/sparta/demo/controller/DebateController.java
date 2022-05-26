@@ -5,6 +5,7 @@ import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.DebateService;
+import com.sparta.demo.validator.ErrorResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// todo: 그냥 컨트롤러 쓰는 건 약간 영문을 모르겠네요?
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/debate")
 public class DebateController {
@@ -30,22 +30,23 @@ public class DebateController {
         return debateService.createLink(debateLinkRequestDto, userDetails);
     }
 
+    // 토론방 내에서 필요한 내용
     @GetMapping("/{roomId}")
     public ResponseEntity<DebateRoomResponseDto> getRoom(@PathVariable String roomId){
         return debateService.getRoom(roomId);
     }
+
     @GetMapping("/{roomId}/check")
     public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        log.info("room check 까지 들어왔다.");
         log.info("userDetails.getUser() : {}", userDetails.getUser());
         log.info("userDetails.getUser().getEmail() : {}", userDetails.getUser().getEmail());
-        return debateService.checkRoomIdUser(roomId, userDetails.getUser().getEmail());
+        return debateService.checkRoomIdUser(roomId, userDetails.getUser());
     }
 
     @PostMapping("/{roomId}")
-    public ResponseEntity<Boolean> saveDebateInfo(@PathVariable String roomId,
-                                                    @RequestBody DebateInfoDto debateInfoDto,
-                                                 @AuthenticationPrincipal UserDetailsImpl userDetails
+    public ErrorResult saveDebateInfo(@PathVariable String roomId,
+                                      @RequestBody DebateInfoDto debateInfoDto,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails
                                                  ) {
         log.info("evidence : {}", debateInfoDto.getEvidences().get(0));
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);

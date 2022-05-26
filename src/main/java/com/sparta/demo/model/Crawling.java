@@ -8,7 +8,6 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 public class Crawling {
@@ -31,8 +30,11 @@ public class Crawling {
     @Column(nullable = false)
     private String date;
 
-//    @Column
-//    private int crawlingType; // 0: NaverNews, 1: 한국디베이트신문
+    @Column
+    private String author;
+
+    @Column
+    private String content2;
 
     @Column
     @Enumerated(value=EnumType.STRING)
@@ -47,12 +49,15 @@ public class Crawling {
         this.type = type;
     }
 
-    public Crawling(String articleUrl, String title, String imgUrl, String content, CrawlTypeEnum type){
+    public Crawling(String articleUrl, String title, String imgUrl, String content, String content2, String date, CrawlTypeEnum type, String author){
         this.articleUrl = articleUrl;
         this.title = title;
         this.imgUrl = imgUrl;
         this.content = content;
+        this.content2 = content2;
+        this.date = date;
         this.type = type;
+        this.author = author;
     }
 
 }
