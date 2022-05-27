@@ -15,7 +15,5 @@ public interface EnterUserRepository extends JpaRepository<EnterUser, Long> {
     
     Optional<EnterUser> findByDebate_DebateIdAndUserEmail(Long debateId, String userEmail);
 
-    Optional<EnterUser> findByDebate_DebateIdAndSide(Long debateId, SideTypeEnum side);
-
     Optional<EnterUser> findByDebate_RoomId(String roomId);
 }

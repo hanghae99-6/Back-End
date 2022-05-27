@@ -1,4 +1,4 @@
-package com.sparta.demo.config.redis;
+package com.sparta.demo.config.notification;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
