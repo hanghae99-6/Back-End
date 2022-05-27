@@ -57,7 +57,7 @@ public class ChatMessageRepository {// Redis
     }
 
     public Long minusUserCnt(String roomId) {
-        Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse(ErrorCode.NOT_FOUND_DEBATE_ID.getErrorMessage());
+        Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).filter(count -> false).orElse(ErrorCode.NOT_FOUND_DEBATE_ID.getErrorMessage());
 
         if(Objects.equals(valueOps.get(USER_COUNT + "_" + roomId), "0")) {
             opsHashChatMessage.delete(CHAT_MESSAGE, roomId);
