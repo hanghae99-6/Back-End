@@ -9,12 +9,14 @@ import com.sparta.demo.config.chat.repository.ChatRoomRepository;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static com.sparta.demo.config.chat.exception.ErrorCode.NO_MESSAGE;
 
@@ -28,12 +30,14 @@ public class ChatMessageService {
     private final RedisPublisher redisPublisher;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final ValueOperations<String, String> valueOperations;
+    private final RedisTemplate<String, String> redisTemplate;
+
     private final JwtDecoder jwtDecoder;
 
 
     public void save(ChatMessageDto messageDto, String token) {
         log.info("save Message : {}", messageDto.getMessage());
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
         String userNickname = "";
         String sender = "";
@@ -76,14 +80,5 @@ public class ChatMessageService {
     public List<ChatMessage> getMessages(String roomId) {
         log.info("getMessages roomId : {}", roomId);
         return chatMessageRepository.findAllMessage(roomId);
-    }
-
-    public String getRoomId(String destination) {
-        int lastIndex = destination.lastIndexOf('/');
-        if (lastIndex != -1) {
-            return destination.substring(lastIndex + 1);
-        } else {
-            return "";
-        }
     }
 }

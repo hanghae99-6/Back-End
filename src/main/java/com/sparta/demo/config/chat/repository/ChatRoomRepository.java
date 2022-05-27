@@ -3,6 +3,7 @@ package com.sparta.demo.config.chat.repository;
 import com.sparta.demo.config.chat.model.ChatRoom;
 import com.sparta.demo.config.chat.pubsub.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
