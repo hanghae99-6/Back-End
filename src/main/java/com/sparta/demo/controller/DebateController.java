@@ -44,7 +44,7 @@ public class DebateController {
     }
 
     @PostMapping("/{roomId}")
-    public ErrorResult saveDebateInfo(@PathVariable String roomId,
+    public ResponseEntity<ErrorResult> saveDebateInfo(@PathVariable String roomId,
                                       @RequestBody DebateInfoDto debateInfoDto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails
                                                  ) {

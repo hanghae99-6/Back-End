@@ -26,16 +26,18 @@ public class ChatController {
     */
     @MessageMapping("/chat/message")
     public void message(ChatMessage message) {
+        log.info("pub/chat/message, message : {}", message.getMessage());
         Date date = new Date();
         log.info("date = : {}", date);
         message.setCreatedAt(date.toString().substring(11,19));
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
-            chatRoomRepository.enterChatRoom(message.getDebateId());
+            chatRoomRepository.enterChatRoom(message.getRoomId());
             message.setMessage(message.getSender() + "님이 입장하셨습니다.");
+            log.info("입장하셨습니다. : {}", message.getMessage());
         } else {
             chatMessageService.save(message);
         }
         // Websocket 에 발행된 메시지를 redis 로 발행한다(publish)
-        redisPublisher.publish(chatRoomRepository.getTopic(message.getDebateId()), new ChatMessageDto(message));
+        redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), new ChatMessageDto(message));
     }
 }
