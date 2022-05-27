@@ -55,10 +55,13 @@ public class ChatMessageRepository {// Redis
     }
 
     public Long minusUserCnt(String roomId) {
+        if(valueOps.get(USER_COUNT + "_" + roomId) == null) {
+            return Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0).orElse(0L);
+        }
         if(Objects.equals(valueOps.get(USER_COUNT + "_" + roomId), "0")) {
             opsHashChatMessage.delete(CHAT_MESSAGE, roomId);
         }
-        return Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0).orElse(0L);
+        return null;
 
     }
 }
