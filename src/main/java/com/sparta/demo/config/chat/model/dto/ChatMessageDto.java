@@ -11,13 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessageDto {
-    private String sender;
-    private String message;
-    private String createdAt;
-
-    public ChatMessageDto(ChatMessage chatMessage) {
-        this.sender = chatMessage.getSender();
-        this.message = chatMessage.getMessage();
-        this.createdAt = chatMessage.getCreatedAt();
-    }
+    // 메시지 타입 : 입장, 채팅
+    private ChatMessage.MessageType type; // 메시지 타입
+    private String roomId; // 방번호
+    private String message; // 메시지
 }
