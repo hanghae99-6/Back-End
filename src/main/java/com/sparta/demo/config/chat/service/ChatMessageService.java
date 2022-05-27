@@ -9,11 +9,12 @@ import com.sparta.demo.config.chat.repository.ChatRoomRepository;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.sparta.demo.config.chat.exception.ErrorCode.NO_MESSAGE;
 
@@ -22,17 +23,22 @@ import static com.sparta.demo.config.chat.exception.ErrorCode.NO_MESSAGE;
 @RequiredArgsConstructor
 public class ChatMessageService {
 
+    public static final String USER_COUNT = "USER_COUNT"; // 채팅룸에 입장한 클라이언트수 저장
+
     private final RedisPublisher redisPublisher;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final ValueOperations<String, String> valueOperations;
     private final JwtDecoder jwtDecoder;
 
 
     public void save(ChatMessageDto messageDto, String token) {
         log.info("save Message : {}", messageDto.getMessage());
-        // username 세팅
+
         String userNickname = "";
         String sender = "";
+
+        String enterUserCnt = valueOperations.get(USER_COUNT + "_" + messageDto.getRoomId());
 
         // TODO: trim() 쓴 이유
         if(messageDto.getMessage().trim().equals("") && messageDto.getType()!= ChatMessage.MessageType.ENTER){
@@ -42,8 +48,10 @@ public class ChatMessageService {
         if (!(String.valueOf(token).equals("Authorization") || String.valueOf(token).equals("null"))) {
             String tokenInfo = token.substring(7); // Bearer 빼고
             userNickname = jwtDecoder.decodeNickName(tokenInfo);
-            sender = jwtDecoder.decodeUsername(tokenInfo);
+            sender = jwtDecoder.decodeEmail(tokenInfo);
         }
+
+
 
         ChatMessage message = new ChatMessage(messageDto);
 
@@ -55,6 +63,7 @@ public class ChatMessageService {
         message.setCreatedAt(date);
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
+            message.setEnterUserCnt(enterUserCnt);
             message.setMessage(message.getNickname() + "님이 입장하셨습니다.");
         } else {
             chatMessageRepository.save(message);
@@ -67,5 +76,14 @@ public class ChatMessageService {
     public List<ChatMessage> getMessages(String roomId) {
         log.info("getMessages roomId : {}", roomId);
         return chatMessageRepository.findAllMessage(roomId);
+    }
+
+    public String getRoomId(String destination) {
+        int lastIndex = destination.lastIndexOf('/');
+        if (lastIndex != -1) {
+            return destination.substring(lastIndex + 1);
+        } else {
+            return "";
+        }
     }
 }

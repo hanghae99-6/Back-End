@@ -22,6 +22,7 @@ public class ChatMessage {
     private String sender; // 메시지 보낸사람 id
     private String nickname;// 메시지 보낸사람 name
     private String message; // 메시지
+    private String enterUserCnt;
 
     //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
 //    @JsonSerialize(using = LocalDateTimeSerializer.class)
