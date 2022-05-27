@@ -14,7 +14,6 @@ import com.sparta.demo.util.ExistSessionException;
 import io.openvidu.java.client.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import javax.transaction.Transactional;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -32,6 +30,16 @@ import java.util.concurrent.TimeUnit;
 public class SessionService {
     private DebateRepository debateRepository;
     private EnterUserRepository enterUserRepository;
+
+
+
+//    private static final Long DEFAULT_TIMEOUT = 60L * 4 * 60;
+//
+//    private final RedisTemplate<String, String> redisTemplate;
+
+
+
+
     // OpenVidu object as entrypoint of the SDK
     private OpenVidu openVidu;
 
@@ -47,6 +55,14 @@ public class SessionService {
     // Secret shared with our OpenVidu server
     private String SECRET;
 
+//    public SessionService(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl, EnterUserRepository enterUserRepository, DebateRepository debateRepository, RedisTemplate<String, String> redisTemplate) {
+//        this.debateRepository = debateRepository;
+//        this.enterUserRepository = enterUserRepository;
+//        this.SECRET = secret;
+//        this.OPENVIDU_URL = openviduUrl;
+//        this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
+//        this.redisTemplate = redisTemplate;
+//    }
     public SessionService(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl, EnterUserRepository enterUserRepository, DebateRepository debateRepository) {
         this.debateRepository = debateRepository;
         this.enterUserRepository = enterUserRepository;
