@@ -70,7 +70,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v2/api-docs",
                         "/webjars/**",
                         "/swagger-ui.html/**");
-//                        "/chat/**");
     }
 
     @Override
