@@ -172,14 +172,18 @@ public class SessionService {
     // todo: 발표자(publisher)가 입장한 현황에 따라서 발표방 상태 설정
     @Transactional
     public void setDebateStatus(Debate debate){
+        log.info("디베이트 상태 저장으로 진입 확인");
         boolean pros = enterUserRepository.findByDebate_DebateIdAndSide(debate.getDebateId(), SideTypeEnum.PROS).isPresent();
         boolean cons = enterUserRepository.findByDebate_DebateIdAndSide(debate.getDebateId(), SideTypeEnum.CONS).isPresent();
 
         if(cons && pros){
             debate.setStatusEnum(StatusTypeEnum.LIVEON);
+            debateRepository.save(debate);
         }else if(pros || cons){
             debate.setStatusEnum(StatusTypeEnum.HOLD);
+            debateRepository.save(debate);
         }
+        log.info("debate.getStausEnum: {}", debate.getStatusEnum().getName());
     }
 
     // todo: publisher가 모두 나가면 session 삭제하기 위한 token 저장

@@ -12,9 +12,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class RedisPublisher {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, ChatMessageDto> redisTemplate;
 
     public void publish(ChannelTopic topic, ChatMessageDto messageDto) {
+        if(topic != null) {
+            log.info("redisPublisher.topic : {}", topic.getTopic());
+        }
+        if(messageDto != null) {
+            log.info("redisPublisher.messageDto : {}", messageDto.getMessage());
+        }
         redisTemplate.convertAndSend(topic.getTopic(), messageDto);
     }
 }

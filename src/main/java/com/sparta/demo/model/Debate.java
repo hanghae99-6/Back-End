@@ -83,7 +83,7 @@ public class Debate extends Timestamped{
 
 
     // todo: live now 진행될 경우 추가해야할 컬럼
-    @Column(nullable = false)
+    @Column
     @Enumerated(value=EnumType.STRING)
     @Setter
     private StatusTypeEnum statusEnum;
