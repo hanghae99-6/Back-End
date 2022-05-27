@@ -1,5 +1,7 @@
 package com.sparta.demo.config.chat.repository;
 
+import com.sparta.demo.config.chat.exception.CustomException;
+import com.sparta.demo.config.chat.exception.ErrorCode;
 import com.sparta.demo.config.chat.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,13 +57,12 @@ public class ChatMessageRepository {// Redis
     }
 
     public Long minusUserCnt(String roomId) {
-        if(valueOps.get(USER_COUNT + "_" + roomId) == null) {
-            return Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0).orElse(0L);
-        }
+        Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse(ErrorCode.NOT_FOUND_DEBATE_ID.getErrorMessage());
+
         if(Objects.equals(valueOps.get(USER_COUNT + "_" + roomId), "0")) {
             opsHashChatMessage.delete(CHAT_MESSAGE, roomId);
         }
-        return null;
+        return Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0).orElse(0L);
 
     }
 }
