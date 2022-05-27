@@ -3,6 +3,7 @@ package com.sparta.demo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import com.sparta.demo.enumeration.CategoryEnum;
+import com.sparta.demo.enumeration.StatusTypeEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,8 +12,6 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,8 +81,12 @@ public class Debate extends Timestamped{
     @JsonIgnore
     private List<DebateVote> debateVoteList;
 
-//    @Column
-//    private Timestamp timestamp;
+
+    // todo: live now 진행될 경우 추가해야할 컬럼
+    @Column
+    @Enumerated(value=EnumType.STRING)
+    @Setter
+    private StatusTypeEnum statusEnum;
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto, User user, CategoryEnum category) {
 //        LocalDateTime localDateTime = LocalDateTime.now();

@@ -16,6 +16,7 @@ import com.sparta.demo.validator.DebateValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.http.ResponseEntity;
@@ -31,16 +32,16 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MainService {
     private static final Long DEFAULT_TIMEOUT = 60L * 24 * 60;
+    private static final String VISIT_COUNT = "visitCnt";
 
-    final private DebateRepository debateRepository;
+    private final DebateRepository debateRepository;
     private final OneClickRepository oneClickRepository;
     private final OneClickUserRepository oneClickUserRepository;
     private final DebateVoteRepository debateVoteRepository;
-    private final EnterUserRepository enterUserRepository;
     private final DebateValidator debateValidator;
 
-//    @Autowired
-//    private final RedisTemplate<Long, String> redisTemplate;
+    @Autowired
+    private final RedisTemplate<String, String> redisTemplate;
 
     // 메인 페이지 - 전체 카테고리의 HOTPEECH 목록
     public ResponseEntity<List<MainCategoryResDto>> getMainAll() {
@@ -117,16 +118,18 @@ public class MainService {
             side = SideTypeEnum.DEFAULT;
         }
         log.info("detail service side: {}", side);
+        String redisKey = String.valueOf(debateId);
 
-//        SetOperations<Long, String> setOperations = redisTemplate.opsForSet();
-//
-//        Set<String> userIp = setOperations.members(debateId);
-//        if(userIp != null) {
-//            return debateValidator.validEmptyValue(debateId, debate, side);
-//        }
-//
-//        setOperations.add(debateId, ip);
-//        redisTemplate.expire(debateId, DEFAULT_TIMEOUT, TimeUnit.HOURS);
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+
+        String userIp = hashOperations.get(redisKey, VISIT_COUNT);
+
+        if(userIp != null && userIp.equals(ip)) {
+            return debateValidator.validEmptyValue(debateId, debate, side);
+        }
+
+        hashOperations.put(redisKey, VISIT_COUNT, ip);
+        redisTemplate.expire(redisKey, DEFAULT_TIMEOUT, TimeUnit.HOURS);
 
         debate.setVisitCnt(debate.getVisitCnt()+1L);
 
@@ -204,7 +207,7 @@ public class MainService {
                     oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
                     break;
                 case 2:
-                    oneClick.setOppoNum(oneClick.getAgreeNum() + 1);
+                    oneClick.setOppoNum(oneClick.getOppoNum() + 1);
                     break;
             }
         }

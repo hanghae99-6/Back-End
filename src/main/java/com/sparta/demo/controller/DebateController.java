@@ -30,21 +30,21 @@ public class DebateController {
         return debateService.createLink(debateLinkRequestDto, userDetails);
     }
 
-    // 토론방 내에서 필요한 내용
-    @GetMapping("/{roomId}")
-    public ResponseEntity<DebateRoomResponseDto> getRoom(@PathVariable String roomId){
-        return debateService.getRoom(roomId);
-    }
-
-    @GetMapping("/{roomId}/check")
-    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        log.info("userDetails.getUser() : {}", userDetails.getUser());
-        log.info("userDetails.getUser().getEmail() : {}", userDetails.getUser().getEmail());
-        return debateService.checkRoomIdUser(roomId, userDetails.getUser());
-    }
+//    // 토론방 내에서 필요한 내용
+//    @GetMapping("/{roomId}")
+//    public ResponseEntity<DebateRoomResponseDto> getRoom(@PathVariable String roomId){
+//        return debateService.getRoom(roomId);
+//    }
+//
+//    @GetMapping("/{roomId}/check")
+//    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+//        log.info("userDetails.getUser() : {}", userDetails.getUser());
+//        log.info("userDetails.getUser().getEmail() : {}", userDetails.getUser().getEmail());
+//        return debateService.checkRoomIdUser(roomId, userDetails.getUser());
+//    }
 
     @PostMapping("/{roomId}")
-    public ErrorResult saveDebateInfo(@PathVariable String roomId,
+    public ResponseEntity<ErrorResult> saveDebateInfo(@PathVariable String roomId,
                                       @RequestBody DebateInfoDto debateInfoDto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails
                                                  ) {
