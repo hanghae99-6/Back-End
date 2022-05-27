@@ -1,5 +1,6 @@
 package com.sparta.demo.config.chat.pubsub;
 
+import com.sparta.demo.config.chat.model.ChatMessage;
 import com.sparta.demo.config.chat.model.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,15 +13,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class RedisPublisher {
 
-    private final RedisTemplate<String, ChatMessageDto> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publish(ChannelTopic topic, ChatMessageDto messageDto) {
+    public void publish(ChannelTopic topic, ChatMessage message) {
         if(topic != null) {
             log.info("redisPublisher.topic : {}", topic.getTopic());
         }
-        if(messageDto != null) {
-            log.info("redisPublisher.messageDto : {}", messageDto.getMessage());
+        if(message != null) {
+            log.info("redisPublisher.messageDto : {}", message.getMessage());
         }
-        redisTemplate.convertAndSend(topic.getTopic(), messageDto);
+        redisTemplate.convertAndSend(topic.getTopic(), message);
     }
 }
