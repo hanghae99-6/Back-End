@@ -6,7 +6,6 @@ import java.util.List;
 
 @Getter
 public class DebateInfoDto {
-    private String prosCons;
     private String opinion;
     private List<String> evidences;
 }

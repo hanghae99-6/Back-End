@@ -46,55 +46,54 @@ public class DebateService {
         return ResponseEntity.ok().body(debateLinkResponseDto);
     }
 
-    public ResponseEntity<DebateRoomResponseDto> getRoom(String roomId) {
-        Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(()->new NullPointerException("존재하지 않는 방입니다."));
-        return ResponseEntity.ok().body(new DebateRoomResponseDto(debate));
-    }
+//    public ResponseEntity<DebateRoomResponseDto> getRoom(String roomId) {
+//        Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(()->new NullPointerException("존재하지 않는 방입니다."));
+//        return ResponseEntity.ok().body(new DebateRoomResponseDto(debate));
+//    }
+//
+//    @Transactional
+//    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, User user) {
+//
+//        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
+//        DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
+//        debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
+//
+//        Optional<Debate> prosCheck = debateRepository.findByRoomIdAndProsName(roomId,user.getEmail());
+//        Optional<Debate> consCheck = debateRepository.findByRoomIdAndConsName(roomId,user.getEmail());
+//
+//
+//        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(debate.get().getDebateId(), user.getEmail());
+//
+//        if(enterUser.isPresent()){
+//            debateRoomIdUserValidateDto.setUser(true);
+//            return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
+//        }
+//
+//        if(prosCheck.isPresent()){
+//            enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.PROS));
+//        }
+//        else if(consCheck.isPresent()){
+//            enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.CONS));
+//        }
+//        debateRoomIdUserValidateDto.setUser(prosCheck.isPresent() || consCheck.isPresent());
+//
+//        return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
+//    }
 
     @Transactional
-    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, User user) {
+    public ResponseEntity<ErrorResult> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
 
-        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
-        DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
-        debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
-
-        Optional<Debate> prosCheck = debateRepository.findByRoomIdAndProsName(roomId,user.getEmail());
-        Optional<Debate> consCheck = debateRepository.findByRoomIdAndConsName(roomId,user.getEmail());
-
-
-        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(debate.get().getDebateId(), user.getEmail());
-
-        if(enterUser.isPresent()){
-            debateRoomIdUserValidateDto.setUser(true);
-            return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
-        }
-
-        if(prosCheck.isPresent()){
-            enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.PROS));
-        }
-        else if(consCheck.isPresent()){
-            enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.CONS));
-        }
-        debateRoomIdUserValidateDto.setUser(prosCheck.isPresent() || consCheck.isPresent());
-
-        return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
-    }
-
-    @Transactional
-    public ErrorResult saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
-
-        int sideNum = (debateInfoDto.getProsCons().equals("찬성"))? 1 : 2;
-        SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(sideNum);
 
         Optional<Debate> validRoomId = debateRepository.findByRoomId(roomId);
         if(!validRoomId.isPresent()) {
-            return new ErrorResult(false, "fail");
+            return ResponseEntity.ok().body(new ErrorResult(false, "fail"));
         }
-        Optional<EnterUser> enterUser = enterUserRepository.findBySideAndDebate_RoomId(sideTypeEnum, roomId);
+        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_RoomId(roomId);
         if(!enterUser.isPresent()) {
-            return new ErrorResult(false, "unMatch");
+            return ResponseEntity.ok().body(new ErrorResult(false, "unMatch"));
         }
         EnterUser validEnterUser = enterUser.get();
+        SideTypeEnum sideTypeEnum = validEnterUser.getSide();
 
         DebateValidator.validateDebate(validEnterUser, userDetails, sideTypeEnum); // 유효성 검사 실행
 
@@ -108,9 +107,11 @@ public class DebateService {
         }
 
         validEnterUser.setEvidences(evidences);
+        log.info("validEnterUser.getEvidences {}:" , validEnterUser.getEvidences().get(0).getEvidence());
         validEnterUser.setOpinion(debateInfoDto.getOpinion());
+        log.info("validEnterUser.getOpinion(): {}",validEnterUser.getOpinion());
 
-        return new ErrorResult(true, "success");
+        return ResponseEntity.ok().body(new ErrorResult(true, "success"));
     }
 
 }

@@ -3,6 +3,7 @@ package com.sparta.demo.service;
 import com.sparta.demo.dto.session.EnterRes;
 import com.sparta.demo.dto.session.LeaveRoomRes;
 import com.sparta.demo.enumeration.SideTypeEnum;
+import com.sparta.demo.enumeration.StatusTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.model.User;
@@ -13,14 +14,17 @@ import com.sparta.demo.util.ExistSessionException;
 import io.openvidu.java.client.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -59,44 +63,17 @@ public class SessionService {
         EnterUser enterUser = setEnterUser(debate, userDetails.getUser());
         System.out.println("userName: " + userDetails.getUsername());
 
-        Boolean isPanel = getPanel(debate, userDetails.getUser().getEmail());
-        System.out.println("isPanel : "+isPanel);
+        OpenViduRole role = (getPanel(debate, userDetails.getUser().getEmail()) ? OpenViduRole.PUBLISHER:OpenViduRole.SUBSCRIBER);
 
-        OpenViduRole role = (isPanel) ? OpenViduRole.PUBLISHER:OpenViduRole.SUBSCRIBER;
+        String token = getToken(userDetails.getUser(), role, roomId, httpSession);
 
-        String serverData = "{\"serverData\": \"" + userDetails.getUser().getNickName() + "\"}";
-        System.out.println("serverData : "+serverData);
-
-        ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
-                .role(role).data(serverData).build();
-
-        String token = "";
-        // 검색하는 방이 존재하지 않을 경우
-        if (this.mapSessions.get(roomId) == null) {
-            // session 값 생성
-            Session session = this.openVidu.createSession();
-            log.info("방이 없는 경우에 진입 roomId: {}, sessionId: {}", roomId,session.getSessionId());
-            try{
-                token = session.createConnection(connectionProperties).getToken();
-                // 방 관리 map에 저장 roomId랑 들어온 유저 저장
-                this.mapSessions.put(roomId, session);
-                this.mapSessionNamesTokens.put(roomId, new ConcurrentHashMap<>());
-                this.mapSessionNamesTokens.get(roomId).put(token, role);
-            }catch (Exception e){
-                httpSession.setAttribute("error",e);
-            }
-        }else{
-            log.info("방이 있는 경우에 진입 roomId: {}, sessionId: {}", roomId, mapSessions.get(roomId).getSessionId());
-            try{
-                token = this.mapSessions.get(roomId).createConnection(connectionProperties).getToken();
-                this.mapSessionNamesTokens.get(roomId).put(token, role);
-            }catch (Exception e){
-                httpSession.setAttribute("error",e);
-            }
+        // todo: publisher가 모두 나가면 session 삭제하기 위한 token 저장
+        // todo: 발표자(publisher)가 입장한 현황에 따라서 발표방 상태 설정
+        if(role.equals(OpenViduRole.PUBLISHER)) {
+//        saveToken(roomId,userEmail,token);
+        setDebateStatus(debate);
         }
-        System.out.println("token :"+ token );
-
-        return getEnterRes(token, role, enterUser, debate);
+        return new EnterRes(role, token, enterUser, debate);
 
     }
 
@@ -142,16 +119,69 @@ public class SessionService {
         return debate1.isPresent() || debate2.isPresent();
     }
 
-    private EnterRes getEnterRes(String token, OpenViduRole role, EnterUser enterUser, Debate debate) {
-        return new EnterRes(role, token, enterUser, debate);
+    private String getToken(User user, OpenViduRole role, String roomId, HttpSession httpSession) throws OpenViduJavaClientException, OpenViduHttpException {
+        String serverData = "{\"serverData\": \"" + user.getNickName() + "\"}";
+        System.out.println("serverData : "+serverData);
+
+        ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
+                .role(role).data(serverData).build();
+
+        String token = "";
+        // 검색하는 방이 존재하지 않을 경우
+        if (this.mapSessions.get(roomId) == null) {
+            // session 값 생성
+            Session session = this.openVidu.createSession();
+            log.info("방이 없는 경우에 진입 roomId: {}, sessionId: {}", roomId,session.getSessionId());
+            try{
+                token = session.createConnection(connectionProperties).getToken();
+                // 방 관리 map에 저장 roomId랑 들어온 유저 저장
+                this.mapSessions.put(roomId, session);
+                this.mapSessionNamesTokens.put(roomId, new ConcurrentHashMap<>());
+                this.mapSessionNamesTokens.get(roomId).put(token, role);
+            }catch (Exception e){
+                httpSession.setAttribute("error",e);
+            }
+        }else{
+            log.info("방이 있는 경우에 진입 roomId: {}, sessionId: {}", roomId, mapSessions.get(roomId).getSessionId());
+            try{
+                token = this.mapSessions.get(roomId).createConnection(connectionProperties).getToken();
+                this.mapSessionNamesTokens.get(roomId).put(token, role);
+            }catch (Exception e){
+                httpSession.setAttribute("error",e);
+            }
+        }
+        System.out.println("token :"+ token );
+        return token;
+    }
+    // todo: 발표자(publisher)가 입장한 현황에 따라서 발표방 상태 설정
+    @Transactional
+    public void setDebateStatus(Debate debate){
+        boolean pros = enterUserRepository.findByDebate_DebateIdAndSide(debate.getDebateId(), SideTypeEnum.PROS).isPresent();
+        boolean cons = enterUserRepository.findByDebate_DebateIdAndSide(debate.getDebateId(), SideTypeEnum.CONS).isPresent();
+
+        if(cons && pros){
+            debate.setStatusEnum(StatusTypeEnum.LIVEON);
+        }else if(pros || cons){
+            debate.setStatusEnum(StatusTypeEnum.HOLD);
+        }
     }
 
+    // todo: publisher가 모두 나가면 session 삭제하기 위한 token 저장
+//    private void saveToken(String roomId, String userEmail, String token){
+//        log.info("saveToken service: {}, {}, {}", roomId, userEmail, token);
+//        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+//
+//        hashOperations.put(roomId, userEmail, token);
+//        redisTemplate.expire(roomId, DEFAULT_TIMEOUT, TimeUnit.HOURS);
+//    }
 
 
 
+    @Transactional
     public ResponseEntity<LeaveRoomRes> leaveRoom(String roomId, String token, UserDetailsImpl userDetails) {
 
         EnterUser enterUser = getEnterUser(roomId, userDetails.getUser());
+        Debate debate = getDebate(roomId);
 
         // If the session exists
         if (this.mapSessions.get(roomId) != null && this.mapSessionNamesTokens.get(roomId) != null) {
@@ -160,11 +190,18 @@ public class SessionService {
             if (this.mapSessionNamesTokens.get(roomId).remove(token) != null) {
                 log.info("token 유효성 통과");
                 log.info("this.mapSessionNamesTokens.get(roomId).toString() :{}",this.mapSessionNamesTokens.get(roomId).toString());
+                // todo: publisher가 모두 나가면 session 삭제
+//                log.info("checkToken : {}",checkToken(roomId, enterUser.getUserEmail(), token));
+//                // User left the session
+//                // todo: checkToken - true면 둘 다 없음, false면 남아 있음
+//                if (this.mapSessionNamesTokens.get(roomId).isEmpty() || checkToken(roomId, enterUser.getUserEmail(), token)) {
                 // User left the session
                 if (this.mapSessionNamesTokens.get(roomId).isEmpty()) {
                     log.info("token이 하나도 안남았을 때");
                     // Last user left: session must be removed
                     this.mapSessions.remove(roomId);
+                    // todo: session이 삭제되면 토론방 상태를 완료로 변경
+                    debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
                     return ResponseEntity.ok().body(new LeaveRoomRes(enterUser));
                 }
                 return ResponseEntity.ok().body(new LeaveRoomRes(enterUser));
@@ -185,6 +222,26 @@ public class SessionService {
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
         return enterUserRepository.findByDebate_DebateIdAndUserEmail(debate.get().getDebateId(), user.getEmail()).get();
     }
+
+//    private Boolean checkToken(String roomId, String userEmail, String token){
+//        log.info("getSavedToken service: {}, {}, {}", roomId, userEmail, token);
+//
+//        Debate found = debateRepository.findByRoomId(roomId).get();
+//
+//        String prosEmail = found.getProsName();
+//        String consEmail = found.getConsName();
+//
+//        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+//        String savedToken = hashOperations.get(roomId, userEmail);
+//
+//        if(savedToken != null && savedToken.equals(token)) {
+//            hashOperations.delete(roomId,userEmail);
+//            if(userEmail.equals(prosEmail)){
+//                return hashOperations.get(roomId, consEmail) == null;
+//            }else return hashOperations.get(roomId, prosEmail) == null;
+//        }
+//        return false;
+//    }
 
 }
 
