@@ -52,8 +52,8 @@ public class ChatMessageRepository {// Redis
         return opsHashChatMessage.get(CHAT_MESSAGE, roomId);
         }
 
-    public void plusUserCnt(String roomId) {
-        valueOps.increment(USER_COUNT + "_" + roomId);
+    public Long plusUserCnt(String roomId) {
+        return Optional.ofNullable(valueOps.increment(USER_COUNT + "_" + roomId)).orElse(0L);
     }
 
     public Long minusUserCnt(String roomId) {
