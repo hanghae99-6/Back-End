@@ -34,6 +34,7 @@ public class ChatMessageService {
         String userNickname = "";
         String sender = "";
 
+        // TODO: trim() 쓴 이유
         if(messageDto.getMessage().trim().equals("") && messageDto.getType()!= ChatMessage.MessageType.ENTER){
             throw new CustomException(NO_MESSAGE);
         }
@@ -54,7 +55,7 @@ public class ChatMessageService {
         message.setCreatedAt(date);
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
-            message.setMessage(message.getSender() + "님이 입장하셨습니다.");
+            message.setMessage(message.getNickname() + "님이 입장하셨습니다.");
         } else {
             chatMessageRepository.save(message);
         }

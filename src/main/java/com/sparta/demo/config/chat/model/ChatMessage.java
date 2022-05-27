@@ -1,5 +1,6 @@
 package com.sparta.demo.config.chat.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.demo.config.chat.model.dto.ChatMessageDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class ChatMessage {
 
     //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
 //    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createdAt;
 
     public ChatMessage(){
