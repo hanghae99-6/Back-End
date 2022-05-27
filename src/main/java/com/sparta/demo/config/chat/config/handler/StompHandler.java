@@ -44,6 +44,9 @@ public class StompHandler implements ChannelInterceptor {
             chatMessageRepository.plusUserCnt(roomId);
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
             chatMessageRepository.minusUserCnt(roomId);
+            if(chatMessageRepository.getUserCnt(roomId) == 0) {
+                chatMessageRepository.delete(roomId);
+            }
         }
         return message;
     }
