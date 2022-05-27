@@ -69,8 +69,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-resources/**",
                         "/v2/api-docs",
                         "/webjars/**",
-                        "/swagger-ui.html/**",
-                        "/chat/**");
+                        "/swagger-ui.html/**");
+//                        "/chat/**");
     }
 
     @Override
@@ -157,7 +157,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("PUT,/main/one-click");
         skipPathList.add("POST,/main/debate/vote");
         skipPathList.add("POST,/main/reply/likes");
+        skipPathList.add("GET,/live");
         skipPathList.add("GET,/favicon.ico");
+
+        skipPathList.add("GET,/wss-stomp/**");
+        skipPathList.add("GET,/sub/**");
+        skipPathList.add("GET,/pub/**");
 
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(

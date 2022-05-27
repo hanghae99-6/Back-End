@@ -34,11 +34,10 @@ public class MainService {
     private static final Long DEFAULT_TIMEOUT = 60L * 24 * 60;
     private static final String VISIT_COUNT = "visitCnt";
 
-    final private DebateRepository debateRepository;
+    private final DebateRepository debateRepository;
     private final OneClickRepository oneClickRepository;
     private final OneClickUserRepository oneClickUserRepository;
     private final DebateVoteRepository debateVoteRepository;
-    private final EnterUserRepository enterUserRepository;
     private final DebateValidator debateValidator;
 
     @Autowired
@@ -126,7 +125,6 @@ public class MainService {
         String userIp = hashOperations.get(redisKey, VISIT_COUNT);
 
         if(userIp != null && userIp.equals(ip)) {
-            System.out.println("조회수는 딱 한번만 올라갈거에요^^");
             return debateValidator.validEmptyValue(debateId, debate, side);
         }
 

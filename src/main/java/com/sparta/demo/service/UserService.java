@@ -1,12 +1,16 @@
 package com.sparta.demo.service;
 
+import com.sparta.demo.dto.debate.DebateInfoDto;
 import com.sparta.demo.dto.user.KakaoUserInfoDto;
 import com.sparta.demo.dto.user.MyDebateDto;
 import com.sparta.demo.dto.user.MyReplyDto;
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.*;
 import com.sparta.demo.repository.*;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.security.jwt.JwtTokenUtils;
+import com.sparta.demo.validator.DebateValidator;
+import com.sparta.demo.validator.ErrorResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -30,8 +34,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final DebateRepository debateRepository;
     private final ReplyRepository replyRepository;
+    private final EnterUserRepository enterUserRepository;
+    private final DebateEvidenceRepository debateEvidenceRepository;
 
-    // 1. 닉네임 수정
+    // 프로필 - 0. 닉네임 수정
     @Transactional
     public ResponseEntity<KakaoUserInfoDto> updateUserInfo(String nickName, UserDetailsImpl userDetails, HttpServletResponse response) {
 
@@ -69,7 +75,7 @@ public class UserService {
     }
 
 
-    // 2. 프로필 페이지 - 토론 내역
+    // 프로필 - 1. 내 토론 내역 조회
     @Transactional
     public ResponseEntity<List<MyDebateDto>> getMyDebate(UserDetailsImpl userDetails) {
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
@@ -100,7 +106,7 @@ public class UserService {
         return ResponseEntity.ok().body(myDebateDtoList);
     }
 
-    // 3. 프로필 페이지 - 내가 쓴 댓글
+    // 프로필 - 2. 내가 쓴 댓글 조회
     @Transactional
     public ResponseEntity<List<MyReplyDto>> getMyReply(UserDetailsImpl userDetails) {
         Optional<User> user = userRepository.findByEmail(userDetails.getUser().getEmail());
@@ -124,11 +130,75 @@ public class UserService {
         return ResponseEntity.ok().body(myReplyDtoList);
     }
 
-    // 4. 프로필 페이지 - 나의 토론 내역 삭제
+    // 프로필 - 3. 나의 토론 수정
     @Transactional
-    public void deleteMydebate(Long debateId, UserDetailsImpl userDetails){
+    public ResponseEntity<ErrorResult> editMydebate(Long debateId, UserDetailsImpl userDetails, DebateInfoDto debateInfoDto){
+
+        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(debateId, userDetails.getUser().getEmail());
+        if(!enterUser.isPresent()){
+            throw new IllegalArgumentException("해당 입장한 유저 정보가 없습니다");
+        } else {
+            enterUser.get().setOpinion(debateInfoDto.getOpinion());
+
+            List<DebateEvidence> evidences = new ArrayList<>();
+            List<String> evidenceList = debateInfoDto.getEvidences();
+
+            for (String evidence : evidenceList) {
+                DebateEvidence debateEvidence = new DebateEvidence(evidence, enterUser.get());
+                debateEvidenceRepository.save(debateEvidence);
+                evidences.add(debateEvidence);
+            }
+            enterUser.get().setEvidences(evidences);
+        }
+
+        return ResponseEntity.ok().body(new ErrorResult(true, "지난 토론 방이 수정 되었습니다."));
+    }
+
+    // 프로필 - 4. 나의 토론 삭제
+    @Transactional
+    public ResponseEntity<ErrorResult> deleteMydebate(Long debateId, UserDetailsImpl userDetails){
         User user = userDetails.getUser();
-        debateRepository.deleteByDebateIdAndUser_Email(debateId, user.getEmail());
-        log.info("마이페이지에서 내 토론내역 삭제 완료!");
+        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(debateId,user.getEmail());
+
+        if(!enterUser.isPresent()){
+            throw new IllegalArgumentException("유저정보가 없습니다");
+        } else {
+            enterUser.get().setUserNickName("탈퇴한 회원입니다.");
+            enterUser.get().setUserImage(null);
+        }
+
+        Optional<Debate> debate = debateRepository.findByDebateId(debateId);
+        if(!debate.isPresent()){
+            throw new IllegalArgumentException("해당 토론방이 없습니다");
+        } else {
+            if(enterUser.get().getSide().getTypeNum()==1){
+                if(debate.get().getConsName().equals("leftUser@weepech.com")){
+                    debateRepository.deleteByDebateIdAndUser_Email(debateId, user.getEmail());
+                    log.info("마이페이지에서 내 토론내역 삭제 완료!");
+                    enterUserRepository.delete(enterUser.get());
+                }
+                else
+                    debate.get().setProsName("leftUser@wepeech.com");
+            }
+            else {
+                if(debate.get().getProsName().equals("leftUser@weepech.com")) {
+                    debateRepository.deleteByDebateIdAndUser_Email(debateId, user.getEmail());
+                    log.info("마이페이지에서 내 토론내역 삭제 완료!");
+                    enterUserRepository.delete(enterUser.get());
+                }
+                else
+                    debate.get().setConsName("leftUser@wepeech.com");
+            }
+        }
+
+        return ResponseEntity.ok().body(new ErrorResult(true, "지난 토론 방이 삭제 되었습니다."));
+    }
+
+    // 관리자 용: 토론방 삭제
+    @Transactional
+    public void deleteMydebateForAdmin(Long debateId, UserDetailsImpl userDetails){
+
+        debateRepository.deleteByDebateId(debateId);
+        log.info("관리자권한: 마이페이지에서 내 토론내역 삭제 완료!");
     }
 }

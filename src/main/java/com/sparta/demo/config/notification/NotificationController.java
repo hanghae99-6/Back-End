@@ -1,4 +1,4 @@
-package com.sparta.demo.config.redis;
+package com.sparta.demo.config.notification;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

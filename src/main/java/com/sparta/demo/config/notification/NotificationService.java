@@ -1,4 +1,4 @@
-package com.sparta.demo.config.redis;
+package com.sparta.demo.config.notification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
