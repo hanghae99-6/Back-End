@@ -40,6 +40,7 @@ public class ChatMessageRepository {// Redis
     public ChatMessage save(ChatMessage chatMessage) {
         log.info("chatMessage : {}", chatMessage.getMessage());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
+        // TODO
         String roomId = chatMessage.getRoomId();
         List<ChatMessage> chatMessageList = opsHashChatMessage.get(CHAT_MESSAGE, roomId);
         if (chatMessageList == null) chatMessageList = new ArrayList<>();
@@ -65,7 +66,7 @@ public class ChatMessageRepository {// Redis
     }
 
     public Long getUserCnt(String roomId) {
-        log.info("getUserCnt : {}", roomId);
+        log.info("getUserCnt : {}", Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0")));
         return Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
     }
 
