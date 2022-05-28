@@ -29,8 +29,6 @@ public class StompHandler implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         log.info("32, simpDestination : {}", message.getHeaders().get("simpDestination"));
 
-        String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
-        log.info("roomId : {}", roomId);
         // websocket 연결시 헤더의 jwt token 검증
         if (StompCommand.CONNECT == accessor.getCommand()) {
             String token = accessor.getFirstNativeHeader("Authorization");
@@ -40,8 +38,10 @@ public class StompHandler implements ChannelInterceptor {
             System.out.println("StompHandler token = " + token);
             jwtDecoder.isValidToken(token);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+            String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
             chatMessageRepository.plusUserCnt(roomId);
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
+            String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
             chatMessageRepository.minusUserCnt(roomId);
             if(chatMessageRepository.getUserCnt(roomId) == 0) {
                 chatMessageRepository.delete(roomId);
