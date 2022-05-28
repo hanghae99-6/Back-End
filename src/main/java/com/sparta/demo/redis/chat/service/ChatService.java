@@ -68,11 +68,13 @@ public class ChatService {
 
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
-            message.setMessage(message.getSender() + "님이 입장하셨습니다.");
-            message.setSender("[알림]");
+            message.setMessage("[알림] " + message.getSender() + "님이 입장하셨습니다.");
+            message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
-            message.setMessage(message.getSender() + "님이 나가셨습니다.");
-            message.setSender("[알림]");
+
+            message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
+            message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
+
         } else if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
             // 토론 시작 - 타이머 계산
             Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
@@ -82,9 +84,9 @@ public class ChatService {
             String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             message.setDebateEndTime(debateEndTime);
             message.setType(ChatMessage.MessageType.START);
+
         }
-
-
+        
         chatMessageRepository.save(message);
         // Websocket 에 발행된 메시지를 redis 로 발행한다(publish)
         redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);

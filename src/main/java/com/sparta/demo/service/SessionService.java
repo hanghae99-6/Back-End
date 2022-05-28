@@ -219,14 +219,16 @@ public class SessionService {
                 log.info("token 유효성 통과");
                 log.info("this.mapSessionNamesTokens.get(roomId).toString() :{}",this.mapSessionNamesTokens.get(roomId).toString());
                 // todo: publisher가 모두 나가면 session 삭제
-                log.info("checkToken : {}",checkToken(roomId, enterUser.getUserEmail(), token));
+                boolean checkToken = checkToken(roomId, enterUser.getUserEmail(), token);
+                log.info("checkToken : {}",checkToken);
                 // User left the session
                 // todo: checkToken - true면 둘 다 없음, false면 남아 있음
-                if(checkToken(roomId,enterUser.getUserEmail(), token)){
+                if(checkToken){
+                    log.info("checkToken이 true면 여기로 들어와야합니다.");
                     this.mapSessions.remove(roomId);
                     // todo: session이 삭제되면 토론방 상태를 완료로 변경
                     debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
-                    return ResponseEntity.ok().body(new LeaveRoomRes(enterUser,true));
+                    return ResponseEntity.ok().body(new LeaveRoomRes(enterUser, true));
                 }
                 // 패널이 있음(  = this.mapSessionNamesTokens.get(roomId).isEmpty() = false)
                 // 발표자가 없음 ( == checktoken = true)
