@@ -26,11 +26,13 @@ public class ChatMessageRepository {// Redis
     private final RedisTemplate<String, Object> redisTemplate;
     private HashOperations<String, String, String> hashOpsEnterInfo;
     private HashOperations<String, String, List<ChatMessage>> opsHashChatMessage;
-    private ValueOperations<String, String> valueOps;
+    private ValueOperations<String, Object> valueOps;
 
     @PostConstruct
     private void init() {
         opsHashChatMessage = redisTemplate.opsForHash();
+        hashOpsEnterInfo = redisTemplate.opsForHash();
+        valueOps = redisTemplate.opsForValue();
     }
 
     public ChatMessage save(ChatMessage chatMessage) {
@@ -61,7 +63,7 @@ public class ChatMessageRepository {// Redis
     }
 
     public Long getUserCnt(String roomId) {
-        return Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
+        return Long.valueOf((String) Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
     }
 
     public void delete(String roomId) {
