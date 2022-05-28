@@ -71,7 +71,6 @@ public class ChatService {
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
 
         } else if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
-            log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
             // 토론 시작 - 타이머 계산
             Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
             LocalDateTime localDateTime = LocalDateTime.now();
@@ -80,7 +79,9 @@ public class ChatService {
             String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             message.setDebateEndTime(debateEndTime);
             message.setType(ChatMessage.MessageType.START);
+            log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
             log.info("메시지 타입 START 확인");
+            redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
         }
 
         chatMessageRepository.save(message);
