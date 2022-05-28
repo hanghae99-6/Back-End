@@ -3,6 +3,7 @@ package com.sparta.demo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateInfoDto;
 import com.sparta.demo.enumeration.SideTypeEnum;
+import com.sparta.demo.model.time.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-public class EnterUser extends Timestamped{
+public class EnterUser extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long enterId;

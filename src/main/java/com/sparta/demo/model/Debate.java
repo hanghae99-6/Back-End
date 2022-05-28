@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.debate.DebateLinkRequestDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.StatusTypeEnum;
+import com.sparta.demo.model.time.Timestamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @DynamicInsert
-public class Debate extends Timestamped{
+public class Debate extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long debateId;
