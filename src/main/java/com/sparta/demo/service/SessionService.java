@@ -1,6 +1,5 @@
 package com.sparta.demo.service;
 
-
 import com.sparta.demo.dto.session.EnterRes;
 import com.sparta.demo.dto.session.LeaveRoomRes;
 import com.sparta.demo.enumeration.SideTypeEnum;
@@ -11,24 +10,19 @@ import com.sparta.demo.model.User;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
-
 import com.sparta.demo.util.ExistSessionException;
-import com.sparta.demo.util.MaxPublisherException;
 import io.openvidu.java.client.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -37,8 +31,14 @@ public class SessionService {
     private DebateRepository debateRepository;
     private EnterUserRepository enterUserRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 4 * 60;
-    private final RedisTemplate<String, String> redisTemplate;
+
+
+//    private static final Long DEFAULT_TIMEOUT = 60L * 4 * 60;
+//
+//    private final RedisTemplate<String, String> redisTemplate;
+
+
+
 
     // OpenVidu object as entrypoint of the SDK
     private OpenVidu openVidu;
@@ -55,23 +55,23 @@ public class SessionService {
     // Secret shared with our OpenVidu server
     private String SECRET;
 
-    public SessionService(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl, EnterUserRepository enterUserRepository, DebateRepository debateRepository, RedisTemplate<String, String> redisTemplate) {
-        this.debateRepository = debateRepository;
-        this.enterUserRepository = enterUserRepository;
-        this.SECRET = secret;
-        this.OPENVIDU_URL = openviduUrl;
-        this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
-        this.redisTemplate = redisTemplate;
-    }
-//    public SessionService(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl, EnterUserRepository enterUserRepository, DebateRepository debateRepository) {
+//    public SessionService(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl, EnterUserRepository enterUserRepository, DebateRepository debateRepository, RedisTemplate<String, String> redisTemplate) {
 //        this.debateRepository = debateRepository;
 //        this.enterUserRepository = enterUserRepository;
 //        this.SECRET = secret;
 //        this.OPENVIDU_URL = openviduUrl;
 //        this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
+//        this.redisTemplate = redisTemplate;
 //    }
+    public SessionService(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl, EnterUserRepository enterUserRepository, DebateRepository debateRepository) {
+        this.debateRepository = debateRepository;
+        this.enterUserRepository = enterUserRepository;
+        this.SECRET = secret;
+        this.OPENVIDU_URL = openviduUrl;
+        this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
+    }
 
-    public EnterRes enterRoom(String roomId, HttpSession httpSession, UserDetailsImpl userDetails, HttpResponse response) throws ExistSessionException, OpenViduJavaClientException, OpenViduHttpException, MaxPublisherException {
+    public EnterRes enterRoom(String roomId, HttpSession httpSession, UserDetailsImpl userDetails) throws ExistSessionException, OpenViduJavaClientException, OpenViduHttpException {
 
         Debate debate = getDebate(roomId);
         log.info("roomId : {}, debate.getDebateId : {}", roomId, debate.getDebateId());
@@ -81,13 +81,13 @@ public class SessionService {
 
         OpenViduRole role = (getPanel(debate, userDetails.getUser().getEmail()) ? OpenViduRole.PUBLISHER:OpenViduRole.SUBSCRIBER);
 
-        String token = getToken(userDetails.getUser(), role, roomId, httpSession, response);
+        String token = getToken(userDetails.getUser(), role, roomId, httpSession);
 
         // todo: publisher가 모두 나가면 session 삭제하기 위한 token 저장
         // todo: 발표자(publisher)가 입장한 현황에 따라서 발표방 상태 설정
         if(role.equals(OpenViduRole.PUBLISHER)) {
-//            saveToken(roomId,userDetails.getUser().getEmail(),token);
-            setDebateStatus(debate);
+//        saveToken(roomId,userEmail,token);
+        setDebateStatus(debate);
         }
         return new EnterRes(role, token, enterUser, debate);
 
@@ -135,7 +135,7 @@ public class SessionService {
         return debate1.isPresent() || debate2.isPresent();
     }
 
-    private String getToken(User user, OpenViduRole role, String roomId, HttpSession httpSession, HttpResponse response) throws OpenViduJavaClientException, OpenViduHttpException, MaxPublisherException {
+    private String getToken(User user, OpenViduRole role, String roomId, HttpSession httpSession) throws OpenViduJavaClientException, OpenViduHttpException {
         String serverData = "{\"serverData\": \"" + user.getNickName() + "\"}";
         System.out.println("serverData : "+serverData);
 
@@ -159,22 +159,6 @@ public class SessionService {
             }
         }else{
             log.info("방이 있는 경우에 진입 roomId: {}, sessionId: {}", roomId, mapSessions.get(roomId).getSessionId());
-
-            // todo: publisher가 두 명 이상 진입했을 때 확인
-            List<OpenViduRole> roles = new ArrayList<>(this.mapSessionNamesTokens.get(roomId).values());
-            int cnt = 1;
-            for (OpenViduRole role1: roles) {
-                if(role1.equals(OpenViduRole.PUBLISHER)){
-                    log.info("role1: {}", role1);
-                    cnt++;
-                }
-            }
-            log.info("cnt: {}", cnt);
-            if(cnt>2){
-                log.info("cnt가 2 이상일 경우 여기로 진입");
-                throw new MaxPublisherException(response);
-            }
-
             try{
                 token = this.mapSessions.get(roomId).createConnection(connectionProperties).getToken();
                 this.mapSessionNamesTokens.get(roomId).put(token, role);
@@ -194,10 +178,12 @@ public class SessionService {
 
         if(cons && pros){
             debate.setStatusEnum(StatusTypeEnum.LIVEON);
+            debateRepository.save(debate);
         }else if(pros || cons){
             debate.setStatusEnum(StatusTypeEnum.HOLD);
+            debateRepository.save(debate);
         }
-        debateRepository.save(debate);
+        log.info("debate.getStausEnum: {}", debate.getStatusEnum().getName());
     }
 
     // todo: publisher가 모두 나가면 session 삭제하기 위한 token 저장
@@ -226,19 +212,19 @@ public class SessionService {
                 log.info("this.mapSessionNamesTokens.get(roomId).toString() :{}",this.mapSessionNamesTokens.get(roomId).toString());
                 // todo: publisher가 모두 나가면 session 삭제
 //                log.info("checkToken : {}",checkToken(roomId, enterUser.getUserEmail(), token));
-                // User left the session
-                // todo: checkToken - true면 둘 다 없음, false면 남아 있음
+//                // User left the session
+//                // todo: checkToken - true면 둘 다 없음, false면 남아 있음
 //                if (this.mapSessionNamesTokens.get(roomId).isEmpty() || checkToken(roomId, enterUser.getUserEmail(), token)) {
                 // User left the session
                 if (this.mapSessionNamesTokens.get(roomId).isEmpty()) {
-                    log.info("token이 하나도 안남았을 때, publisher가 둘 다 나갔을 때");
+                    log.info("token이 하나도 안남았을 때");
                     // Last user left: session must be removed
                     this.mapSessions.remove(roomId);
                     // todo: session이 삭제되면 토론방 상태를 완료로 변경
                     debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
-                    return ResponseEntity.ok().body(new LeaveRoomRes(enterUser, true));
+                    return ResponseEntity.ok().body(new LeaveRoomRes(enterUser));
                 }
-                return ResponseEntity.ok().body(new LeaveRoomRes(enterUser, false));
+                return ResponseEntity.ok().body(new LeaveRoomRes(enterUser));
             } else {
                 // The TOKEN wasn't valid
                 System.out.println("Problems in the app server: the TOKEN wasn't valid");

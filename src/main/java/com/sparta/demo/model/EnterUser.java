@@ -27,9 +27,11 @@ public class EnterUser extends Timestamped{
     @Column
     private String userEmail;
 
+    @Setter
     @Column
     private String userImage;
 
+    @Setter
     @Column
     private String userNickName;
 

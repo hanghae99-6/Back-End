@@ -3,6 +3,7 @@ package com.sparta.demo.config.chat.repository;
 import com.sparta.demo.config.chat.model.ChatRoom;
 import com.sparta.demo.config.chat.pubsub.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -54,12 +55,12 @@ public class ChatRoomRepository {
     /**
      * 채팅방 입장 : redis 에 topic 을 만들고 pub/sub 통신을 하기 위해 리스너를 설정한다.
      */
-    public void enterChatRoom(String debateId) {
-        ChannelTopic topic = topics.get(debateId);
+    public void enterChatRoom(String roomId) {
+        ChannelTopic topic = topics.get(roomId);
         if (topic == null)
-            topic = new ChannelTopic(debateId);
+            topic = new ChannelTopic(roomId);
         redisMessageListener.addMessageListener(redisSubscriber, topic);
-        topics.put(debateId, topic);
+        topics.put(roomId, topic);
     }
 
     public ChannelTopic getTopic(String roomId) {

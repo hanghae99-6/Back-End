@@ -1,6 +1,6 @@
 package com.sparta.demo.config.chat.pubsub;
 
-import com.sparta.demo.config.chat.model.dto.ChatMessageDto;
+import com.sparta.demo.config.chat.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,7 +14,7 @@ public class RedisPublisher {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publish(ChannelTopic topic, ChatMessageDto messageDto) {
-        redisTemplate.convertAndSend(topic.getTopic(), messageDto);
+    public void publish(ChannelTopic topic, ChatMessage message) {
+        redisTemplate.convertAndSend(topic.getTopic(), message);
     }
 }

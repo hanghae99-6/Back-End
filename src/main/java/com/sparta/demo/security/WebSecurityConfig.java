@@ -70,7 +70,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v2/api-docs",
                         "/webjars/**",
                         "/swagger-ui.html/**");
-//                        "/chat/**");
     }
 
     @Override
@@ -161,8 +160,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/favicon.ico");
 
         skipPathList.add("GET,/wss-stomp/**");
-        skipPathList.add("GET,/sub/**");
-        skipPathList.add("GET,/pub/**");
+//        skipPathList.add("GET,/sub/**");
+//        skipPathList.add("GET,/pub/**");
 
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(

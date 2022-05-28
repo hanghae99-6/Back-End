@@ -25,7 +25,8 @@ public interface  DebateRepository extends JpaRepository<Debate, Long> {
     List<Debate> findTop60ByProsNameOrConsName(Sort sort, String userEmailPros, String userEmailCons);
 
     void deleteByDebateIdAndUser_Email(Long debateId, String email);
-
+    void deleteByDebateId(Long debateId);
 
     List<Debate> findAllByStatusEnumOrStatusEnum(StatusTypeEnum liveOn, StatusTypeEnum hold);
+
 }
