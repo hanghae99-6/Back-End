@@ -1,6 +1,7 @@
 package com.sparta.demo.redis.session;
 
 import com.sparta.demo.enumeration.StatusTypeEnum;
+import com.sparta.demo.model.Debate;
 import com.sparta.demo.repository.DebateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,7 +40,8 @@ public class SessionListener extends KeyExpirationEventMessageListener {
 
         log.info("redis key value: {}, type: {}", Long.valueOf(message.toString()), Long.valueOf(message.toString()).getClass());
         try{
-            debateRepository.findByDebateId(Long.valueOf(message.toString())).get().setStatusEnum(StatusTypeEnum.LIVEOFF);
+            Debate debate = debateRepository.findByDebateId(Long.valueOf(message.toString())).get();
+            debateRepository.save(debate);
         }catch (Exception e){
             log.info(e.getMessage());
         }
