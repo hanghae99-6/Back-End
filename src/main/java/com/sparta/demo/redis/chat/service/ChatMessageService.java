@@ -1,6 +1,6 @@
 package com.sparta.demo.redis.chat.service;
 
-import com.sparta.demo.redis.exception.CustomException;
+import com.sparta.demo.exception.CustomException;
 import com.sparta.demo.redis.chat.model.ChatMessage;
 import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
 import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
-import static com.sparta.demo.redis.exception.ErrorCode.NO_MESSAGE;
+import static com.sparta.demo.exception.ErrorCode.NO_MESSAGE;
 
 @Slf4j
 @Service

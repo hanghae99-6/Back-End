@@ -1,4 +1,5 @@
-package com.sparta.demo.redis.exception;
+
+package com.sparta.demo.exception;
 
 import lombok.Getter;
 
