@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class KakaoUserInfoDto {
+
     private Long id;
     private String nickname;
     private String profileImg;
@@ -18,10 +19,4 @@ public class KakaoUserInfoDto {
         this.email = email;
     }
 
-    public KakaoUserInfoDto(String nickname, String profileImg, String email){
-        this.nickname = nickname;
-        this.profileImg = profileImg;
-        this.email = email;
-
-    }
 }

@@ -51,9 +51,4 @@ public class User {
         this.profileImg = profileImg;
     }
 
-
-    public User update(String nickName){
-        this.nickName = nickName;
-        return this;
-    }
 }

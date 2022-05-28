@@ -50,7 +50,7 @@ public class UserService {
             throw new IllegalArgumentException("로그인 하지 않았습니다");
         }
         KakaoUserInfoDto kakaoUserInfoDto = new KakaoUserInfoDto
-                (user.get().getNickName(), user.get().getProfileImg(), user.get().getEmail());
+                (user.get().getId(), user.get().getNickName(), user.get().getProfileImg(), user.get().getEmail());
 
         jwtTokenCreate(user, response);
 
