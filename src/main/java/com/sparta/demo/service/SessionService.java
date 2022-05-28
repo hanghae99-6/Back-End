@@ -13,6 +13,7 @@ import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.util.ExistSessionException;
 import io.openvidu.java.client.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +72,7 @@ public class SessionService {
         this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
     }
 
-    public EnterRes enterRoom(String roomId, HttpSession httpSession, UserDetailsImpl userDetails) throws ExistSessionException, OpenViduJavaClientException, OpenViduHttpException {
+    public EnterRes enterRoom(String roomId, HttpSession httpSession, UserDetailsImpl userDetails, HttpResponse response) throws ExistSessionException, OpenViduJavaClientException, OpenViduHttpException {
 
         Debate debate = getDebate(roomId);
         log.info("roomId : {}, debate.getDebateId : {}", roomId, debate.getDebateId());
@@ -89,7 +90,10 @@ public class SessionService {
 //        saveToken(roomId,userEmail,token);
         setDebateStatus(debate);
         }
-        return new EnterRes(role, token, enterUser, debate);
+
+        boolean roomKing = debate.getUser().getEmail().equals(userDetails.getUser().getEmail());
+
+        return new EnterRes(role, token, enterUser, debate, roomKing);
 
     }
 

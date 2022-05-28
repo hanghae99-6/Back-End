@@ -81,12 +81,13 @@ public class Debate extends Timestamped{
     @JsonIgnore
     private List<DebateVote> debateVoteList;
 
-
-    // todo: live now 진행될 경우 추가해야할 컬럼
     @Column
     @Enumerated(value=EnumType.STRING)
     @Setter
     private StatusTypeEnum statusEnum;
+
+    @Column(nullable = false)
+    private int speechMinute;
 
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto, User user, CategoryEnum category) {
 //        LocalDateTime localDateTime = LocalDateTime.now();
@@ -101,6 +102,7 @@ public class Debate extends Timestamped{
         debate.prosName = debateLinkRequestDto.getProsName();
         debate.consName = debateLinkRequestDto.getConsName();
         debate.content = debateLinkRequestDto.getContent();
+        debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
 //        debate.timestamp = Timestamp.valueOf(localDateTime);
         return debate;
     }
