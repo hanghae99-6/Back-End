@@ -40,6 +40,7 @@ public class SessionService {
 
     private final RedisTemplate<String, String> redisTemplate;
     private static final String DEBATE_STATUS = "debateStatus";
+    private static final String REDIS_KEY = "debate";
 
 
 
@@ -206,7 +207,8 @@ public class SessionService {
     private void saveDebate(Debate debate){
         log.info("saveDebate 진입");
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-        String redisKey = String.valueOf(debate.getDebateId());
+        String redisKey = REDIS_KEY+String.valueOf(debate.getDebateId());
+        log.info("rediskey: {}", redisKey);
         hashOperations.put(redisKey, DEBATE_STATUS, debate.getStatusEnum().getName());
         log.info("저장 된 값 확인: {}", hashOperations.get(redisKey, DEBATE_STATUS));
         redisTemplate.expire(redisKey, DEFAULT_TIMEOUT, TimeUnit.SECONDS);
