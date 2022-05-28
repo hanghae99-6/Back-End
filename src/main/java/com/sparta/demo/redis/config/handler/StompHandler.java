@@ -52,6 +52,7 @@ public class StompHandler implements ChannelInterceptor {
             chatMessageRepository.setUserEnterInfo(roomId, sessionId);
             chatMessageRepository.plusUserCnt(roomId);
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
+            log.info("DISCONNECT");
             String roomId = chatMessageRepository.getRoomId(sessionId);
             log.info("세션으로 가져오는 roomId, 50 : {}", roomId);
 

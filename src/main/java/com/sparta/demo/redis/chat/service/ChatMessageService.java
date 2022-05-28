@@ -33,8 +33,8 @@ public class ChatMessageService {
     public void save(ChatMessageDto messageDto, String token) {
         log.info("save Message : {}", messageDto.getMessage());
 
-        String userNickname = "";
         String sender = "";
+        String userImage = "";
 
         Long enterUserCnt = chatMessageRepository.getUserCnt(messageDto.getRoomId());
 
@@ -45,8 +45,8 @@ public class ChatMessageService {
 
         if (!(String.valueOf(token).equals("Authorization") || String.valueOf(token).equals("null"))) {
             String tokenInfo = token.substring(7); // Bearer 빼고
-            userNickname = jwtDecoder.decodeNickName(tokenInfo);
-            sender = jwtDecoder.decodeEmail(tokenInfo);
+            sender = jwtDecoder.decodeNickName(tokenInfo);
+            userImage = jwtDecoder.decodeImage(tokenInfo);
         }
 
 
@@ -54,7 +54,7 @@ public class ChatMessageService {
         ChatMessage message = new ChatMessage(messageDto);
 
         message.setSender(sender);
-        message.setNickname(userNickname);
+        message.setUserImage(userImage);
 
         // 시간 세팅
         Date date = new Date();

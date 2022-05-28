@@ -73,7 +73,7 @@ public class JwtDecoder {
                 .asString();
     }
 
-    public String decodeEmail(String tokenInfo) {
+    public String decodeImage(String tokenInfo) {
         DecodedJWT decodedJWT = isValidToken(tokenInfo)
                 .orElseThrow(() -> new IllegalArgumentException("유효한 토큰이 아닙니다."));
 
@@ -87,7 +87,7 @@ public class JwtDecoder {
         }
 
         return decodedJWT
-                .getClaim(CLAIM_EMAIL)
+                .getClaim(CLAIM_PROFILE_IMG)
                 .asString();
     }
 }
