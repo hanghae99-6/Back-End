@@ -65,6 +65,7 @@ public class ChatMessageRepository {// Redis
     }
 
     public Long getUserCnt(String roomId) {
+        log.info("getUserCnt : {}", roomId);
         return Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
     }
 
