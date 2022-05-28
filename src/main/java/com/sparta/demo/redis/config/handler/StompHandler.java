@@ -4,6 +4,7 @@ import com.sparta.demo.exception.CustomException;
 import com.sparta.demo.redis.chat.model.ChatMessage;
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
+import com.sparta.demo.redis.chat.service.ChatRoomService;
 import com.sparta.demo.redis.chat.service.ChatService;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ import static com.sparta.demo.exception.ErrorCode.NOT_FOUND_DEBATE_ID;
 public class StompHandler implements ChannelInterceptor {
 
     private final JwtDecoder jwtDecoder;
-    private final ChatService chatService;
+    private final ChatRoomService chatRoomService;
     private final ChatMessageRepository chatMessageRepository;
 
     // websocket 을 통해 들어온 요청이 처리 되기전 실행된다.
@@ -47,7 +48,7 @@ public class StompHandler implements ChannelInterceptor {
             jwtDecoder.isValidToken(token);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             sessionId = (String) message.getHeaders().get("simpSessionId");
-            String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
+            String roomId = chatRoomService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
 
             log.info("roomId, 45 : {}", roomId);
 
@@ -61,10 +62,6 @@ public class StompHandler implements ChannelInterceptor {
 
             chatMessageRepository.minusUserCnt(roomId);
             log.info("minusUserCnt : {}", chatMessageRepository.minusUserCnt(roomId));
-
-            // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
-            String name = Optional.ofNullable((Principal) message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
-            chatService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.QUIT).roomId(roomId).sender(name).build());
 
             // 퇴장한 클라이언트의 roomId 맵핑 정보를 삭제한다.
             chatMessageRepository.removeUserEnterInfo(sessionId);
