@@ -1,3 +1,4 @@
+
 package com.sparta.demo.exception;
 
 import lombok.Getter;

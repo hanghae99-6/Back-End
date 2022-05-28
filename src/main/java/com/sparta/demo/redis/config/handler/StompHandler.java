@@ -27,10 +27,10 @@ public class StompHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        log.info("32, simpDestination : {}", message.getHeaders().get("simpDestination"));
+        log.info("30, simpDestination : {}", message.getHeaders().get("simpDestination"));
+        log.info("31, sessionId : {}", message.getHeaders().get("simpSessionId"));
+        String sessionId = (String) message.getHeaders().get("simpSessionId");
 
-        String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
-        log.info("roomId : {}", roomId);
         // websocket 연결시 헤더의 jwt token 검증
         if (StompCommand.CONNECT == accessor.getCommand()) {
             String token = accessor.getFirstNativeHeader("Authorization");
@@ -40,9 +40,19 @@ public class StompHandler implements ChannelInterceptor {
             System.out.println("StompHandler token = " + token);
             jwtDecoder.isValidToken(token);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+            String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
+
+            log.info("roomId, 45 : {}", roomId);
+            chatMessageRepository.setUserEnterInfo(roomId, sessionId);
             chatMessageRepository.plusUserCnt(roomId);
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-            chatMessageRepository.minusUserCnt(roomId);
+            String roomId = chatMessageRepository.getRoomId(sessionId);
+            log.info("세션으로 가져오는 roomId, 50 : {}", roomId);
+
+            if(roomId != null) {
+                chatMessageRepository.minusUserCnt(roomId);
+            }
+
             if(chatMessageRepository.getUserCnt(roomId) == 0) {
                 chatMessageRepository.delete(roomId);
             }
