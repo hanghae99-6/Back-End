@@ -1,6 +1,6 @@
-package com.sparta.demo.redis.chat.config;
+package com.sparta.demo.redis.config;
 
-import com.sparta.demo.redis.chat.config.handler.StompHandler;
+import com.sparta.demo.redis.config.handler.StompHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
