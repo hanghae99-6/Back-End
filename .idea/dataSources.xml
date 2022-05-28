@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="devlog@devlog.cpbkqzl9osar.ap-northeast-2.rds.amazonaws.com" uuid="b7ebcca8-0eb4-4717-a7d3-6f6f28eb3cf1">
+    <data-source source="LOCAL" name="wepeech" uuid="337447f5-e4c8-4fd9-9416-ba5fa481b034">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://devlog.cpbkqzl9osar.ap-northeast-2.rds.amazonaws.com:3306/devlog</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="wepeech" uuid="b8e7aba9-2bc9-4856-833a-8d4566211da8">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://devlog.cpbkqzl9osar.ap-northeast-2.rds.amazonaws.com:3306</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

@@ -63,13 +63,6 @@ public class SessionService {
         this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
         this.redisTemplate = redisTemplate;
     }
-//    public SessionService(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl, EnterUserRepository enterUserRepository, DebateRepository debateRepository) {
-//        this.debateRepository = debateRepository;
-//        this.enterUserRepository = enterUserRepository;
-//        this.SECRET = secret;
-//        this.OPENVIDU_URL = openviduUrl;
-//        this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
-//    }
 
     public EnterRes enterRoom(String roomId, HttpSession httpSession, UserDetailsImpl userDetails, HttpResponse response) throws ExistSessionException, OpenViduJavaClientException, OpenViduHttpException {
 
@@ -227,18 +220,27 @@ public class SessionService {
                 log.info("this.mapSessionNamesTokens.get(roomId).toString() :{}",this.mapSessionNamesTokens.get(roomId).toString());
                 // todo: publisher가 모두 나가면 session 삭제
                 log.info("checkToken : {}",checkToken(roomId, enterUser.getUserEmail(), token));
-//                // User left the session
-//                // todo: checkToken - true면 둘 다 없음, false면 남아 있음
-                if (this.mapSessionNamesTokens.get(roomId).isEmpty() || checkToken(roomId, enterUser.getUserEmail(), token)) {
                 // User left the session
-//                if (this.mapSessionNamesTokens.get(roomId).isEmpty()) {
-                    log.info("token이 하나도 안남았을 때");
-                    // Last user left: session must be removed
+                // todo: checkToken - true면 둘 다 없음, false면 남아 있음
+                if(checkToken(roomId,enterUser.getUserEmail(), token)){
                     this.mapSessions.remove(roomId);
                     // todo: session이 삭제되면 토론방 상태를 완료로 변경
                     debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
                     return ResponseEntity.ok().body(new LeaveRoomRes(enterUser,true));
                 }
+                // 패널이 있음(  = this.mapSessionNamesTokens.get(roomId).isEmpty() = false)
+                // 발표자가 없음 ( == checktoken = true)
+                // 둘 사이에 or을 붙이면?    = > false  ==> 아래 로직으로 넘어가지지 않음 ===> session 삭제 안됨
+//                if (this.mapSessionNamesTokens.get(roomId).isEmpty()){
+//                // User left the session
+////                if (this.mapSessionNamesTokens.get(roomId).isEmpty()) {
+//                    log.info("token이 하나도 안남았을 때");
+//                    // Last user left: session must be removed
+//                    this.mapSessions.remove(roomId);
+//                    // todo: session이 삭제되면 토론방 상태를 완료로 변경
+//                    debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
+//                    return ResponseEntity.ok().body(new LeaveRoomRes(enterUser,true));
+//                }
                 return ResponseEntity.ok().body(new LeaveRoomRes(enterUser,false));
             } else {
                 // The TOKEN wasn't valid
