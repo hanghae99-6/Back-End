@@ -10,6 +10,7 @@ import com.sparta.demo.model.User;
 import com.sparta.demo.repository.DebateEvidenceRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
+import com.sparta.demo.repository.UserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.validator.DebateValidator;
 import com.sparta.demo.validator.ErrorResult;
@@ -31,6 +32,7 @@ public class DebateService {
     private final DebateRepository debateRepository;
     private final EnterUserRepository enterUserRepository;
     private final DebateEvidenceRepository debateEvidenceRepository;
+    private final UserRepository userRepository;
 
     public ResponseEntity<DebateLinkResponseDto> createLink(DebateLinkRequestDto debateLinkRequestDto, UserDetailsImpl userDetails) {
 
@@ -46,39 +48,6 @@ public class DebateService {
         return ResponseEntity.ok().body(debateLinkResponseDto);
     }
 
-    public ResponseEntity<DebateRoomResponseDto> getRoom(String roomId) {
-        Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(() -> new NullPointerException("존재하지 않는 방입니다."));
-        return ResponseEntity.ok().body(new DebateRoomResponseDto(debate));
-    }
-
-    @Transactional
-    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(String roomId, User user) {
-
-        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
-        DebateRoomIdUserValidateDto debateRoomIdUserValidateDto = new DebateRoomIdUserValidateDto();
-        debateRoomIdUserValidateDto.setRoomId(debate.isPresent());
-
-        Optional<Debate> prosCheck = debateRepository.findByRoomIdAndProsName(roomId, user.getEmail());
-        Optional<Debate> consCheck = debateRepository.findByRoomIdAndConsName(roomId, user.getEmail());
-
-
-        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(debate.get().getDebateId(), user.getEmail());
-
-        if (enterUser.isPresent()) {
-            debateRoomIdUserValidateDto.setUser(true);
-            return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
-        }
-
-        if (prosCheck.isPresent()) {
-            enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.PROS));
-        } else if (consCheck.isPresent()) {
-            enterUserRepository.save(new EnterUser(debate.get(), user, SideTypeEnum.CONS));
-        }
-        debateRoomIdUserValidateDto.setUser(prosCheck.isPresent() || consCheck.isPresent());
-
-        return ResponseEntity.ok().body(debateRoomIdUserValidateDto);
-    }
-
     @Transactional
     public ResponseEntity<ErrorResult> saveDebateInfo(String roomId, DebateInfoDto debateInfoDto, UserDetailsImpl userDetails) {
 
@@ -87,7 +56,7 @@ public class DebateService {
         if(!validRoomId.isPresent()) {
             return ResponseEntity.ok().body(new ErrorResult(false, "fail"));
         }
-        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_RoomId(roomId);
+        Optional<EnterUser> enterUser = enterUserRepository.findByDebate_DebateIdAndUserEmail(validRoomId.get().getDebateId(), userDetails.getUser().getEmail());
         if(!enterUser.isPresent()) {
             return ResponseEntity.ok().body(new ErrorResult(false, "unMatch"));
         }
@@ -111,5 +80,10 @@ public class DebateService {
         log.info("validEnterUser.getOpinion(): {}",validEnterUser.getOpinion());
 
         return ResponseEntity.ok().body(new ErrorResult(true, "success"));
+    }
+
+    public ResponseEntity<ErrorResult> emailCheck(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return ResponseEntity.ok().body(new ErrorResult(user.isPresent(),"emailChecking"));
     }
 }

@@ -81,8 +81,6 @@ public class Debate extends Timestamped{
     @JsonIgnore
     private List<DebateVote> debateVoteList;
 
-
-    // todo: live now 진행될 경우 추가해야할 컬럼
     @Column(nullable = false)
     @Enumerated(value=EnumType.STRING)
     @Setter
