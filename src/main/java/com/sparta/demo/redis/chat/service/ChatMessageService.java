@@ -64,6 +64,7 @@ public class ChatMessageService {
             message.setEnterUserCnt(String.valueOf(enterUserCnt));
             message.setMessage(message.getNickname() + "님이 입장하셨습니다.");
         } else {
+            message.setEnterUserCnt(String.valueOf(enterUserCnt));
             chatMessageRepository.save(message);
         }
         // Websocket 에 발행된 메시지를 redis 로 발행한다(publish)
