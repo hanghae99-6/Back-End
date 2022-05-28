@@ -14,7 +14,7 @@ import java.util.Date;
 public class ChatMessage {
     // 메시지 타입 : 입장, 채팅
     public enum MessageType {
-        ENTER, TALK, QUIT
+        ENTER, TALK, QUIT, TIMER
     }
 
     private MessageType type; // 메시지 타입
