@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Repository;
@@ -24,15 +25,16 @@ public class ChatMessageRepository {// Redis
     public static final String ENTER_INFO = "ENTER_INFO"; // 채팅룸에 입장한 클라이언트의 sessionId와 채팅룸 id를 맵핑한 정보 저장
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
     private HashOperations<String, String, String> hashOpsEnterInfo;
     private HashOperations<String, String, List<ChatMessage>> opsHashChatMessage;
-    private ValueOperations<String, Object> valueOps;
+    private ValueOperations<String, String> valueOps;
 
     @PostConstruct
     private void init() {
         opsHashChatMessage = redisTemplate.opsForHash();
         hashOpsEnterInfo = redisTemplate.opsForHash();
-        valueOps = redisTemplate.opsForValue();
+        valueOps = stringRedisTemplate.opsForValue();
     }
 
     public ChatMessage save(ChatMessage chatMessage) {
@@ -63,7 +65,7 @@ public class ChatMessageRepository {// Redis
     }
 
     public Long getUserCnt(String roomId) {
-        return Long.valueOf((String) Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
+        return Long.valueOf(Optional.ofNullable(valueOps.get(USER_COUNT + "_" + roomId)).orElse("0"));
     }
 
     public void delete(String roomId) {
