@@ -63,7 +63,7 @@ public class SessionController {
             @ApiResponse(code = 500, message = "서버 에러", response = ErrorResponse.class)
     })
 //    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<LeaveRoomRes> leaveRoom(@RequestBody LeaveRoomReq leaveRoomReq, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<LeaveRoomRes> leaveRoom(@RequestBody LeaveRoomReq leaveRoomReq, @AuthenticationPrincipal UserDetailsImpl userDetails) throws OpenViduJavaClientException, OpenViduHttpException {
         System.out.println("/api/rooms 방 나가기 진입");
         String roomId = leaveRoomReq.getRoomId();
         String token = leaveRoomReq.getToken();
