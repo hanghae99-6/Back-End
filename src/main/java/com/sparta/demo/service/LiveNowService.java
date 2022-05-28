@@ -22,6 +22,7 @@ public class LiveNowService {
 
     private final DebateRepository debateRepository;
     private final UserRepository userRepository;
+    private final
 
     public ResponseEntity<List<LiveResponseDto>> getLiveNow() {
 

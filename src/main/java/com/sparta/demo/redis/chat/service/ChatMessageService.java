@@ -42,7 +42,7 @@ public class ChatMessageService {
 
         String enterUserCnt = valueOperations.get(USER_COUNT + "_" + messageDto.getRoomId());
 
-        // TODO: trim() 쓴 이유
+        // TODO: trim() 쓴 이유 : 빈 칸 안받으려고
         if(messageDto.getMessage().trim().equals("") && messageDto.getType()!= ChatMessage.MessageType.ENTER){
             throw new CustomException(NO_MESSAGE);
         }
