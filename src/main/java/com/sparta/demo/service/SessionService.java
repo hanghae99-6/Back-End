@@ -75,23 +75,26 @@ public class SessionService {
 
         Debate debate = getDebate(roomId);
         log.info("roomId : {}, debate.getDebateId : {}", roomId, debate.getDebateId());
+        User user = userDetails.getUser();
+        String userEmail = userDetails.getUser().getEmail();
 
-        EnterUser enterUser = setEnterUser(debate, userDetails.getUser());
-        System.out.println("userName: " + userDetails.getUsername());
+        EnterUser enterUser = setEnterUser(debate, user);
+        System.out.println("userName: " + user.getUserName());
 
-        OpenViduRole role = (getPanel(debate, userDetails.getUser().getEmail()) ? OpenViduRole.PUBLISHER:OpenViduRole.SUBSCRIBER);
+        OpenViduRole role = (getPanel(debate, userEmail)) ? OpenViduRole.PUBLISHER:OpenViduRole.SUBSCRIBER;
 
-        String token = getToken(userDetails.getUser(), role, roomId, httpSession);
+        String token = getToken(user, role, roomId, httpSession);
 
         // todo: publisher가 모두 나가면 session 삭제하기 위한 token 저장
         // todo: 발표자(publisher)가 입장한 현황에 따라서 발표방 상태 설정
         if(role.equals(OpenViduRole.PUBLISHER)) {
-//        saveToken(roomId,userEmail,token);
-        setDebateStatus(debate);
+            log.info("PUBLISHER일 때만 들어오는지?");
+            saveToken(roomId, userEmail, token);
+            setDebateStatus(debate);
         }
         saveDebate(debate);
 
-        boolean roomKing = debate.getUser().getEmail().equals(userDetails.getUser().getEmail());
+        boolean roomKing = debate.getUser().getEmail().equals(userEmail);
 
         return new EnterRes(role, token, enterUser, debate, roomKing);
 
@@ -191,13 +194,12 @@ public class SessionService {
     }
 
     // todo: publisher가 모두 나가면 session 삭제하기 위한 token 저장
-//    private void saveToken(String roomId, String userEmail, String token){
-//        log.info("saveToken service: {}, {}, {}", roomId, userEmail, token);
-//        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-//
-//        hashOperations.put(roomId, userEmail, token);
-//        redisTemplate.expire(roomId, DEFAULT_TIMEOUT, TimeUnit.HOURS);
-//    }
+    private void saveToken(String roomId, String userEmail, String token){
+        log.info("saveToken service: {}, {}, {}", roomId, userEmail, token);
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+
+        hashOperations.put(roomId, userEmail, token);
+    }
 
     private void saveDebate(Debate debate){
         log.info("saveDebate 진입");
@@ -224,20 +226,20 @@ public class SessionService {
                 log.info("token 유효성 통과");
                 log.info("this.mapSessionNamesTokens.get(roomId).toString() :{}",this.mapSessionNamesTokens.get(roomId).toString());
                 // todo: publisher가 모두 나가면 session 삭제
-//                log.info("checkToken : {}",checkToken(roomId, enterUser.getUserEmail(), token));
+                log.info("checkToken : {}",checkToken(roomId, enterUser.getUserEmail(), token));
 //                // User left the session
 //                // todo: checkToken - true면 둘 다 없음, false면 남아 있음
-//                if (this.mapSessionNamesTokens.get(roomId).isEmpty() || checkToken(roomId, enterUser.getUserEmail(), token)) {
+                if (this.mapSessionNamesTokens.get(roomId).isEmpty() || checkToken(roomId, enterUser.getUserEmail(), token)) {
                 // User left the session
-                if (this.mapSessionNamesTokens.get(roomId).isEmpty()) {
+//                if (this.mapSessionNamesTokens.get(roomId).isEmpty()) {
                     log.info("token이 하나도 안남았을 때");
                     // Last user left: session must be removed
                     this.mapSessions.remove(roomId);
                     // todo: session이 삭제되면 토론방 상태를 완료로 변경
                     debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
-                    return ResponseEntity.ok().body(new LeaveRoomRes(enterUser));
+                    return ResponseEntity.ok().body(new LeaveRoomRes(enterUser,true));
                 }
-                return ResponseEntity.ok().body(new LeaveRoomRes(enterUser));
+                return ResponseEntity.ok().body(new LeaveRoomRes(enterUser,false));
             } else {
                 // The TOKEN wasn't valid
                 System.out.println("Problems in the app server: the TOKEN wasn't valid");
@@ -256,25 +258,25 @@ public class SessionService {
         return enterUserRepository.findByDebate_DebateIdAndUserEmail(debate.get().getDebateId(), user.getEmail()).get();
     }
 
-//    private Boolean checkToken(String roomId, String userEmail, String token){
-//        log.info("getSavedToken service: {}, {}, {}", roomId, userEmail, token);
-//
-//        Debate found = debateRepository.findByRoomId(roomId).get();
-//
-//        String prosEmail = found.getProsName();
-//        String consEmail = found.getConsName();
-//
-//        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-//        String savedToken = hashOperations.get(roomId, userEmail);
-//
-//        if(savedToken != null && savedToken.equals(token)) {
-//            hashOperations.delete(roomId,userEmail);
-//            if(userEmail.equals(prosEmail)){
-//                return hashOperations.get(roomId, consEmail) == null;
-//            }else return hashOperations.get(roomId, prosEmail) == null;
-//        }
-//        return false;
-//    }
+    private Boolean checkToken(String roomId, String userEmail, String token){
+        log.info("getSavedToken service: {}, {}, {}", roomId, userEmail, token);
+
+        Debate found = debateRepository.findByRoomId(roomId).get();
+
+        String prosEmail = found.getProsName();
+        String consEmail = found.getConsName();
+
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+        String savedToken = hashOperations.get(roomId, userEmail);
+
+        if(savedToken != null && savedToken.equals(token)) {
+            hashOperations.delete(roomId, userEmail);
+            if(userEmail.equals(prosEmail)){
+                return hashOperations.get(roomId, consEmail) == null;
+            }else return hashOperations.get(roomId, prosEmail) == null;
+        }
+        return false;
+    }
 
 }
 
