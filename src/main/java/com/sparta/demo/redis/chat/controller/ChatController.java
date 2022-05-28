@@ -2,7 +2,7 @@ package com.sparta.demo.redis.chat.controller;
 
 import com.sparta.demo.redis.chat.model.ChatMessage;
 import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
-import com.sparta.demo.redis.chat.service.ChatMessageService;
+import com.sparta.demo.redis.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.Header;
@@ -19,7 +19,7 @@ import java.util.List;
 @Controller
 public class ChatController {
 
-    private final ChatMessageService chatMessageService;
+    private final ChatService chatService;
 
     /**
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
@@ -27,14 +27,14 @@ public class ChatController {
     @MessageMapping("/chat/message")
     public void message(ChatMessageDto message, @Header("Authorization") String token) {
         log.info("요청 메서드 [Message] /chat/message");
-        chatMessageService.save(message, token);
+        chatService.save(message, token);
     }
 
     @GetMapping("/chat/message/{roomId}")
     @ResponseBody
     public List<ChatMessage> getMessages(@PathVariable String roomId) {
         log.info("요청 메서드 [GET] /chat/message/{roomId}");
-        return chatMessageService.getMessages(roomId);
+        return chatService.getMessages(roomId);
     }
 
 }
