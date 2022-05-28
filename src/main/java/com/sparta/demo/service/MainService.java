@@ -7,10 +7,12 @@ import com.sparta.demo.dto.main.OneClickResponseDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
-import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.model.OneClickUser;
-import com.sparta.demo.repository.*;
+import com.sparta.demo.repository.DebateRepository;
+import com.sparta.demo.repository.DebateVoteRepository;
+import com.sparta.demo.repository.OneClickRepository;
+import com.sparta.demo.repository.OneClickUserRepository;
 import com.sparta.demo.util.GetIp;
 import com.sparta.demo.validator.DebateValidator;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -118,7 +119,7 @@ public class MainService {
             side = SideTypeEnum.DEFAULT;
         }
         log.info("detail service side: {}", side);
-        String redisKey = String.valueOf(debateId);
+        String redisKey = VISIT_COUNT + debateId;
 
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
 
@@ -129,7 +130,7 @@ public class MainService {
         }
 
         hashOperations.put(redisKey, VISIT_COUNT, ip);
-        redisTemplate.expire(redisKey, DEFAULT_TIMEOUT, TimeUnit.HOURS);
+        redisTemplate.expire(redisKey, DEFAULT_TIMEOUT, TimeUnit.SECONDS);
 
         debate.setVisitCnt(debate.getVisitCnt()+1L);
 
