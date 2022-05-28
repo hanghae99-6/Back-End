@@ -62,10 +62,6 @@ public class StompHandler implements ChannelInterceptor {
             chatMessageRepository.minusUserCnt(roomId);
             log.info("minusUserCnt : {}", chatMessageRepository.minusUserCnt(roomId));
 
-            // 클라이언트 퇴장 메시지를 채팅방에 발송한다.(redis publish)
-            String name = Optional.ofNullable((Principal) message.getHeaders().get("simpUser")).map(Principal::getName).orElse("UnknownUser");
-            chatService.sendChatMessage(ChatMessage.builder().type(ChatMessage.MessageType.QUIT).roomId(roomId).sender(name).build());
-
             // 퇴장한 클라이언트의 roomId 맵핑 정보를 삭제한다.
             chatMessageRepository.removeUserEnterInfo(sessionId);
 
