@@ -51,7 +51,7 @@ public class DebateController {
     }
 
     // 타이머 - 토론 시작하기
-    @PostMapping("/{roomId}/start-timer")
+    @GetMapping("/{roomId}/start-timer")
     public ResponseEntity<DebateTimerRes> startDebateTimer(@PathVariable String roomId,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return debateService.startDebateTimer(roomId, userDetails);
