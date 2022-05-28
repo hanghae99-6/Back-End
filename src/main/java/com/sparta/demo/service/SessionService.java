@@ -213,7 +213,7 @@ public class SessionService {
 
 
     @Transactional
-    public ResponseEntity<LeaveRoomRes> leaveRoom(String roomId, String token, UserDetailsImpl userDetails) {
+    public ResponseEntity<LeaveRoomRes> leaveRoom(String roomId, String token, UserDetailsImpl userDetails) throws OpenViduJavaClientException, OpenViduHttpException {
 
         EnterUser enterUser = getEnterUser(roomId, userDetails.getUser());
         Debate debate = getDebate(roomId);
@@ -270,10 +270,17 @@ public class SessionService {
         String savedToken = hashOperations.get(roomId, userEmail);
 
         if(savedToken != null && savedToken.equals(token)) {
+            log.info("저장 된 토큰이 있고, 지금 들어온 토큰이랑 같을 경우, 레디스에 저장 된 토큰 삭제");
             hashOperations.delete(roomId, userEmail);
             if(userEmail.equals(prosEmail)){
+                log.info("찬성자 이메일 일 때");
+                log.info("반대자 이메일이 없으면, true/ 있으면 false");
                 return hashOperations.get(roomId, consEmail) == null;
-            }else return hashOperations.get(roomId, prosEmail) == null;
+            }else if(userEmail.equals(consEmail)){
+                log.info("반대자 이메일일 일 때");
+                log.info("찬성자 이메일이 없으면, true/ 있으면 false");
+                return hashOperations.get(roomId, prosEmail) == null;
+            }
         }
         return false;
     }
