@@ -9,8 +9,6 @@ import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -28,19 +26,17 @@ public class ChatMessageService {
     private final RedisPublisher redisPublisher;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final RedisTemplate<String, String> redisTemplate;
 
     private final JwtDecoder jwtDecoder;
 
 
     public void save(ChatMessageDto messageDto, String token) {
         log.info("save Message : {}", messageDto.getMessage());
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
         String userNickname = "";
         String sender = "";
 
-        String enterUserCnt = valueOperations.get(USER_COUNT + "_" + messageDto.getRoomId());
+        Long enterUserCnt = chatMessageRepository.getUserCnt(messageDto.getRoomId());
 
         // TODO: trim() 쓴 이유 : 빈 칸 안받으려고
         if(messageDto.getMessage().trim().equals("") && messageDto.getType()!= ChatMessage.MessageType.ENTER){
@@ -65,7 +61,7 @@ public class ChatMessageService {
         message.setCreatedAt(date);
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
-            message.setEnterUserCnt(enterUserCnt);
+            message.setEnterUserCnt(String.valueOf(enterUserCnt));
             message.setMessage(message.getNickname() + "님이 입장하셨습니다.");
         } else {
             chatMessageRepository.save(message);
