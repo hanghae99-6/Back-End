@@ -80,7 +80,6 @@ public class ChatService {
             message.setDebateEndTime(debateEndTime);
             message.setType(ChatMessage.MessageType.START);
             log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
-            log.info("메시지 타입 START 확인");
             redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
         }
 
