@@ -73,24 +73,6 @@ public class JwtDecoder {
                 .asString();
     }
 
-    public String decodeEmail(String tokenInfo) {
-        DecodedJWT decodedJWT = isValidToken(tokenInfo)
-                .orElseThrow(() -> new IllegalArgumentException("유효한 토큰이 아닙니다."));
-
-        Date expiredDate = decodedJWT
-                .getClaim(CLAIM_EXPIRED_DATE)
-                .asDate();
-
-        Date now = new Date();
-        if (expiredDate.before(now)) {
-            throw new IllegalArgumentException("유효한 DATE토큰이 아닙니다.");
-        }
-
-        return decodedJWT
-                .getClaim(CLAIM_EMAIL)
-                .asString();
-    }
-
     public String decodeImage(String tokenInfo) {
         DecodedJWT decodedJWT = isValidToken(tokenInfo)
                 .orElseThrow(() -> new IllegalArgumentException("유효한 토큰이 아닙니다."));

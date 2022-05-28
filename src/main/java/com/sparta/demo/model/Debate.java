@@ -86,9 +86,6 @@ public class Debate extends Timestamped{
     @Setter
     private StatusTypeEnum statusEnum;
 
-    @Column(nullable = false)
-    private int speechMinute;
-
     public static Debate create(DebateLinkRequestDto debateLinkRequestDto, User user, CategoryEnum category) {
 //        LocalDateTime localDateTime = LocalDateTime.now();
         // 얘는 홈트 어쩌고 그거 그대로 긁어온건데 뭔지 모르겠네요
@@ -102,7 +99,6 @@ public class Debate extends Timestamped{
         debate.prosName = debateLinkRequestDto.getProsName();
         debate.consName = debateLinkRequestDto.getConsName();
         debate.content = debateLinkRequestDto.getContent();
-        debate.speechMinute = debateLinkRequestDto.getSpeechMinute();
 //        debate.timestamp = Timestamp.valueOf(localDateTime);
         return debate;
     }
