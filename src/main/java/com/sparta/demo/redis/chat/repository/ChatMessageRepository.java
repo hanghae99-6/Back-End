@@ -21,8 +21,10 @@ public class ChatMessageRepository {// Redis
 
     private static final String CHAT_MESSAGE = "CHAT_MESSAGE";
     public static final String USER_COUNT = "USER_COUNT"; // 채팅룸에 입장한 클라이언트수 저장
+    public static final String ENTER_INFO = "ENTER_INFO"; // 채팅룸에 입장한 클라이언트의 sessionId와 채팅룸 id를 맵핑한 정보 저장
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private HashOperations<String, String, String> hashOpsEnterInfo;
     private HashOperations<String, String, List<ChatMessage>> opsHashChatMessage;
     private ValueOperations<String, String> valueOps;
 
@@ -64,5 +66,13 @@ public class ChatMessageRepository {// Redis
 
     public void delete(String roomId) {
         opsHashChatMessage.delete(CHAT_MESSAGE, roomId);
+    }
+
+    public void setUserEnterInfo(String roomId, String sessionId) {
+        hashOpsEnterInfo.put(ENTER_INFO, sessionId, roomId);
+    }
+
+    public String getRoomId(String sessionId) {
+        return hashOpsEnterInfo.get(ENTER_INFO, sessionId);
     }
 }
