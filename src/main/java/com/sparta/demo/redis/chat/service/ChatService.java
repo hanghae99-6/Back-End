@@ -1,18 +1,23 @@
 package com.sparta.demo.redis.chat.service;
 
 import com.sparta.demo.exception.CustomException;
+import com.sparta.demo.model.Debate;
 import com.sparta.demo.redis.chat.model.ChatMessage;
 import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
 import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
+import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static com.sparta.demo.exception.ErrorCode.NO_MESSAGE;
 
@@ -26,6 +31,7 @@ public class ChatService {
     private final RedisPublisher redisPublisher;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final DebateRepository debateRepository;
 
     private final JwtDecoder jwtDecoder;
 
@@ -59,13 +65,26 @@ public class ChatService {
         Date date = new Date();
         message.setCreatedAt(date); // 시간 세팅
 
+
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
             message.setMessage("[알림] " + message.getSender() + "님이 입장하셨습니다.");
-            message.setSender("\uD83D\uDC51PEECH KING\uD83D\uDC51");
+            message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
+
             message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
-            message.setSender("\uD83D\uDC51PEECH KING\uD83D\uDC51");
+            message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
+
+        } else if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
+            // 토론 시작 - 타이머 계산
+            Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
+            LocalDateTime localDateTime = LocalDateTime.now();
+            // 토론 종료 시간
+            Long debateTime = debate.get().getDebateTime();
+            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            message.setDebateEndTime(debateEndTime);
+            message.setType(ChatMessage.MessageType.START);
+
         }
 
         chatMessageRepository.save(message);
