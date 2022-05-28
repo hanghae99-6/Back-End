@@ -35,6 +35,7 @@ public class ChatMessageService {
 
         String userNickname = "";
         String sender = "";
+        String userImage = "";
 
         Long enterUserCnt = chatMessageRepository.getUserCnt(messageDto.getRoomId());
 
@@ -47,6 +48,7 @@ public class ChatMessageService {
             String tokenInfo = token.substring(7); // Bearer 빼고
             userNickname = jwtDecoder.decodeNickName(tokenInfo);
             sender = jwtDecoder.decodeEmail(tokenInfo);
+            userImage = jwtDecoder.decodeImage(tokenInfo);
         }
 
 
@@ -55,6 +57,7 @@ public class ChatMessageService {
 
         message.setSender(sender);
         message.setNickname(userNickname);
+        message.setUserImage(userImage);
 
         // 시간 세팅
         Date date = new Date();
