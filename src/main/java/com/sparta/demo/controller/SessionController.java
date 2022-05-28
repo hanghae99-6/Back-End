@@ -68,6 +68,5 @@ public class SessionController {
 
         return sessionService.leaveRoom(roomId, token, userDetails);
 
-
     }
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.demo.dto.reply.ReplyRequestDto;
 import com.sparta.demo.enumeration.SideTypeEnum;
-import com.sparta.demo.model.time.Timestamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -1,8 +1,6 @@
 package com.sparta.demo.controller;
 
 import com.sparta.demo.dto.debate.*;
-import com.sparta.demo.model.Debate;
-import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.DebateService;
 import com.sparta.demo.validator.ErrorResult;
@@ -10,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -22,6 +17,7 @@ import java.util.List;
 public class DebateController {
     private final DebateService debateService;
 
+    // 토론방 생성
     @PostMapping("/link")
     public ResponseEntity<DebateLinkResponseDto> createLink(
             @RequestBody DebateLinkRequestDto debateLinkRequestDto,
@@ -43,6 +39,7 @@ public class DebateController {
 //        return debateService.checkRoomIdUser(roomId, userDetails.getUser());
 //    }
 
+    // 토론방 퇴장시 주장한 의견과 근거 작성
     @PostMapping("/{roomId}")
     public ResponseEntity<ErrorResult> saveDebateInfo(@PathVariable String roomId,
                                       @RequestBody DebateInfoDto debateInfoDto,
@@ -50,5 +47,12 @@ public class DebateController {
                                                  ) {
         log.info("evidence : {}", debateInfoDto.getEvidences().get(0));
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);
+    }
+
+    // 타이머 - 토론 시작하기
+    @PostMapping("/{roomId}/start-timer")
+    public ResponseEntity<DebateTimerRes> startDebateTimer(@PathVariable String roomId,
+                                                           @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return debateService.startDebateTimer(roomId, userDetails);
     }
 }

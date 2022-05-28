@@ -1,4 +1,4 @@
-package com.sparta.demo.model.time;
+package com.sparta.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
