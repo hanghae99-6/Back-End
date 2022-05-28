@@ -26,7 +26,7 @@ public enum ErrorCode {
 
     // 404 Not Found
     NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "404_0", "유저 아이디가 존재하지 않습니다."),
-    NOT_FOUND_DEBATE_ID(HttpStatus.NOT_FOUND, "404_1", "토론방이 존재하지 않습니다."),
+    NOT_FOUND_DEBATE_ID(HttpStatus.NOT_FOUND, "404_1", "토론 방이 존재하지 않습니다."),
 
     NOT_FOUND_TEAM_ID(HttpStatus.NOT_FOUND, "404_2", "팀 아이디가 존재하지 않습니다."),
     NOT_FOUND_MEMBER_ID(HttpStatus.NOT_FOUND, "404_3", "멤버 아이디가 존재하지 않습니다."),

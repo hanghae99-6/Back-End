@@ -1,5 +1,6 @@
 package com.sparta.demo.redis.config.handler;
 
+import com.sparta.demo.exception.CustomException;
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.redis.chat.service.ChatService;
 import com.sparta.demo.security.jwt.JwtDecoder;
@@ -13,6 +14,8 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+
+import static com.sparta.demo.exception.ErrorCode.NOT_FOUND_DEBATE_ID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,7 +46,7 @@ public class StompHandler implements ChannelInterceptor {
             String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
 
             if(roomId == null) {
-
+                throw new CustomException(NOT_FOUND_DEBATE_ID);
             }
             log.info("roomId, 45 : {}", roomId);
             chatMessageRepository.setUserEnterInfo(roomId, sessionId);
