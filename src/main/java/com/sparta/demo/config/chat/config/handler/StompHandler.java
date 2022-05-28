@@ -29,9 +29,10 @@ public class StompHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        log.info("simpDestination : {}", message.getHeaders().get("simpDestination"));
+        log.info("32, simpDestination : {}", message.getHeaders().get("simpDestination"));
 
         String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
+        log.info("roomId : {}", roomId);
         // websocket 연결시 헤더의 jwt token 검증
         if (StompCommand.CONNECT == accessor.getCommand()) {
             String token = accessor.getFirstNativeHeader("Authorization");

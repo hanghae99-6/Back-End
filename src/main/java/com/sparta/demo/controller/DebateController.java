@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -30,25 +31,24 @@ public class DebateController {
         return debateService.createLink(debateLinkRequestDto, userDetails);
     }
 
-//    // 토론방 내에서 필요한 내용
-//    @GetMapping("/{roomId}")
-//    public ResponseEntity<DebateRoomResponseDto> getRoom(@PathVariable String roomId){
-//        return debateService.getRoom(roomId);
-//    }
-//
-//    @GetMapping("/{roomId}/check")
-//    public ResponseEntity<DebateRoomIdUserValidateDto> checkRoomIdUser(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        log.info("userDetails.getUser() : {}", userDetails.getUser());
-//        log.info("userDetails.getUser().getEmail() : {}", userDetails.getUser().getEmail());
-//        return debateService.checkRoomIdUser(roomId, userDetails.getUser());
-//    }
-
     @PostMapping("/{roomId}")
     public ResponseEntity<ErrorResult> saveDebateInfo(@PathVariable String roomId,
-                                      @RequestBody DebateInfoDto debateInfoDto,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails
-                                                 ) {
+                                                      @RequestBody DebateInfoDto debateInfoDto,
+                                                      @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         log.info("evidence : {}", debateInfoDto.getEvidences().get(0));
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);
+    }
+
+    @PostMapping("/emailCheck/pros")
+    public ResponseEntity<ErrorResult> prosEmailCheck(@RequestParam String email){
+        log.info("email: {}", email);
+        return debateService.emailCheck(email);
+    }
+
+    @PostMapping("/emailCheck/cons")
+    public ResponseEntity<ErrorResult> consEmailCheck(@RequestParam String email){
+        log.info("email: {}", email);
+        return debateService.emailCheck(email);
     }
 }

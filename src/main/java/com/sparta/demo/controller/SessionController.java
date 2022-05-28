@@ -7,6 +7,7 @@ import com.sparta.demo.dto.session.LeaveRoomRes;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.SessionService;
 import com.sparta.demo.util.ExistSessionException;
+import com.sparta.demo.util.MaxPublisherException;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.swagger.annotations.Api;
@@ -15,6 +16,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -40,13 +42,14 @@ public class SessionController {
     })
     public ResponseEntity<EnterRes> enterRoom(@PathVariable String roomId,
                                               HttpSession httpSession,
-                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws OpenViduJavaClientException, OpenViduHttpException, ExistSessionException {
+                                              @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                              HttpResponse response) throws OpenViduJavaClientException, OpenViduHttpException, ExistSessionException, MaxPublisherException {
 
         System.out.println("/api/rooms/{roomId} 진입 확인");
         log.info("roomId : {}", roomId);
         log.info("userEmail : {}", userDetails.getUser().getEmail());
 
-        return ResponseEntity.ok().body(sessionService.enterRoom(roomId, httpSession, userDetails));
+        return ResponseEntity.ok().body(sessionService.enterRoom(roomId, httpSession, userDetails, response));
     }
 
 
