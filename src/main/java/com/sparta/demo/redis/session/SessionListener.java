@@ -11,8 +11,6 @@ import org.springframework.data.redis.listener.KeyExpirationEventMessageListener
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
-
 @Component
 @Slf4j
 public class SessionListener extends KeyExpirationEventMessageListener {
@@ -36,7 +34,6 @@ public class SessionListener extends KeyExpirationEventMessageListener {
      * @param pattern   __keyevent@*__:expired
      */
     @Override
-    @Transactional
     public void onMessage(Message message, byte[] pattern) {
 
         System.out.println("########## onMessage pattern " + new String(pattern) + " | " + message.toString());
@@ -45,6 +42,7 @@ public class SessionListener extends KeyExpirationEventMessageListener {
         try{
             Debate debate = debateRepository.findByDebateId(Long.valueOf(message.toString())).get();
             debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
+            debateRepository.save(debate);
         }catch (Exception e){
             log.info(e.getMessage());
         }
