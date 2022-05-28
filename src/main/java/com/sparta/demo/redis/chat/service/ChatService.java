@@ -44,11 +44,6 @@ public class ChatService {
 
         Long enterUserCnt = chatMessageRepository.getUserCnt(messageDto.getRoomId());
 
-        // TODO: trim() 쓴 이유 : 빈 칸 안받으려고
-        if(messageDto.getMessage().trim().equals("") && messageDto.getType()!= ChatMessage.MessageType.ENTER){
-            throw new CustomException(NO_MESSAGE);
-        }
-
         if (!(String.valueOf(token).equals("Authorization") || String.valueOf(token).equals("null"))) {
             String tokenInfo = token.substring(7); // Bearer 빼고
             sender = jwtDecoder.decodeNickName(tokenInfo);
@@ -65,13 +60,13 @@ public class ChatService {
         Date date = new Date();
         message.setCreatedAt(date); // 시간 세팅
 
+        log.info("type : {}", message.getType());
 
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
             message.setMessage("[알림] " + message.getSender() + "님이 입장하셨습니다.");
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
-
             message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
 
