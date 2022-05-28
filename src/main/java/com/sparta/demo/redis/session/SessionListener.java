@@ -44,8 +44,7 @@ public class SessionListener extends KeyExpirationEventMessageListener {
         log.info("redis key value: {}, type: {}", Long.valueOf(message.toString()), Long.valueOf(message.toString()).getClass());
         try{
             Debate debate = debateRepository.findByDebateId(Long.valueOf(message.toString())).get();
-            log.info("debate있는지 확인 : {}", debate.getTopic());
-//            debateRepository.save(debate);
+            debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
         }catch (Exception e){
             log.info(e.getMessage());
         }
