@@ -14,7 +14,7 @@ import java.util.Date;
 public class ChatMessage {
     // 메시지 타입 : 입장, 채팅
     public enum MessageType {
-        ENTER, TALK, QUIT, TIMER
+        ENTER, TALK, QUIT, TIMER, START
     }
 
     private MessageType type; // 메시지 타입
@@ -23,6 +23,7 @@ public class ChatMessage {
     private String userImage;
     private String message; // 메시지
     private String enterUserCnt;
+    private String debateEndTime;
 
     //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
 //    @JsonSerialize(using = LocalDateTimeSerializer.class)
