@@ -10,7 +10,7 @@ import com.sparta.demo.model.User;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
-import com.sparta.demo.util.ExistSessionException;
+import com.sparta.demo.exception.ExistSessionException;
 import io.openvidu.java.client.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;

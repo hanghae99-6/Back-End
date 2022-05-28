@@ -1,4 +1,4 @@
-package com.sparta.demo.redis.chat.exception;
+package com.sparta.demo.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

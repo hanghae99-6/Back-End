@@ -1,4 +1,4 @@
-package com.sparta.demo.util;
+package com.sparta.demo.exception;
 
 import javax.persistence.EntityNotFoundException;
 

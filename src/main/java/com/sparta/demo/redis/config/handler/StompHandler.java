@@ -1,4 +1,4 @@
-package com.sparta.demo.redis.chat.config.handler;
+package com.sparta.demo.redis.config.handler;
 
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.redis.chat.service.ChatService;
