@@ -61,11 +61,11 @@ public class ChatService {
 
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
-            message.setMessage("[알림]" + message.getSender() + "님이 입장하셨습니다.");
-            message.setSender("*PEECH KING*");
+            message.setMessage("[알림] " + message.getSender() + "님이 입장하셨습니다.");
+            message.setSender("\uD83D\uDC51PEECH KING\uD83D\uDC51");
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
-            message.setMessage("[알림]" + message.getSender() + "님이 나가셨습니다.");
-            message.setSender("*PEECH KING*");
+            message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
+            message.setSender("\uD83D\uDC51PEECH KING\uD83D\uDC51");
         }
 
         chatMessageRepository.save(message);
