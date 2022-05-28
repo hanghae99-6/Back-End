@@ -57,12 +57,12 @@ public class ChatMessageService {
         message.setUserImage(userImage);
 
         // 시간 세팅
-        Date date = new Date();
+        Date date = new Date(+9);
         message.setCreatedAt(date);
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
             message.setEnterUserCnt(String.valueOf(enterUserCnt));
-            message.setMessage(message.getNickname() + "님이 입장하셨습니다.");
+            message.setMessage(message.getSender() + "님이 입장하셨습니다.");
         } else {
             message.setEnterUserCnt(String.valueOf(enterUserCnt));
             chatMessageRepository.save(message);
