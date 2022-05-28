@@ -42,10 +42,12 @@ public class StompHandler implements ChannelInterceptor {
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
 
+            log.info("roomId, 45 : {}", roomId);
             chatMessageRepository.setUserEnterInfo(roomId, sessionId);
             chatMessageRepository.plusUserCnt(roomId);
         } else if (StompCommand.DISCONNECT == accessor.getCommand()) {
             String roomId = chatMessageRepository.getRoomId(sessionId);
+            log.info("세션으로 가져오는 roomId, 50 : {}", roomId);
 
             if(roomId != null) {
                 chatMessageRepository.minusUserCnt(roomId);
