@@ -35,8 +35,7 @@ public class SessionService {
     private final DebateRepository debateRepository;
     private final EnterUserRepository enterUserRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 15L;
-//    private static final Long DEFAULT_TIMEOUT = 60L * 3 * 60;
+    private static final Long DEFAULT_TIMEOUT = 60L * 2 * 60;
 
     private final RedisTemplate<String, String> redisTemplate;
     private static final String DEBATE_STATUS = "debateStatus";
