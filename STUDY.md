@@ -21,12 +21,12 @@ private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>()
 - [Oracle - Cluster 설명](https://docs.oracle.com/cd/E19146-01/820-5654/gehht/index.html)
 
 
-java.lang.ClassCastException: com.sparta.demo.config.chat.model.dto.ChatMessageDto cannot be cast to java.lang.String
+java.lang.ClassCastException: com.sparta.demo.redis.chat.model.dto.ChatMessageDto cannot be cast to java.lang.String
 at org.springframework.data.redis.serializer.StringRedisSerializer.serialize(StringRedisSerializer.java:36) ~[spring-data-redis-2.6.4.jar!/:2.6.4]
 at org.springframework.data.redis.core.RedisTemplate.rawValue(RedisTemplate.java:580) ~[spring-data-redis-2.6.4.jar!/:2.6.4]
 at org.springframework.data.redis.core.RedisTemplate.convertAndSend(RedisTemplate.java:845) ~[spring-data-redis-2.6.4.jar!/:2.6.4]
-at com.sparta.demo.config.chat.pubsub.RedisPublisher.publish(RedisPublisher.java:18) ~[classes!/:na]
-at com.sparta.demo.config.chat.controller.ChatController.message(ChatController.java:41) ~[classes!/:na]
+at com.sparta.demo.redis.chat.pubsub.RedisPublisher.publish(RedisPublisher.java:18) ~[classes!/:na]
+at com.sparta.demo.redis.chat.controller.ChatController.message(ChatController.java:41) ~[classes!/:na]
 at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_212]
 at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_212]
 at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_212]
