@@ -21,8 +21,9 @@ public class EnterRes {
     private SideTypeEnum side;
     private String topic;
     private String content;
+    private boolean roomKing;
 
-    public EnterRes(OpenViduRole role, String token, EnterUser enterUser, Debate debate) {
+    public EnterRes(OpenViduRole role, String token, EnterUser enterUser, Debate debate, boolean roomKing) {
         this.user = true;
         this.role = role;
         this.token = token;
@@ -30,5 +31,6 @@ public class EnterRes {
         this.side = enterUser.getSide();
         this.topic = debate.getTopic();
         this.content = debate.getContent();
+        this.roomKing = roomKing;
     }
 }

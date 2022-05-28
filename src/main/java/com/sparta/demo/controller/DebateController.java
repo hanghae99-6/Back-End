@@ -40,11 +40,12 @@ public class DebateController {
 //    }
 
     // 토론방 퇴장시 주장한 의견과 근거 작성
+
     @PostMapping("/{roomId}")
     public ResponseEntity<ErrorResult> saveDebateInfo(@PathVariable String roomId,
-                                      @RequestBody DebateInfoDto debateInfoDto,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails
-                                                 ) {
+                                                      @RequestBody DebateInfoDto debateInfoDto,
+                                                      @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         log.info("evidence : {}", debateInfoDto.getEvidences().get(0));
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);
     }
@@ -52,7 +53,20 @@ public class DebateController {
     // 타이머 - 토론 시작하기
     @PostMapping("/{roomId}/start-timer")
     public ResponseEntity<DebateTimerRes> startDebateTimer(@PathVariable String roomId,
-                                                           @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return debateService.startDebateTimer(roomId, userDetails);
+    }
+
+    @PostMapping("/emailCheck/pros")
+    public ResponseEntity<ErrorResult> prosEmailCheck(@RequestParam String email){
+        log.info("email: {}", email);
+        return debateService.emailCheck(email);
+    }
+
+    @PostMapping("/emailCheck/cons")
+    public ResponseEntity<ErrorResult> consEmailCheck(@RequestParam String email){
+        log.info("email: {}", email);
+        return debateService.emailCheck(email);
+
     }
 }

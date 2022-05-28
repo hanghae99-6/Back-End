@@ -84,8 +84,8 @@ public class Debate extends Timestamped {
     @Column
     private Long debateTime;
 
-
     // todo: live now 진행될 경우 추가해야할 컬럼
+
     @Column
     @Enumerated(value=EnumType.STRING)
     @Setter
