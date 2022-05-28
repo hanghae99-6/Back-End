@@ -21,14 +21,13 @@ public class SessionListener extends KeyExpirationEventMessageListener {
 
     /**
      *
-     * @param message   redis key
+     * @param message   rediskey
      * @param pattern   __keyevent@*__:expired
      */
     @Override
     public void onMessage(Message message, byte[] pattern) {
 
-
-
         System.out.println("########## onMessage pattern " + new String(pattern) + " | " + message.toString());
     }
+
 }

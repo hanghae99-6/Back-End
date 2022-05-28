@@ -32,12 +32,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 //@RequiredArgsConstructor
 public class SessionService {
-    private DebateRepository debateRepository;
-    private EnterUserRepository enterUserRepository;
+    private final DebateRepository debateRepository;
+    private final EnterUserRepository enterUserRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 4 * 60;
+    private static final Long DEFAULT_TIMEOUT = 30L;
+//    private static final Long DEFAULT_TIMEOUT = 60L * 3 * 60;
 
-    private final RedisTemplate<Long, String> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private static final String DEBATE_STATUS = "debateStatus";
 
 
@@ -58,7 +59,7 @@ public class SessionService {
     // Secret shared with our OpenVidu server
     private String SECRET;
 
-    public SessionService(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl, EnterUserRepository enterUserRepository, DebateRepository debateRepository, RedisTemplate<Long, String> redisTemplate) {
+    public SessionService(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl, EnterUserRepository enterUserRepository, DebateRepository debateRepository, RedisTemplate<String, String> redisTemplate) {
         this.debateRepository = debateRepository;
         this.enterUserRepository = enterUserRepository;
         this.SECRET = secret;
@@ -203,8 +204,12 @@ public class SessionService {
 //    }
 
     private void saveDebate(Debate debate){
-        HashOperations<Long, String, StatusTypeEnum> hashOperations = redisTemplate.opsForHash();
-        hashOperations.put(debate.getDebateId(), DEBATE_STATUS, debate.getStatusEnum());
+        log.info("saveDebate 진입");
+        HashOperations<String , String, StatusTypeEnum> hashOperations = redisTemplate.opsForHash();
+        String redisKey = String.valueOf(debate.getDebateId());
+        hashOperations.put(redisKey, DEBATE_STATUS, debate.getStatusEnum());
+        log.info("저장 된 값 확인: {}", hashOperations.get(redisKey, DEBATE_STATUS));
+        redisTemplate.expire(redisKey, DEFAULT_TIMEOUT, TimeUnit.HOURS);
     }
 
 
