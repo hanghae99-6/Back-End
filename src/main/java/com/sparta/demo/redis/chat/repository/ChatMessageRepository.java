@@ -81,4 +81,9 @@ public class ChatMessageRepository {// Redis
     public String getRoomId(String sessionId) {
         return hashOpsEnterInfo.get(ENTER_INFO, sessionId);
     }
+
+    // 유저 세션정보와 맵핑된 채팅방ID 삭제
+    public void removeUserEnterInfo(String sessionId) {
+        hashOpsEnterInfo.delete(ENTER_INFO, sessionId);
+    }
 }
