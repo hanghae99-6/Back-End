@@ -101,12 +101,25 @@ public class ChatService {
     }
 
     // 타이머
-    public void getTimer(ChatMessageDto messageDto, UserDetailsImpl userDetails) {
+    public void getTimer(ChatMessageDto messageDto, String token) {
 
         ChatMessage message = new ChatMessage(messageDto);
 
         Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
-        if (userDetails.getUser().getEmail().equals(debate.get().getUser().getEmail())) {
+//        if (userDetails.getUser().getEmail().equals(debate.get().getUser().getEmail())) {
+//            if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
+//
+//                LocalDateTime localDateTime = LocalDateTime.now();
+//                // 토론 종료 시간
+//                Long debateTime = debate.get().getDebateTime();
+//                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//                message.setDebateEndTime(debateEndTime);
+//                message.setType(ChatMessage.MessageType.START);
+//                log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
+//                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
+//            }
+//        } else throw new IllegalArgumentException("방장만 토론 타이머 시작이 가능합니다.");
+        if (!(String.valueOf(token).equals("Authorization") || String.valueOf(token).equals("null"))) {
             if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
 
                 LocalDateTime localDateTime = LocalDateTime.now();
@@ -118,7 +131,6 @@ public class ChatService {
                 log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
                 redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
             }
-        } else throw new IllegalArgumentException("방장만 토론 타이머 시작이 가능합니다.");
-        
+        }
     }
 }

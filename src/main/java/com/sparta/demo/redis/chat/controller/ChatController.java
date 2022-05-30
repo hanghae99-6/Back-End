@@ -41,9 +41,9 @@ public class ChatController {
 
     // 타이머
     @MessageMapping("/timer")
-    public void getTimer(ChatMessageDto message, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public void getTimer(ChatMessageDto message, @Header("Authorization") String token) {
         log.info("요청 메서드 [Message] /timer");
-        chatService.getTimer(message, userDetails);
+        chatService.getTimer(message, token);
     }
 
 }
