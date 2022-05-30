@@ -25,13 +25,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         HttpMethod.PUT.name(),
                         HttpMethod.DELETE.name());
     }
-    ResponseCookie cookie = ResponseCookie.from("access-token", token)
-            .path("/")
-            .secure(true)
-            .sameSite("None")
-            .httpOnly(false)
-            .domain("예)abcd.com")
-            .build;
-
-response.setHeader("Set-Cookie", cookie.toString());
 }
