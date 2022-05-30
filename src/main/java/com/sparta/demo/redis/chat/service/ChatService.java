@@ -44,11 +44,6 @@ public class ChatService {
 
         Long enterUserCnt = chatMessageRepository.getUserCnt(messageDto.getRoomId());
 
-        // TODO: trim() 쓴 이유 : 빈 칸 안받으려고
-        if(messageDto.getMessage().trim().equals("") && messageDto.getType()!= ChatMessage.MessageType.ENTER){
-            throw new CustomException(NO_MESSAGE);
-        }
-
         if (!(String.valueOf(token).equals("Authorization") || String.valueOf(token).equals("null"))) {
             String tokenInfo = token.substring(7); // Bearer 빼고
             sender = jwtDecoder.decodeNickName(tokenInfo);
@@ -56,8 +51,8 @@ public class ChatService {
         }
 
 
-
         ChatMessage message = new ChatMessage(messageDto);
+
 
         message.setSender(sender);
         message.setUserImage(userImage);
