@@ -1,6 +1,5 @@
 package com.sparta.demo.security;
 
-import com.sparta.demo.security.filter.CookieFilter;
 import com.sparta.demo.security.filter.FormLoginFilter;
 import com.sparta.demo.security.filter.JwtAuthFilter;
 import com.sparta.demo.security.jwt.HeaderTokenExtractor;
@@ -39,17 +38,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
-    private final CookieFilter cookieFilter;
 
 
     public WebSecurityConfig(
             JWTAuthProvider jwtAuthProvider,
-            HeaderTokenExtractor headerTokenExtractor,
-            CookieFilter cookieFilter
+            HeaderTokenExtractor headerTokenExtractor
     ) {
         this.jwtAuthProvider = jwtAuthProvider;
         this.headerTokenExtractor = headerTokenExtractor;
-        this.cookieFilter = cookieFilter;
     }
 
     @Bean
