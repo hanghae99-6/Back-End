@@ -160,57 +160,43 @@ public class MainService {
 
     // 원클릭 토픽 찬반 선택하기
     @Transactional
-    public ResponseEntity<List<OneClickResponseDto>> sumOneClick(OneClickRequestDto oneClickRequestDto, HttpServletRequest request) {
+    public ResponseEntity<List<OneClickResponseDto>> updateOneClickVote(SideTypeEnum sideTypeEnum,
+                                                                        OneClick oneClick,
+                                                                        OneClickUser oneClickUser,
+                                                                        HttpServletRequest request) {
 
-        String userIp = GetIp.getIp(request);
+    switch (sideTypeEnum) {
+        case PROS:
+                oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
+                oneClick.setOppoNum(oneClick.getOppoNum() - 1);
+                oneClickUser.setSideTypeEnum(SideTypeEnum.PROS);
+            break;
+        case CONS:
+                oneClick.setOppoNum(oneClick.getOppoNum() + 1);
+                oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
+                oneClickUser.setSideTypeEnum(SideTypeEnum.CONS);
+            break;
+    }
 
-        SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(oneClickRequestDto.getSide()); // enum 값으로 변형
+        return ResponseEntity.ok().body(getOneClick(request).getBody());
+    }
+    // 원클릭 토픽 찬반 선택하기
+    @Transactional
+    public ResponseEntity<List<OneClickResponseDto>> createOneClickVote(OneClickRequestDto oneClickRequestDto,
+                                                                        String userIp,
+                                                                        SideTypeEnum sideTypeEnum,
+                                                                        OneClick oneClick,
+                                                                        HttpServletRequest request) {
 
-        OneClick oneClick = oneClickRepository.findById(oneClickRequestDto.getOneClickId()).orElseThrow( // oneClickTopic 으로 OneClick 객체를 찾아옴
-                () -> new IllegalStateException("없는 토픽입니다.")
-        );
-
-        Optional<OneClickUser> oneClickUser = oneClickUserRepository.findByUserIpAndOneClickId(userIp, oneClickRequestDto.getOneClickId());
-
-
-        log.info("sideTypeEnum.getTypeNum(): {}", sideTypeEnum.getTypeNum());
-
-        if (oneClickUser.isPresent()) {
-            switch (sideTypeEnum) {
-                case PROS:
-                    if (sideTypeEnum == oneClickUser.get().getSideTypeEnum()) {
-                        oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
-                        oneClickUser.get().setSideTypeEnum(SideTypeEnum.DEFAULT);
-                        oneClickUserRepository.delete(oneClickUser.get());
-                    } else {
-                        oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
-                        oneClick.setOppoNum(oneClick.getOppoNum() - 1);
-                        oneClickUser.get().setSideTypeEnum(SideTypeEnum.PROS);
-                    }
-                    break;
-                case CONS:
-                    if (sideTypeEnum == oneClickUser.get().getSideTypeEnum()) {
-                        oneClick.setOppoNum(oneClick.getOppoNum() - 1);
-                        oneClickUser.get().setSideTypeEnum(SideTypeEnum.DEFAULT);
-                        oneClickUserRepository.delete(oneClickUser.get());
-                    } else {
-                        oneClick.setOppoNum(oneClick.getOppoNum() + 1);
-                        oneClick.setAgreeNum(oneClick.getAgreeNum() - 1);
-                        oneClickUser.get().setSideTypeEnum(SideTypeEnum.CONS);
-                    }
-                    break;
-            }
-        } else {
-            OneClickUser oneclickUser = new OneClickUser(userIp, sideTypeEnum, oneClickRequestDto.getOneClickId());
-            oneClickUserRepository.save(oneclickUser);
-            switch (oneClickRequestDto.getSide()) {
-                case 1:
-                    oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
-                    break;
-                case 2:
-                    oneClick.setOppoNum(oneClick.getOppoNum() + 1);
-                    break;
-            }
+        OneClickUser oneclickUser = new OneClickUser(userIp, sideTypeEnum, oneClickRequestDto.getOneClickId());
+        oneClickUserRepository.save(oneclickUser);
+        switch (oneClickRequestDto.getSide()) {
+            case 1:
+                oneClick.setAgreeNum(oneClick.getAgreeNum() + 1);
+                break;
+            case 2:
+                oneClick.setOppoNum(oneClick.getOppoNum() + 1);
+                break;
         }
 
         return ResponseEntity.ok().body(getOneClick(request).getBody());
