@@ -2,6 +2,7 @@ package com.sparta.demo.redis.chat.controller;
 
 import com.sparta.demo.redis.chat.model.ChatMessage;
 import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
+import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
 import com.sparta.demo.redis.chat.service.ChatService;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -46,4 +47,10 @@ public class ChatController {
         chatService.getTimer(message, token);
     }
 
+    @GetMapping("/timer/{roomId}")
+    @ResponseBody
+    public TimerResponseDto getTimer(@PathVariable String roomId) {
+        log.info("요청 메서드 [GET] /timer/{roomId}");
+        return chatService.getTimer(roomId);
+    }
 }
