@@ -5,6 +5,7 @@ import com.sparta.demo.exception.CustomException;
 import com.sparta.demo.exception.ErrorCode;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.redis.chat.model.ChatMessage;
+import com.sparta.demo.redis.chat.model.Timer;
 import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
 import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
 import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
@@ -110,23 +111,30 @@ public class ChatService {
                 log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
                 redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
             }
+            else if(ChatMessage.MessageType.ENTER.equals(message.getType())){
+                LocalDateTime localDateTime = LocalDateTime.now();
+                // 토론 종료 시간
+                Long debateTime = debate.get().getDebateTime();
+                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                Timer timer = new Timer(message.getType(),debateEndTime,true);
+                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
+            }
         }
     }
 
-    public TimerResponseDto getTimer(String roomId) {
-        log.info("getTimer roomId : {}", roomId);
-        TimerResponseDto timerResponseDto = new TimerResponseDto();
-        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
-        ChatMessage message = new ChatMessage();
-        if(message.getType().equals(ChatMessage.MessageType.START)){
-            LocalDateTime localDateTime = LocalDateTime.now();
-            // 토론 종료 시간
-            Long debateTime = debate.get().getDebateTime();
-            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            Boolean isStarted = true;
-            timerResponseDto.setDebateEndTime(debateEndTime); timerResponseDto.setIsStarted(isStarted);
-        }
-
-        return timerResponseDto;
-    }
+//    public TimerResponseDto getTimer(String roomId) {
+//        log.info("getTimer roomId : {}", roomId);
+//        TimerResponseDto timerResponseDto = new TimerResponseDto();
+//        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
+//        ChatMessage message = new ChatMessage();
+//        if(message.getType().equals(ChatMessage.MessageType.START)){
+//            LocalDateTime localDateTime = LocalDateTime.now();
+//            // 토론 종료 시간
+//            Long debateTime = debate.get().getDebateTime();
+//            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//            Boolean isStarted = true;
+//            timerResponseDto.setDebateEndTime(debateEndTime); timerResponseDto.setIsStarted(isStarted);
+//        }
+//        return timerResponseDto;
+//    }
 }
