@@ -4,6 +4,7 @@ import com.sparta.demo.dto.live.LiveResponseDto;
 import com.sparta.demo.enumeration.StatusTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.User;
+import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class LiveNowService {
 
     private final DebateRepository debateRepository;
     private final UserRepository userRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     public ResponseEntity<List<LiveResponseDto>> getLiveNow() {
 
@@ -31,11 +33,9 @@ public class LiveNowService {
         for (Debate debate: debateList) {
             Optional<User> prosUser = userRepository.findByEmail(debate.getProsName());
             Optional<User> consUser = userRepository.findByEmail(debate.getConsName());
+            Long userCnt = chatMessageRepository.getUserCnt(debate.getRoomId());
 
-            log.info("prosNickName: {}", prosUser.get().getNickName());
-            log.info("consNickName: {}", consUser.get().getNickName());
-
-            liveResponseDtoList.add(new LiveResponseDto(debate, prosUser.get(), consUser.get()));
+            liveResponseDtoList.add(new LiveResponseDto(debate, prosUser.get(), consUser.get(), userCnt));
         }
 
         return ResponseEntity.ok().body(liveResponseDtoList);

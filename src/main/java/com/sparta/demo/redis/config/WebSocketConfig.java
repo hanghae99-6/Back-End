@@ -27,7 +27,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry
                 .addEndpoint("/wss-stomp")
                 .setAllowedOriginPatterns("*")
-                .withSockJS();
+                .withSockJS().setHeartbeatTime(1000);
     }
 
     @Override

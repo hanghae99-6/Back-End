@@ -1,11 +1,7 @@
 package com.sparta.demo.redis.config.handler;
 
-import com.sparta.demo.exception.CustomException;
-import com.sparta.demo.redis.chat.model.ChatMessage;
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
-import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
 import com.sparta.demo.redis.chat.service.ChatRoomService;
-import com.sparta.demo.redis.chat.service.ChatService;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +12,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.Optional;
-
-import static com.sparta.demo.exception.ErrorCode.NOT_FOUND_DEBATE_ID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,7 +30,6 @@ public class StompHandler implements ChannelInterceptor {
         log.info("30, simpDestination : {}", message.getHeaders().get("simpDestination"));
         log.info("31, sessionId : {}", message.getHeaders().get("simpSessionId"));
         String sessionId = "";
-
         // websocket 연결시 헤더의 jwt token 검증
         if (StompCommand.CONNECT == accessor.getCommand()) {
             String token = accessor.getFirstNativeHeader("Authorization");

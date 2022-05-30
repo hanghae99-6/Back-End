@@ -10,7 +10,7 @@ public class LiveResponseDto {
     private String roomId;
     private String topic;
     private String content;
-    private int enterUserCnt;
+    private Long enterUserCnt;
     private String status;
     private String category;
 
@@ -23,13 +23,13 @@ public class LiveResponseDto {
 //    private int prosNow;
 //    private int consNow;
 
-    public LiveResponseDto(Debate debate, User prosUser, User consUser) {
+    public LiveResponseDto(Debate debate, User prosUser, User consUser, Long userCnt) {
         this.debateId = debate.getDebateId();
         this.roomId = debate.getRoomId();
         this.topic = debate.getTopic();
         this.content = debate.getContent();
         // todo: 추후에 현재 채팅방에 있는 인원으로 변경해야함
-        this.enterUserCnt = debate.getEnterUserList().size();
+        this.enterUserCnt = userCnt;
         this.status = debate.getStatusEnum().getName();
         this.category = debate.getCategoryEnum().getName();
 
