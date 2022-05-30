@@ -63,31 +63,28 @@ public class ChatService {
 
         log.info("type : {}", message.getType());
 
-        switch (message.getType()) {
-            case ENTER:
-                chatRoomRepository.enterChatRoom(message.getRoomId());
-                message.setMessage("[알림] " + message.getSender() + "님이 입장하셨습니다.");
-                message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
-                chatMessageRepository.save(message);
-            case QUIT:
-                message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
-                message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
-                chatMessageRepository.save(message);
-            case TIMER:
-                // 토론 시작 - 타이머 계산
-                Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
-                LocalDateTime localDateTime = LocalDateTime.now();
-                // 토론방이 없을 경우 에러 발생
-                if(!debate.isPresent()) {
-                    throw new CustomException(ErrorCode.NOT_FOUND_DEBATE_ID);
-                }
-                // 토론 종료 시간
-                Long debateTime = debate.get().getDebateTime();
-                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                message.setDebateEndTime(debateEndTime);
-                message.setType(ChatMessage.MessageType.START);
-                log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
+
+        if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
+            chatRoomRepository.enterChatRoom(message.getRoomId());
+            message.setMessage("[알림] " + message.getSender() + "님이 입장하셨습니다.");
+            message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
+        } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
+            message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
+            message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
+
+        } else if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
+            // 토론 시작 - 타이머 계산
+            Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
+            LocalDateTime localDateTime = LocalDateTime.now();
+            // 토론 종료 시간
+            Long debateTime = debate.get().getDebateTime();
+            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            message.setDebateEndTime(debateEndTime);
+            message.setType(ChatMessage.MessageType.START);
+            log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
+            redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
         }
+
 
         // Websocket 에 발행된 메시지를 redis 로 발행한다(publish)
         redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
