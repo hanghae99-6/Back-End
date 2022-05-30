@@ -32,6 +32,7 @@ public class StompHandler implements ChannelInterceptor {
         String sessionId = "";
         // websocket 연결시 헤더의 jwt token 검증
         if (StompCommand.CONNECT == accessor.getCommand()) {
+            log.info("CONNECT : {}", sessionId);
             String token = accessor.getFirstNativeHeader("Authorization");
             if (token != null) {
                 token = token.substring(7);
@@ -39,6 +40,7 @@ public class StompHandler implements ChannelInterceptor {
             System.out.println("StompHandler token = " + token);
             jwtDecoder.isValidToken(token);
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+            log.info("SUBSCRIBE : {}", sessionId);
             sessionId = (String) message.getHeaders().get("simpSessionId");
             String roomId = chatRoomService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
 
