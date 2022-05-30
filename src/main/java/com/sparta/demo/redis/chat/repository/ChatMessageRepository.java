@@ -40,8 +40,9 @@ public class ChatMessageRepository {// Redis
 
     public ChatMessage save(ChatMessage chatMessage) {
         log.info("chatMessage : {}", chatMessage.getMessage());
+        log.info("type: {}", chatMessage.getType());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
-        // TODO
+
         String roomId = chatMessage.getRoomId();
         List<ChatMessage> chatMessageList = opsHashChatMessage.get(CHAT_MESSAGE, roomId);
         if (chatMessageList == null) chatMessageList = new ArrayList<>();
