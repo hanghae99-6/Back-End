@@ -6,6 +6,7 @@ import com.sparta.demo.exception.ErrorCode;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.redis.chat.model.ChatMessage;
 import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
+import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
 import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
@@ -102,6 +103,7 @@ public class ChatService {
                 LocalDateTime localDateTime = LocalDateTime.now();
                 // 토론 종료 시간
                 Long debateTime = debate.get().getDebateTime();
+                String debateStartTime = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                 message.setDebateEndTime(debateEndTime);
                 message.setType(ChatMessage.MessageType.START);
@@ -109,5 +111,22 @@ public class ChatService {
                 redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
             }
         }
+    }
+
+    public TimerResponseDto getTimer(String roomId) {
+        log.info("getTimer roomId : {}", roomId);
+        TimerResponseDto timerResponseDto = new TimerResponseDto();
+        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
+        ChatMessage message = new ChatMessage();
+        if(message.getType().equals(ChatMessage.MessageType.START)){
+            LocalDateTime localDateTime = LocalDateTime.now();
+            // 토론 종료 시간
+            Long debateTime = debate.get().getDebateTime();
+            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            Boolean isStarted = true;
+            timerResponseDto.setDebateEndTime(debateEndTime); timerResponseDto.setIsStarted(isStarted);
+        }
+
+        return timerResponseDto;
     }
 }
