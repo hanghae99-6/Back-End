@@ -86,5 +86,8 @@ public class ChatMessageRepository {// Redis
     // 유저 세션정보와 맵핑된 채팅방ID 삭제
     public void removeUserEnterInfo(String sessionId) {
         hashOpsEnterInfo.delete(ENTER_INFO, sessionId);
+        if(hashOpsEnterInfo.get(ENTER_INFO, sessionId) == null) {
+            log.info("세션 삭제 완료 : {}", sessionId);
+        }
     }
 }
