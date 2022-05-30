@@ -5,7 +5,9 @@ import com.sparta.demo.exception.CustomException;
 import com.sparta.demo.exception.ErrorCode;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.redis.chat.model.ChatMessage;
+import com.sparta.demo.redis.chat.model.Timer;
 import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
+import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
 import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -71,20 +74,18 @@ public class ChatService {
             chatRoomRepository.enterChatRoom(message.getRoomId());
             message.setMessage("[알림] " + message.getSender() + "님이 입장하셨습니다.");
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
+            message.setUserImage(null);
+            // timer
+            Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
+            LocalDateTime localDateTime = LocalDateTime.now();
+            Long debateTime = debate.get().getDebateTime();
+            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            Timer timer = new Timer(message.getType(),debateEndTime,true);
+            redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
             message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
-        } else if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
-            // 토론 시작 - 타이머 계산
-            Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
-            LocalDateTime localDateTime = LocalDateTime.now();
-            // 토론 종료 시간
-            Long debateTime = debate.get().getDebateTime();
-            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            message.setDebateEndTime(debateEndTime);
-            message.setType(ChatMessage.MessageType.START);
-            log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
-            redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
+            message.setUserImage(null);
         }
 
         chatMessageRepository.save(message);
@@ -104,31 +105,45 @@ public class ChatService {
         ChatMessage message = new ChatMessage(messageDto);
 
         Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
-//        if (userDetails.getUser().getEmail().equals(debate.get().getUser().getEmail())) {
-//            if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
-//
-//                LocalDateTime localDateTime = LocalDateTime.now();
-//                // 토론 종료 시간
-//                Long debateTime = debate.get().getDebateTime();
-//                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-//                message.setDebateEndTime(debateEndTime);
-//                message.setType(ChatMessage.MessageType.START);
-//                log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
-//                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
-//            }
-//        } else throw new IllegalArgumentException("방장만 토론 타이머 시작이 가능합니다.");
+
         if (!(String.valueOf(token).equals("Authorization") || String.valueOf(token).equals("null"))) {
             if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
 
                 LocalDateTime localDateTime = LocalDateTime.now();
                 // 토론 종료 시간
                 Long debateTime = debate.get().getDebateTime();
+                String debateStartTime = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                 message.setDebateEndTime(debateEndTime);
                 message.setType(ChatMessage.MessageType.START);
                 log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
                 redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
             }
+            else if(ChatMessage.MessageType.ENTER.equals(message.getType())){
+                LocalDateTime localDateTime = LocalDateTime.now();
+                // 토론 종료 시간
+                Long debateTime = debate.get().getDebateTime();
+                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                Timer timer = new Timer(message.getType(),debateEndTime,true);
+                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
+            }
         }
+    }
+
+    @Transactional
+    public TimerResponseDto getTimer(String roomId) {
+        log.info("getTimer roomId : {}", roomId);
+        TimerResponseDto timerResponseDto = new TimerResponseDto();
+        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
+        ChatMessage message = new ChatMessage();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        // 토론 종료 시간
+        Long debateTime = debate.get().getDebateTime();
+        String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        Boolean isStarted = true;
+        timerResponseDto.setDebateEndTime(debateEndTime);
+        timerResponseDto.setIsStarted(isStarted);
+        
+        return timerResponseDto;
     }
 }
