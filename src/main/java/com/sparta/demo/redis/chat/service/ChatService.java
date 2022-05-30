@@ -1,5 +1,6 @@
 package com.sparta.demo.redis.chat.service;
 
+import com.sparta.demo.dto.debate.DebateTimerRes;
 import com.sparta.demo.exception.CustomException;
 import com.sparta.demo.exception.ErrorCode;
 import com.sparta.demo.model.Debate;
@@ -9,9 +10,11 @@ import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
 import com.sparta.demo.repository.DebateRepository;
+import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -93,5 +96,27 @@ public class ChatService {
     public List<ChatMessage> getMessages(String roomId) {
         log.info("getMessages roomId : {}", roomId);
         return chatMessageRepository.findAllMessage(roomId);
+    }
+
+    // 타이머
+    public void getTimer(ChatMessageDto messageDto, UserDetailsImpl userDetails) {
+
+        ChatMessage message = new ChatMessage(messageDto);
+
+        Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
+        if (userDetails.getUser().getEmail().equals(debate.get().getUser().getEmail())) {
+            if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
+
+                LocalDateTime localDateTime = LocalDateTime.now();
+                // 토론 종료 시간
+                Long debateTime = debate.get().getDebateTime();
+                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                message.setDebateEndTime(debateEndTime);
+                message.setType(ChatMessage.MessageType.START);
+                log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
+                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
+            }
+        } else throw new IllegalArgumentException("방장만 토론 타이머 시작이 가능합니다.");
+        
     }
 }
