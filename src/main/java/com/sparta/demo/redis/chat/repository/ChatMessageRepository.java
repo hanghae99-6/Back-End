@@ -40,8 +40,9 @@ public class ChatMessageRepository {// Redis
 
     public ChatMessage save(ChatMessage chatMessage) {
         log.info("chatMessage : {}", chatMessage.getMessage());
+        log.info("type: {}", chatMessage.getType());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
-        // TODO
+
         String roomId = chatMessage.getRoomId();
         List<ChatMessage> chatMessageList = opsHashChatMessage.get(CHAT_MESSAGE, roomId);
         if (chatMessageList == null) chatMessageList = new ArrayList<>();
@@ -86,5 +87,8 @@ public class ChatMessageRepository {// Redis
     // 유저 세션정보와 맵핑된 채팅방ID 삭제
     public void removeUserEnterInfo(String sessionId) {
         hashOpsEnterInfo.delete(ENTER_INFO, sessionId);
+        if(hashOpsEnterInfo.get(ENTER_INFO, sessionId) == null) {
+            log.info("세션 삭제 완료 : {}", sessionId);
+        }
     }
 }
