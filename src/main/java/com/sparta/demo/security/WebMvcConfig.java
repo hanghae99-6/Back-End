@@ -3,6 +3,7 @@ package com.sparta.demo.security;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -16,6 +17,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("*")
                 .allowedHeaders("*")
                 .exposedHeaders(HttpHeaders.AUTHORIZATION)
+                .exposedHeaders(HttpHeaders.COOKIE)
                 .allowedMethods(
                         HttpMethod.GET.name(),
                         HttpMethod.HEAD.name(),
@@ -23,4 +25,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         HttpMethod.PUT.name(),
                         HttpMethod.DELETE.name());
     }
+    ResponseCookie cookie = ResponseCookie.from("access-token", token)
+            .path("/")
+            .secure(true)
+            .sameSite("None")
+            .httpOnly(false)
+            .domain("예)abcd.com")
+            .build;
+
+response.setHeader("Set-Cookie", cookie.toString());
 }

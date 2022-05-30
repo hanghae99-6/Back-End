@@ -1,5 +1,6 @@
 package com.sparta.demo.security;
 
+import com.sparta.demo.security.filter.CookieFilter;
 import com.sparta.demo.security.filter.FormLoginFilter;
 import com.sparta.demo.security.filter.JwtAuthFilter;
 import com.sparta.demo.security.jwt.HeaderTokenExtractor;
@@ -38,14 +39,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
+    private final CookieFilter cookieFilter;
 
 
     public WebSecurityConfig(
             JWTAuthProvider jwtAuthProvider,
-            HeaderTokenExtractor headerTokenExtractor
+            HeaderTokenExtractor headerTokenExtractor,
+            CookieFilter cookieFilter
     ) {
         this.jwtAuthProvider = jwtAuthProvider;
         this.headerTokenExtractor = headerTokenExtractor;
+        this.cookieFilter = cookieFilter;
     }
 
     @Bean
@@ -184,21 +188,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-////        configuration.addAllowedOrigin("http://localhost:3000");  // local 테스트 시
-//        configuration.addAllowedOrigin("*");
-////        configuration.addAllowedOrigin("http://hanghae99-sout.s3-website.ap-northeast-2.amazonaws.com"); // 배포 시
-//        configuration.addAllowedMethod("*");
-//        configuration.addAllowedHeader("*");
-//        configuration.addExposedHeader("Authorization");
-//        configuration.setAllowCredentials(true);
-//        configuration.addAllowedOriginPattern("*");
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 }
