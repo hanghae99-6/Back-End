@@ -28,6 +28,7 @@ public class TimerConfig implements WebSocketMessageBrokerConfigurer {
         registry
                 .addEndpoint("/ws-stomp")
                 .setAllowedOriginPatterns("*")
+                .setAllowedOrigins("*")
                 .withSockJS();
     }
 
