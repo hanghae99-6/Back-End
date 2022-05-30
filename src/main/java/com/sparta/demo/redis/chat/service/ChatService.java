@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -129,19 +130,20 @@ public class ChatService {
         }
     }
 
+    @Transactional
     public TimerResponseDto getTimer(String roomId) {
         log.info("getTimer roomId : {}", roomId);
         TimerResponseDto timerResponseDto = new TimerResponseDto();
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
         ChatMessage message = new ChatMessage();
-        if(message.getType().equals(ChatMessage.MessageType.START)){
-            LocalDateTime localDateTime = LocalDateTime.now();
-            // 토론 종료 시간
-            Long debateTime = debate.get().getDebateTime();
-            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            Boolean isStarted = true;
-            timerResponseDto.setDebateEndTime(debateEndTime); timerResponseDto.setIsStarted(isStarted);
-        }
+        LocalDateTime localDateTime = LocalDateTime.now();
+        // 토론 종료 시간
+        Long debateTime = debate.get().getDebateTime();
+        String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        Boolean isStarted = true;
+        timerResponseDto.setDebateEndTime(debateEndTime);
+        timerResponseDto.setIsStarted(isStarted);
+        
         return timerResponseDto;
     }
 }
