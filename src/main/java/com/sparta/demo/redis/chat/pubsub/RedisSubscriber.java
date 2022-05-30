@@ -32,6 +32,7 @@ public class RedisSubscriber implements MessageListener {
             ChatMessage roomMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
             log.info("roomMessage.getMessage : {}", roomMessage.getMessage());
             log.info("roomMessage.getRoomId : {}", roomMessage.getRoomId());
+            log.info("onMessage : {}", roomMessage.getType());
             if(roomMessage.getType().equals(ChatMessage.MessageType.START)) {
                 log.info("타입이 타이머일 경우 섭스크라이브");
                 messagingTemplate.convertAndSend("/sub-timer/chat/room/" + roomMessage.getRoomId(), roomMessage);
