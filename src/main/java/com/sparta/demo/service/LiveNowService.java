@@ -30,12 +30,20 @@ public class LiveNowService {
         List<Debate> debateList = debateRepository.findAllByStatusEnumOrStatusEnum(StatusTypeEnum.LIVEON, StatusTypeEnum.HOLD);
         List<LiveResponseDto> liveResponseDtoList = new ArrayList<>();
 
+        log.info("debateList.size(): {}", debateList.size());
+
         for (Debate debate: debateList) {
+
+            log.info("debatdId: {}",debate.getDebateId());
+            log.info("prosName: {}",debate.getProsName());
+            log.info("prosName: {}",debate.getConsName());
+
             Optional<User> prosUser = userRepository.findByEmail(debate.getProsName());
             Optional<User> consUser = userRepository.findByEmail(debate.getConsName());
             Long userCnt = chatMessageRepository.getUserCnt(debate.getRoomId());
 
             log.info("prosNickName: {}", prosUser.get().getNickName());
+            log.info("consUser isPresent: {}", consUser.isPresent());
             log.info("consNickName: {}", consUser.get().getNickName());
             log.info("userCnt: {}",userCnt);
 
