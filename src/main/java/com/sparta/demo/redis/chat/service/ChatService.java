@@ -74,6 +74,13 @@ public class ChatService {
             message.setMessage("[알림] " + message.getSender() + "님이 입장하셨습니다.");
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
             message.setUserImage(null);
+            // timer
+            Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
+            LocalDateTime localDateTime = LocalDateTime.now();
+            Long debateTime = debate.get().getDebateTime();
+            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            Timer timer = new Timer(message.getType(),debateEndTime,true);
+            redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
             message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
@@ -110,14 +117,6 @@ public class ChatService {
                 message.setType(ChatMessage.MessageType.START);
                 log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
                 redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
-            }
-            else if(ChatMessage.MessageType.ENTER.equals(message.getType())){
-                LocalDateTime localDateTime = LocalDateTime.now();
-                // 토론 종료 시간
-                Long debateTime = debate.get().getDebateTime();
-                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                Timer timer = new Timer(message.getType(),debateEndTime,true);
-                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
             }
         }
     }
