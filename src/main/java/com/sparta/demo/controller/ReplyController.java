@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Controller
@@ -43,9 +42,9 @@ public class ReplyController {
 
     // 리뷰 수정
     @PutMapping("/main/reply/{replyId}")
-    public ResponseEntity<ErrorResult> updateReply(@RequestBody ReplyRequestDto replyRequestDto,
-                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                   @PathVariable Long replyId){
+    public ResponseEntity<String> updateReply(@RequestBody ReplyRequestDto replyRequestDto,
+                                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                       @PathVariable Long replyId){
         return replyService.updateReply(replyRequestDto, userDetails, replyId);
     }
 

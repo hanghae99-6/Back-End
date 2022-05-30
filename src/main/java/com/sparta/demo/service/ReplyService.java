@@ -5,7 +5,6 @@ import com.sparta.demo.dto.reply.ReplyResponseDto;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.Reply;
-import com.sparta.demo.model.User;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.LikesRepository;
 import com.sparta.demo.repository.ReplyRepository;
@@ -92,7 +91,7 @@ public class ReplyService {
 
     // 댓글 수정
     @Transactional
-    public ResponseEntity<ErrorResult> updateReply(ReplyRequestDto replyRequestDto, UserDetailsImpl userDetails, Long replyId){
+    public ResponseEntity<String> updateReply(ReplyRequestDto replyRequestDto, UserDetailsImpl userDetails, Long replyId){
         Optional<Reply> reply = replyRepository.findByReplyId(replyId);
         log.info("유저정보: {}", userDetails.getUser().getEmail());
         if(!reply.isPresent()){
@@ -101,10 +100,10 @@ public class ReplyService {
             if(reply.get().getUser().getEmail().equals(userDetails.getUser().getEmail())){
                 reply.get().updateReply(replyRequestDto);
                 log.info("댓글 수정이 완료 되었습니다!");
-                return ResponseEntity.ok().body(new ErrorResult(true, "댓글 수정이 완료 되었습니다!"));
+                return ResponseEntity.ok().body(reply.get().getReply());
             }
             else {
-                return ResponseEntity.ok().body(new ErrorResult(false, "댓글 작성자가 다릅니다."));
+                return ResponseEntity.ok().body("댓글 작성자가 다릅니다.");
             }
         }
 
