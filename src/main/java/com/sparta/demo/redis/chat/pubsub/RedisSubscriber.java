@@ -33,6 +33,7 @@ public class RedisSubscriber implements MessageListener {
             log.info("roomMessage.getMessage : {}", roomMessage.getMessage());
             log.info("roomMessage.getRoomId : {}", roomMessage.getRoomId());
             if(roomMessage.getType().equals(ChatMessage.MessageType.START)) {
+                log.info("타입이 타이머일 경우 섭스크라이브");
                 messagingTemplate.convertAndSend("/sub-timer/chat/room/" + roomMessage.getRoomId(), roomMessage);
             }
             // Websocket 구독자에게 채팅 메시지 Send
