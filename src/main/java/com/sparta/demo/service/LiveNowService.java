@@ -36,6 +36,7 @@ public class LiveNowService {
             Long userCnt = chatMessageRepository.getUserCnt(debate.getRoomId());
 
             log.info("prosNickName: {}", prosUser.get().getNickName());
+            log.info("consUser isPresent: {}", consUser.isPresent());
             log.info("consNickName: {}", consUser.get().getNickName());
             log.info("userCnt: {}",userCnt);
 
