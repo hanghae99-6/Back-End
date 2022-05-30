@@ -16,11 +16,15 @@ public class RedisPublisher {
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void publish(ChannelTopic topic, ChatMessage message) {
+        log.info("ChannelTopic : {}", topic.getTopic());
+        log.info("ChatMessage : {}", message.getType());
         redisTemplate.convertAndSend(topic.getTopic(), message);
         System.out.println("발행 완료");
     }
 
     public void publish(ChannelTopic topic, Timer timer) {
+        log.info("Timer ChannelTopic : {}", topic.getTopic());
+        log.info("Timer ChatMessage : {}", timer.getType());
         redisTemplate.convertAndSend(topic.getTopic(), timer);
         System.out.println("발행 완료");
     }
