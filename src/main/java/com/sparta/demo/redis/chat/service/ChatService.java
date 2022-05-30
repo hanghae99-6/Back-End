@@ -70,11 +70,11 @@ public class ChatService {
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
             message.setMessage("[알림] " + message.getSender() + "님이 입장하셨습니다.");
-            message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
+            message.setSender("PEECH KING");
             message.setUserImage(null);
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
             message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
-            message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
+            message.setSender("PEECH KING");
             message.setUserImage(null);
         } else if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
             // 토론 시작 - 타이머 계산
