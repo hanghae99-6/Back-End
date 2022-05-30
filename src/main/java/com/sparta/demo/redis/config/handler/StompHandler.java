@@ -57,7 +57,6 @@ public class StompHandler implements ChannelInterceptor {
 
             // 퇴장한 클라이언트의 roomId 맵핑 정보를 삭제한다.
             chatMessageRepository.removeUserEnterInfo(sessionId);
-
         }
         return message;
     }
