@@ -35,6 +35,10 @@ public class LiveNowService {
             Optional<User> consUser = userRepository.findByEmail(debate.getConsName());
             Long userCnt = chatMessageRepository.getUserCnt(debate.getRoomId());
 
+            log.info("prosNickName: {}", prosUser.get().getNickName());
+            log.info("consNickName: {}", consUser.get().getNickName());
+            log.info("userCnt: {}",userCnt);
+
             liveResponseDtoList.add(new LiveResponseDto(debate, prosUser.get(), consUser.get(), userCnt));
         }
 
