@@ -47,10 +47,10 @@ public class ChatController {
         chatService.getTimer(message, token);
     }
 
-//    @GetMapping("/timer/{roomId}")
-//    @ResponseBody
-//    public TimerResponseDto getTimer(@PathVariable String roomId) {
-//        log.info("요청 메서드 [GET] /timer/{roomId}");
-//        return chatService.getTimer(roomId);
-//    }
+    @GetMapping("/timer/{roomId}")
+    @ResponseBody
+    public TimerResponseDto getTimer(@PathVariable String roomId) {
+        log.info("요청 메서드 [GET] /timer/{roomId}");
+        return chatService.getTimer(roomId);
+    }
 }
