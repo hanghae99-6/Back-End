@@ -25,14 +25,14 @@ public class RedisConfig {
     @Value("${spring.redis.port}")
     private int port;
 
-    @Value("${spring.redis.password}")
-    private String password;
+//    @Value("${spring.redis.password}")
+//    private String password;
 
     // redisConnectionFactory 를 통해 외부 redis 를 연결한다.
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(host, port);
-        redisStandaloneConfiguration.setPassword(password);
+//        redisStandaloneConfiguration.setPassword(password);
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
