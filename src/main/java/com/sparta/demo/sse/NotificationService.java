@@ -61,13 +61,13 @@ public class NotificationService {
         // 5 (redis 저장된 값)
         if (timerRepository.findAll(roomId) != null){
             sendToClient(emitter, id, timerRepository.findAll(roomId));
-            log.info("");
+            log.info("타이머 레포지토리 진입");
         }
 
         return emitter;
     }
 
-    // 5
+    // 6
     private void sendToClient(SseEmitter emitter, String id, Object data) {
         log.info("쎈드투클라이언트 진입!");
         try {
@@ -81,15 +81,6 @@ public class NotificationService {
         }
     }
 
-//    @Transactional
-//    public Long create(LoginMember loginMember, ReviewRequest reviewRequest) {
-//        // ...
-//        notificationService.send(teacher, savedReview, "새로운 리뷰 요청이 도착했습니다!");
-//
-//        return savedReview.getId();
-//    }
-
-    @Transactional
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
