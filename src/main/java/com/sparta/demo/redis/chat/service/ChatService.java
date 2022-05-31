@@ -80,8 +80,9 @@ public class ChatService {
             LocalDateTime localDateTime = LocalDateTime.now();
             Long debateTime = debate.get().getDebateTime();
             String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            Timer timer = new Timer(Timer.MessageType.START,debateEndTime,true);
-            redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
+            message.setDebateEndTime(debateEndTime);
+            message.setIsStarted(true);
+
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
             message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
@@ -120,14 +121,14 @@ public class ChatService {
                 log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
                 redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
             }
-            else if(ChatMessage.MessageType.ENTER.equals(message.getType())){
-                LocalDateTime localDateTime = LocalDateTime.now();
-                // 토론 종료 시간
-                Long debateTime = debate.get().getDebateTime();
-                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                Timer timer = new Timer(Timer.MessageType.START,debateEndTime,true);
-                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
-            }
+//            else if(ChatMessage.MessageType.ENTER.equals(message.getType())){
+//                LocalDateTime localDateTime = LocalDateTime.now();
+//                // 토론 종료 시간
+//                Long debateTime = debate.get().getDebateTime();
+//                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//                Timer timer = new Timer(Timer.MessageType.START,debateEndTime,true);
+//                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
+//            }
         }
     }
 
@@ -144,7 +145,7 @@ public class ChatService {
         Boolean isStarted = true;
         timerResponseDto.setDebateEndTime(debateEndTime);
         timerResponseDto.setIsStarted(isStarted);
-        
+        log.info("타이머 GETMAPPING 응답확인 (엔드타임): {}", timerResponseDto.getDebateEndTime());
         return timerResponseDto;
     }
 }

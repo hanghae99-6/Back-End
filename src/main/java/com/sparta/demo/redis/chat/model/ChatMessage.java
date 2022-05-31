@@ -24,6 +24,7 @@ public class ChatMessage {
     private String message; // 메시지
     private String enterUserCnt;
     private String debateEndTime;
+    private Boolean isStarted;
 
     //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
 //    @JsonSerialize(using = LocalDateTimeSerializer.class)
