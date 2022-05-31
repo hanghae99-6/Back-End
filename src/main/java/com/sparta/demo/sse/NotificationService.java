@@ -5,6 +5,7 @@ import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -15,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -27,9 +29,11 @@ public class NotificationService {
     public SseEmitter subscribe(String roomId, String lastEventId) {
         // 1
         String id = roomId + "_" + System.currentTimeMillis();
+        log.info("구독 id: {}",id);
 
         // 2
         SseEmitter emitter = emitterRepository.save(roomId, new SseEmitter(DEFAULT_TIMEOUT));
+        log.info("구독 emitter timeout: {}",emitter.getTimeout());
 
         emitter.onCompletion(() -> emitterRepository.deleteById(id));
         emitter.onTimeout(() -> emitterRepository.deleteById(id));
@@ -37,6 +41,7 @@ public class NotificationService {
         // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
         sendToClient(emitter, id, "EventStream Created. [roomId=" + roomId + "]");
+        log.info("더미 이벤트 발송");
 
         // 4
         // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
@@ -45,6 +50,7 @@ public class NotificationService {
             events.entrySet().stream()
                     .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
                     .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
+            log.info("클라이언트가 미수신 목록이 존재할 경우 재전송");
         }
 
         return emitter;
@@ -52,11 +58,13 @@ public class NotificationService {
 
     // 5
     private void sendToClient(SseEmitter emitter, String id, Object data) {
+        log.info("쎈드투클라이언트 진입!");
         try {
             emitter.send(SseEmitter.event()
                     .id(id)
                     .name("sse")
                     .data(data));
+            log.info("클라이언트에게 전송!");
         } catch (IOException exception) {
             emitterRepository.deleteById(id);
             throw new RuntimeException("연결 오류!");
@@ -72,6 +80,7 @@ public class NotificationService {
 //    }
 
     public void timer(String roomId, UserDetailsImpl userDetails){
+        log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
@@ -81,6 +90,7 @@ public class NotificationService {
             String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             Boolean isStarted = true;
             TimerResponseDto timerResponseDto = new TimerResponseDto(isStarted,debateEndTime);
+            log.info("토론 종료 시간 결과: {}", debateEndTime);
             sendToClient(emitter,roomId,timerResponseDto);
         } else throw new IllegalArgumentException("방장이 아닙니다.");
 
