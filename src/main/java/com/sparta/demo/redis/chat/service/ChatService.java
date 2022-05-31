@@ -80,7 +80,7 @@ public class ChatService {
             LocalDateTime localDateTime = LocalDateTime.now();
             Long debateTime = debate.get().getDebateTime();
             String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            Timer timer = new Timer(message.getType(),debateEndTime,true);
+            Timer timer = new Timer(Timer.MessageType.START,debateEndTime,true);
             redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
             message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
@@ -125,7 +125,7 @@ public class ChatService {
                 // 토론 종료 시간
                 Long debateTime = debate.get().getDebateTime();
                 String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                Timer timer = new Timer(message.getType(),debateEndTime,true);
+                Timer timer = new Timer(Timer.MessageType.START,debateEndTime,true);
                 redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
             }
         }
