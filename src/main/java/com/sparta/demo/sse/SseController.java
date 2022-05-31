@@ -25,11 +25,11 @@ public class SseController {
      * @title 로그인 한 유저 sse 연결
      * 페이지 시작했을 때 구독 요청
      */
-    @GetMapping(value = "/subscribe/{userEmail}", produces = "text/event-stream")
-    public SseEmitter subscribe(@PathVariable String userEmail,
+    @GetMapping(value = "/subscribe/{roomId}", produces = "text/event-stream")
+    public SseEmitter subscribe(@PathVariable String roomId,
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
         log.info("구독 controller 입장");
-        return notificationService.subscribe(userEmail, lastEventId);
+        return notificationService.subscribe(roomId, lastEventId);
     }
 
     // 토론 시작하기 눌렀을 때
