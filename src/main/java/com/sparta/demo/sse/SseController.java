@@ -27,7 +27,7 @@ public class SseController {
      */
     @GetMapping(value = "/subscribe/{userEmail}", produces = "text/event-stream")
     public SseEmitter subscribe(@PathVariable String userEmail,
-                                @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,) {
+                                @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
         log.info("구독 controller 입장");
         return notificationService.subscribe(userEmail, lastEventId);
     }
