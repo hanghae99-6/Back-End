@@ -92,7 +92,7 @@ public class NotificationService {
             Boolean isStarted = true;
             TimerResponseDto timerResponseDto = new TimerResponseDto(isStarted,debateEndTime);
             log.info("토론 종료 시간 결과: {}", debateEndTime);
-            log.info("timer method emmiter: {}:",emitter.toString());
+            log.info("timer method emmiter: {}:",emitter);
             log.info("timer method roomId: {}:",roomId);
             log.info("timer method timerResponseDto: {}:",timerResponseDto.getDebateEndTime());
             sendToClient(emitter,roomId,timerResponseDto);
