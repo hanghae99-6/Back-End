@@ -10,6 +10,7 @@ import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -58,8 +59,10 @@ public class NotificationService {
         }
 
         // 5 (redis 저장된 값)
-        if (timerRepository.findAll(roomId) != null)
+        if (timerRepository.findAll(roomId) != null){
             sendToClient(emitter, id, timerRepository.findAll(roomId));
+            log.info("");
+        }
 
         return emitter;
     }
@@ -86,7 +89,7 @@ public class NotificationService {
 //        return savedReview.getId();
 //    }
 
-    public TimerResponseDto timer(String roomId, UserDetailsImpl userDetails) {
+    public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
         log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
@@ -112,6 +115,6 @@ public class NotificationService {
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
         sendToClient(emitter, roomId, timerResponseDto);
 
-        return timerResponseDto;
+        return ResponseEntity.ok().body(timerResponseDto);
     }
 }
