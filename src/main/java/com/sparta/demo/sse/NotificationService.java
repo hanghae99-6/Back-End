@@ -95,6 +95,7 @@ public class NotificationService {
         log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
+
         if (!debate.get().getUser().getEmail().equals(userDetails.getUser().getEmail())) {
             throw new IllegalArgumentException("방장이 아닙니다.");
         }
