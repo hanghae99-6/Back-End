@@ -45,6 +45,11 @@ public class NotificationService {
         SseEmitter emitter = emitterRepository.save(roomId, new SseEmitter(DEFAULT_TIMEOUT));
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
 
+        emitterSet.remove(sseEmitter);
+
+        log.info("emitterSet size: {}", emitterSet.size());
+        log.info(sseEmitter.toString());
+
         emitterSet.add(emitter);
 
         log.info("구독 emitter timeout: {}", emitter.getTimeout());
@@ -108,6 +113,7 @@ public class NotificationService {
                 log.info("클라이언트에게 전송!");
             } catch (Exception ignore) {
                 deadEmitters.add(emitter);
+                emitter.complete();
                 emitterRepository.deleteById(id);
                 throw new RuntimeException("연결 오류!");
             }
