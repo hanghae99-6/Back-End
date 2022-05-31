@@ -11,6 +11,7 @@ import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.yaml.snakeyaml.emitter.Emitter;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
@@ -65,13 +68,13 @@ public class NotificationService {
         // 5 (redis 저장된 값)
         if (timerRepository.findAll(roomId) != null){
             sendToClient(emitter, id, timerRepository.findAll(roomId));
-            log.info("");
+            log.info("타이머 레포지토리 진입");
         }
 
         return emitter;
     }
 
-    // 5
+    // 6
     private void sendToClient(SseEmitter emitter, String id, Object data) {
         log.info("쎈드투클라이언트 진입!");
         try {
@@ -85,14 +88,7 @@ public class NotificationService {
         }
     }
 
-//    @Transactional
-//    public Long create(LoginMember loginMember, ReviewRequest reviewRequest) {
-//        // ...
-//        notificationService.send(teacher, savedReview, "새로운 리뷰 요청이 도착했습니다!");
-//
-//        return savedReview.getId();
-//    }
-
+    @Async
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
@@ -102,26 +98,34 @@ public class NotificationService {
         }
         log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
-        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
-        if (!debate.get().getUser().getEmail().equals(userDetails.getUser().getEmail())) {
+        Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(
+                () -> new IllegalArgumentException("없는 토론방입니다.")
+        );
+
+        if (!debate.getUser().getEmail().equals(userDetails.getUser().getEmail())) {
             throw new IllegalArgumentException("방장이 아닙니다.");
         }
+
         LocalDateTime localDateTime = LocalDateTime.now();
-        Long debateTime = debate.get().getDebateTime();
+        Long debateTime = debate.getDebateTime();
         String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         Boolean isStarted = true;
         // redis 에 저장장
         Timer timer = new Timer();
-            timer.setType(Timer.MessageType.START);
-            timer.setDebateEndTime(debateEndTime);
-            timer.setIsStarted(isStarted);
-            timerRepository.save(timer, roomId);
+        timer.setType(Timer.MessageType.START);
+        timer.setDebateEndTime(debateEndTime);
+        timer.setIsStarted(isStarted);
+        timerRepository.save(timer, roomId);
         TimerResponseDto timerResponseDto = new TimerResponseDto(Timer.MessageType.START, isStarted, debateEndTime);
         log.info("토론 종료 시간 결과: {}", debateEndTime);
         log.info("timer method emmiter: {}:", emitter);
         log.info("timer method roomId: {}:", roomId);
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
-        sendToClient(emitter, roomId, timerResponseDto);
+        for(int i = 0; i < 3; i++) {
+            sendToClient(emitter, roomId, timerResponseDto);
+            log.info("i번째 센드투클라이언트 : {}", i);
+        }
+
 
         for(SseEmitter emit : emitterList){
             sendToClient(emit,roomId,timerResponseDto);
