@@ -88,6 +88,7 @@ public class ChatService {
             message.setUserImage(null);
         }
 
+        log.info("ENTER : {}", message.getMessage());
         chatMessageRepository.save(message);
         // Websocket 에 발행된 메시지를 redis 로 발행한다(publish)
         redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
