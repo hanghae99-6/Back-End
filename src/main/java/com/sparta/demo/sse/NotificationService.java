@@ -123,7 +123,7 @@ public class NotificationService {
         log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
         Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < emitterSet.size(); i++) {
             emitterList.add(emitterRepository.findByUserEmail(userDetails.getUser().getEmail()));
         }
         log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
