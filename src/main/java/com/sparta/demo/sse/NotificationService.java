@@ -36,13 +36,13 @@ public class NotificationService {
     private final TimerRepository timerRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    public SseEmitter subscribe(String roomId, String lastEventId) {
+    public SseEmitter subscribe(String roomId, String lastEventId, UserDetailsImpl userDetails) {
         // 1
         String id = roomId + "_" + System.currentTimeMillis();
         log.info("구독 id: {}", id);
 
         // 2
-        SseEmitter emitter = emitterRepository.save(roomId, new SseEmitter(DEFAULT_TIMEOUT));
+        SseEmitter emitter = emitterRepository.save(userDetails.getUser().getEmail(), new SseEmitter(DEFAULT_TIMEOUT));
         log.info("구독 emitter timeout: {}", emitter.getTimeout());
 
         emitter.onCompletion(() -> emitterRepository.deleteById(id));

@@ -27,9 +27,10 @@ public class SseController {
      */
     @GetMapping(value = "/subscribe/{roomId}", produces = "text/event-stream")
     public SseEmitter subscribe(@PathVariable String roomId,
-                                @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
+                                @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
+                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("구독 controller 입장");
-        return notificationService.subscribe(roomId, lastEventId);
+        return notificationService.subscribe(roomId, lastEventId, userDetails);
     }
 
     // 토론 시작하기 눌렀을 때
