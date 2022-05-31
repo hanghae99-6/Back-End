@@ -17,7 +17,7 @@ public class RedisPublisher {
 
     public void publish(ChannelTopic topic, ChatMessage message) {
         redisTemplate.convertAndSend(topic.getTopic(), message);
-        System.out.println("발행 완료");
+        System.out.println("발행 완료!");
     }
 
     public void publish(ChannelTopic topic, Timer timer) {
