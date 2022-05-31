@@ -81,15 +81,6 @@ public class NotificationService {
         }
     }
 
-//    @Transactional
-//    public Long create(LoginMember loginMember, ReviewRequest reviewRequest) {
-//        // ...
-//        notificationService.send(teacher, savedReview, "새로운 리뷰 요청이 도착했습니다!");
-//
-//        return savedReview.getId();
-//    }
-
-    @Transactional
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
