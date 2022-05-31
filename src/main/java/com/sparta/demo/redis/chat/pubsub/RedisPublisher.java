@@ -23,8 +23,7 @@ public class RedisPublisher {
     }
 
     public void publish(ChannelTopic topic, Timer timer) {
-        log.info("Timer ChannelTopic : {}", topic.getTopic());
-        log.info("Timer ChatMessage : {}", timer.getType());
+        log.info("Timer publish 진입확인 ");
         redisTemplate.convertAndSend(topic.getTopic(), timer);
         System.out.println("발행 완료");
     }
