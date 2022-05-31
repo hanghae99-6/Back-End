@@ -5,7 +5,6 @@ import com.sparta.demo.exception.CustomException;
 import com.sparta.demo.exception.ErrorCode;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.redis.chat.model.ChatMessage;
-import com.sparta.demo.redis.chat.model.Timer;
 import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
 import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
 import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
@@ -77,10 +76,11 @@ public class ChatService {
             message.setUserImage(null);
             // timer
             Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
+            log.info("Enter일때 endTime: {}", message.getDebateEndTime());
             LocalDateTime localDateTime = LocalDateTime.now();
-            Long debateTime = debate.get().getDebateTime();
-            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            message.setDebateEndTime(debateEndTime);
+//            Long debateTime = debate.get().getDebateTime();
+//            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//            message.setDebateEndTime(debateEndTime);
             message.setIsStarted(true);
 
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
@@ -114,7 +114,6 @@ public class ChatService {
                 LocalDateTime localDateTime = LocalDateTime.now();
                 // 토론 종료 시간
                 Long debateTime = debate.get().getDebateTime();
-                String debateStartTime = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                 message.setDebateEndTime(debateEndTime);
                 message.setType(ChatMessage.MessageType.START);

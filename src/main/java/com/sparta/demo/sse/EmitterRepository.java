@@ -1,4 +1,4 @@
-package com.sparta.demo.redis.notification;
+package com.sparta.demo.sse;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -56,5 +56,9 @@ public class EmitterRepository {
                     }
                 }
         );
+    }
+
+    public SseEmitter findByRoomId(String roomId){
+        return emitters.get(roomId);
     }
 }
