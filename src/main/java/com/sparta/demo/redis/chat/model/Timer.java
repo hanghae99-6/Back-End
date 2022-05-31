@@ -1,3 +1,4 @@
+//<<<<<<< HEAD
 //package com.sparta.demo.redis.chat.model;
 //
 //import com.fasterxml.jackson.annotation.JsonFormat;
@@ -12,6 +13,7 @@
 //@Setter
 //@AllArgsConstructor
 //public class Timer {
+//
 //    public enum MessageType {
 //        ENTER, TIMER, START
 //    }
