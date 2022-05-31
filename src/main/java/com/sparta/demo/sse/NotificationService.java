@@ -36,13 +36,13 @@ public class NotificationService {
     private final TimerRepository timerRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    public SseEmitter subscribe(String userEmail, String lastEventId) {
+    public SseEmitter subscribe(String roomId, String lastEventId) {
         // 1
-        String id = userEmail + "_" + System.currentTimeMillis();
+        String id = roomId + "_" + System.currentTimeMillis();
         log.info("구독 id: {}", id);
 
         // 2
-        SseEmitter emitter = emitterRepository.save(userEmail, new SseEmitter(DEFAULT_TIMEOUT));
+        SseEmitter emitter = emitterRepository.save(roomId, new SseEmitter(DEFAULT_TIMEOUT));
         log.info("구독 emitter timeout: {}", emitter.getTimeout());
 
         emitter.onCompletion(() -> emitterRepository.deleteById(id));
@@ -50,13 +50,13 @@ public class NotificationService {
 
         // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
-        sendToClient(emitter, id, "EventStream Created. [roomId=" + userEmail + "]");
+        sendToClient(emitter, id, "EventStream Created. [roomId=" + roomId + "]");
         log.info("더미 이벤트 발송");
 
         // 4
         // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
         if (!lastEventId.isEmpty()) {
-            Map<String, Object> events = emitterRepository.findAllEventCacheStartWithId(String.valueOf(userEmail));
+            Map<String, Object> events = emitterRepository.findAllEventCacheStartWithId(String.valueOf(roomId));
             events.entrySet().stream()
                     .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
                     .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
@@ -64,8 +64,8 @@ public class NotificationService {
         }
 
         // 5 (redis 저장된 값)
-        if (timerRepository.findAll(userEmail) != null) {
-            sendToClient(emitter, id, timerRepository.findAll(userEmail));
+        if (timerRepository.findAll(roomId) != null) {
+            sendToClient(emitter, id, timerRepository.findAll(roomId));
             log.info("타이머 레포지토리 진입");
         }
 
@@ -91,7 +91,7 @@ public class NotificationService {
 //        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
         Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
         for (int i = 0; i < 3; i++) {
-            emitterList.add(emitterRepository.findByUserEmail(userDetails.getUser().getEmail()));
+            emitterList.add(emitterRepository.findByRoomId(roomId));
         }
 //        log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
