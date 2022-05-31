@@ -61,4 +61,8 @@ public class EmitterRepository {
     public SseEmitter findByRoomId(String roomId){
         return emitters.get(roomId);
     }
+
+    public SseEmitter findByUserEmail(String userEmail){
+        return emitters.get(userEmail);
+    }
 }
