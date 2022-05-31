@@ -201,4 +201,5 @@ public class UserService {
         debateRepository.deleteByDebateId(debateId);
         log.info("관리자권한: 마이페이지에서 내 토론내역 삭제 완료!");
     }
+
 }

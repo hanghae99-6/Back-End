@@ -42,17 +42,18 @@ public class ReplyController {
 
     // 리뷰 수정
     @PutMapping("/main/reply/{replyId}")
-    public ResponseEntity<String> updateReply(@RequestBody ReplyRequestDto replyRequestDto,
+    public ResponseEntity<List<ReplyResponseDto>> updateReply(@RequestBody ReplyRequestDto replyRequestDto,
                                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                       @PathVariable Long replyId){
-        return replyService.updateReply(replyRequestDto, userDetails, replyId);
+                                                       @PathVariable Long replyId, HttpServletRequest request){
+        return replyService.updateReply(replyRequestDto, userDetails, replyId, request);
     }
 
     // 리뷰 삭제
     @DeleteMapping("/main/reply/{replyId}")
-    public ResponseEntity<ErrorResult> deleteReply(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                            @PathVariable Long replyId){
-        return replyService.deleteReply(userDetails, replyId);
+    public ResponseEntity<List<ReplyResponseDto>> deleteReply(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                   @PathVariable Long replyId,
+                                                   HttpServletRequest request){
+        return replyService.deleteReply(userDetails, replyId, request);
     }
 
 }
