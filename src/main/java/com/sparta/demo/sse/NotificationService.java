@@ -82,6 +82,7 @@ public class NotificationService {
     public void timer(String roomId, UserDetailsImpl userDetails){
         log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
+        log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
         if(debate.get().getUser().getEmail().equals(userDetails.getUser().getEmail())){
@@ -91,7 +92,7 @@ public class NotificationService {
             Boolean isStarted = true;
             TimerResponseDto timerResponseDto = new TimerResponseDto(isStarted,debateEndTime);
             log.info("토론 종료 시간 결과: {}", debateEndTime);
-            log.info("timer method emmiter: {}:",emitter.toString());
+            log.info("timer method emmiter: {}:",emitter);
             log.info("timer method roomId: {}:",roomId);
             log.info("timer method timerResponseDto: {}:",timerResponseDto.getDebateEndTime());
             sendToClient(emitter,roomId,timerResponseDto);
