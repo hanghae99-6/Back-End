@@ -116,10 +116,10 @@ public class NotificationService {
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
 //        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
-        Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
-        for (int i = 0; i < 3; i++) {
-            emitterList.add(emitterRepository.findByUserEmail(userDetails.getUser().getEmail()));
-        }
+//        Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
+//        for (int i = 0; i < 3; i++) {
+//            emitterList.add(emitterRepository.findByUserEmail(userDetails.getUser().getEmail()));
+//        }
 //        log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
         Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(
@@ -146,10 +146,10 @@ public class NotificationService {
         log.info("timer method roomId: {}:", roomId);
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
 
-        for (SseEmitter emit : emitterList) {
-//            sendToClient(emit, roomId, timerResponseDto);
-            sendToClient(roomId, timerResponseDto);
-        }
+//        for (SseEmitter emit : emitterList) {
+////            sendToClient(emit, roomId, timerResponseDto);
+//            sendToClient(roomId, timerResponseDto);
+//        }
         return ResponseEntity.ok().body(timerResponseDto);
     }
 }
