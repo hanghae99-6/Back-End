@@ -13,11 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.yaml.snakeyaml.emitter.Emitter;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,6 +33,7 @@ public class NotificationService {
     private final EmitterRepository emitterRepository;
     private final DebateRepository debateRepository;
     private final TimerRepository timerRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     public SseEmitter subscribe(String roomId, String lastEventId) {
         // 1
@@ -92,6 +96,10 @@ public class NotificationService {
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
+        List<SseEmitter> emitterList = new ArrayList<>();
+        for(int i=0; i<3; i++){
+            emitterList.add(emitterRepository.findByRoomId(roomId));
+        }
         log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
@@ -115,6 +123,9 @@ public class NotificationService {
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
         sendToClient(emitter, roomId, timerResponseDto);
 
+        for(SseEmitter emit : emitterList){
+            sendToClient(emit,roomId,timerResponseDto);
+        }
         return ResponseEntity.ok().body(timerResponseDto);
     }
 }
