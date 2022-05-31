@@ -113,7 +113,11 @@ public class NotificationService {
         log.info("timer method emmiter: {}:", emitter);
         log.info("timer method roomId: {}:", roomId);
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
-        sendToClient(emitter, roomId, timerResponseDto);
+        for(int i = 0; i < 3; i++) {
+            sendToClient(emitter, roomId, timerResponseDto);
+            log.info("i번째 센드투클라이언트 : {}", i);
+        }
+
 
         return ResponseEntity.ok().body(timerResponseDto);
     }
