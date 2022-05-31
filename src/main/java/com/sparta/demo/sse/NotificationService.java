@@ -20,10 +20,8 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -88,13 +86,12 @@ public class NotificationService {
         }
     }
 
-    @Async
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
 //        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
-        List<SseEmitter> emitterList = new ArrayList<>();
+        Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
         for (int i = 0; i < 3; i++) {
-            emitterList.add(emitterRepository.findByRoomId(roomId));
+            emitterList.add(emitterRepository.findByUserEmail(userDetails.getUser().getEmail()));
         }
 //        log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
