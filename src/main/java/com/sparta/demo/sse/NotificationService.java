@@ -66,7 +66,7 @@ public class NotificationService {
         }
 
         // 5 (redis 저장된 값)
-        if (timerRepository.findAll(roomId) != null){
+        if (timerRepository.findAll(roomId) != null) {
             sendToClient(emitter, id, timerRepository.findAll(roomId));
             log.info("타이머 레포지토리 진입");
         }
@@ -91,12 +91,12 @@ public class NotificationService {
     @Async
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
-        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
+//        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
         List<SseEmitter> emitterList = new ArrayList<>();
-        for(int i=0; i<3; i++){
+        for (int i = 0; i < 3; i++) {
             emitterList.add(emitterRepository.findByRoomId(roomId));
         }
-        log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
+//        log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
         Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(
                 () -> new IllegalArgumentException("없는 토론방입니다.")
@@ -118,17 +118,12 @@ public class NotificationService {
         timerRepository.save(timer, roomId);
         TimerResponseDto timerResponseDto = new TimerResponseDto(Timer.MessageType.START, isStarted, debateEndTime);
         log.info("토론 종료 시간 결과: {}", debateEndTime);
-        log.info("timer method emmiter: {}:", emitter);
+//        log.info("timer method emmiter: {}:", emitter);
         log.info("timer method roomId: {}:", roomId);
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
-        for(int i = 0; i < 3; i++) {
-            sendToClient(emitter, roomId, timerResponseDto);
-            log.info("i번째 센드투클라이언트 : {}", i);
-        }
 
-
-        for(SseEmitter emit : emitterList){
-            sendToClient(emit,roomId,timerResponseDto);
+        for (SseEmitter emit : emitterList) {
+            sendToClient(emit, roomId, timerResponseDto);
         }
         return ResponseEntity.ok().body(timerResponseDto);
     }
