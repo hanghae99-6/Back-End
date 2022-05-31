@@ -17,7 +17,7 @@ public class Timer {
         ENTER, TIMER, START
     }
 
-    private ChatMessage.MessageType type; // 메시지 타입
+    private MessageType type; // 메시지 타입
 //    private String roomId; // 방번호
     private String debateEndTime;
     private Boolean isStarted;
