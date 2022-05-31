@@ -11,6 +11,7 @@ import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -20,6 +21,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
@@ -81,6 +84,7 @@ public class NotificationService {
         }
     }
 
+    @Async
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
@@ -91,22 +95,44 @@ public class NotificationService {
         if (!debate.get().getUser().getEmail().equals(userDetails.getUser().getEmail())) {
             throw new IllegalArgumentException("방장이 아닙니다.");
         }
+
         LocalDateTime localDateTime = LocalDateTime.now();
         Long debateTime = debate.get().getDebateTime();
         String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         Boolean isStarted = true;
-        // redis 에 저장장
-        Timer timer = new Timer();
-            timer.setType(Timer.MessageType.START);
-            timer.setDebateEndTime(debateEndTime);
-            timer.setIsStarted(isStarted);
-            timerRepository.save(timer, roomId);
-        TimerResponseDto timerResponseDto = new TimerResponseDto(Timer.MessageType.START, isStarted, debateEndTime);
-        log.info("토론 종료 시간 결과: {}", debateEndTime);
-        log.info("timer method emmiter: {}:", emitter);
-        log.info("timer method roomId: {}:", roomId);
-        log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
-        sendToClient(emitter, roomId, timerResponseDto);
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            try {
+                // redis 에 저장장
+                Timer timer = new Timer();
+                timer.setType(Timer.MessageType.START);
+                timer.setDebateEndTime(debateEndTime);
+                timer.setIsStarted(isStarted);
+                timerRepository.save(timer, roomId);
+                TimerResponseDto timerResponse = TimerResponseDto.builder()
+                                                                 .type(Timer.MessageType.START)
+                                                                 .debateEndTime(debateEndTime)
+                                                                 .isStarted(isStarted)
+                                                                 .build();
+                log.info("토론 종료 시간 결과: {}", debateEndTime);
+                log.info("timer method emmiter: {}:", emitter);
+                log.info("timer method roomId: {}:", roomId);
+                log.info("timer method timerResponseDto: {}:", timerResponse.getDebateEndTime());
+                sendToClient(emitter, roomId, timerResponse);
+            } catch(Exception e) {
+                emitter.completeWithError(e);
+            } finally {
+                emitter.complete();
+            }
+        });
+        executor.shutdown();
+
+        TimerResponseDto timerResponseDto = TimerResponseDto.builder()
+                .type(Timer.MessageType.START)
+                .debateEndTime(debateEndTime)
+                .isStarted(isStarted)
+                .build();
 
         return ResponseEntity.ok().body(timerResponseDto);
     }
