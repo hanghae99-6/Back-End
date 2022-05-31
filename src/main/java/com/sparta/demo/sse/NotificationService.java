@@ -45,11 +45,6 @@ public class NotificationService {
         SseEmitter emitter = emitterRepository.save(roomId, new SseEmitter(DEFAULT_TIMEOUT));
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
 
-        emitterSet.remove(sseEmitter);
-
-        log.info("emitterSet size: {}", emitterSet.size());
-        log.info(sseEmitter.toString());
-
         emitterSet.add(emitter);
 
         log.info("구독 emitter timeout: {}", emitter.getTimeout());
@@ -123,12 +118,12 @@ public class NotificationService {
 
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
+        // todo:
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
         Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
         for (int i = 0; i < emitterSet.size(); i++) {
-            emitterList.add(emitterRepository.findByUserEmail(userDetails.getUser().getEmail()));
+            emitterList.add(emitter);
         }
-        log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
         Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(
                 () -> new IllegalArgumentException("없는 토론방입니다.")
