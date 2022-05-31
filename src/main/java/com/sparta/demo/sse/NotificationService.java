@@ -59,8 +59,10 @@ public class NotificationService {
         }
 
         // 5 (redis 저장된 값)
-        if (timerRepository.findAll(roomId) != null)
+        if (timerRepository.findAll(roomId) != null){
             sendToClient(emitter, id, timerRepository.findAll(roomId));
+            log.info("");
+        }
 
         return emitter;
     }
@@ -114,5 +116,6 @@ public class NotificationService {
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
         sendToClient(emitter, roomId, timerResponseDto);
 
+        return ResponseEntity.ok().body(timerResponseDto);
     }
 }
