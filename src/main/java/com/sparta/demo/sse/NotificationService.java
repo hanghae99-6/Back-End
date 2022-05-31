@@ -88,7 +88,6 @@ public class NotificationService {
         }
     }
 
-    @Async
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
 //        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
