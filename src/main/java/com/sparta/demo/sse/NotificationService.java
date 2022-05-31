@@ -61,13 +61,13 @@ public class NotificationService {
         // 5 (redis 저장된 값)
         if (timerRepository.findAll(roomId) != null){
             sendToClient(emitter, id, timerRepository.findAll(roomId));
-            log.info("");
+            log.info("타이머 레포지토리 진입");
         }
 
         return emitter;
     }
 
-    // 5
+    // 6
     private void sendToClient(SseEmitter emitter, String id, Object data) {
         log.info("쎈드투클라이언트 진입!");
         try {
