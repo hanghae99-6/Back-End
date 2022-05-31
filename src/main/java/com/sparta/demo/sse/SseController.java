@@ -25,11 +25,13 @@ public class SseController {
     @GetMapping(value = "/subscribe/{roomId}", produces = "text/event-stream")
     public SseEmitter subscribe(@PathVariable String roomId,
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
+        log.info("구독 controller 입장");
         return notificationService.subscribe(roomId, lastEventId);
     }
 
     @GetMapping("/timer/{roomId}")
     public void sseTimer(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        log.info("타이머 controller 입장");
         notificationService.timer(roomId, userDetails);
     }
 }
