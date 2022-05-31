@@ -82,7 +82,6 @@ public class ChatService {
             String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             message.setDebateEndTime(debateEndTime);
             message.setIsStarted(true);
-
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
             message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
