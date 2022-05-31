@@ -62,7 +62,6 @@ public class NotificationService {
         try {
             emitter.send(SseEmitter.event()
                     .id(id)
-                    .name("sse")
                     .data(data));
             log.info("클라이언트에게 전송!");
         } catch (IOException exception) {
