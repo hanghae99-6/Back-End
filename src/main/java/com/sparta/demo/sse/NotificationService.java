@@ -44,6 +44,11 @@ public class NotificationService {
         // 2
         SseEmitter emitter = emitterRepository.save(roomId, new SseEmitter(DEFAULT_TIMEOUT));
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
+
+        emitterSet.remove(emitter);
+
+        System.out.println(emitterSet.size());
+
         emitterSet.add(emitter);
 
         log.info("구독 emitter timeout: {}", emitter.getTimeout());
@@ -105,12 +110,13 @@ public class NotificationService {
                         .id(id)
                         .data(data));
                 log.info("클라이언트에게 전송!");
-            } catch (IOException exception) {
+            } catch (Exception ignore) {
+                deadEmitters.add(emitter);
                 emitterRepository.deleteById(id);
                 throw new RuntimeException("연결 오류!");
             }
         });
-        emitterSet.removeAll(deadEmitters);
+        deadEmitters.forEach(emitterSet::remove);
     }
 
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
