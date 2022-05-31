@@ -12,6 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Timer {
+
     public enum MessageType {
         ENTER, TIMER, START
     }
