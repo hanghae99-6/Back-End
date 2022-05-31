@@ -1,5 +1,4 @@
-//<<<<<<< HEAD
-//package com.sparta.demo.redis.chat.model;
+package com.sparta.demo.redis.chat.model;//package com.sparta.demo.redis.chat.model;
 //
 //import com.fasterxml.jackson.annotation.JsonFormat;
 //import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
@@ -13,7 +12,6 @@
 //@Setter
 //@AllArgsConstructor
 //public class Timer {
-//
 //    public enum MessageType {
 //        ENTER, TIMER, START
 //    }

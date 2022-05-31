@@ -98,11 +98,12 @@ public class ReplyService {
         if(!reply.isPresent()){
             throw new IllegalArgumentException("댓글 정보가 없습니다");
         } else {
-            List<ReplyResponseDto> replyResponseDtoList = getReply(reply.get().getDebate().getDebateId(), request).getBody();
             if(reply.get().getUser().getEmail().equals(userDetails.getUser().getEmail())){
                 reply.get().updateReply(replyRequestDto);
                 log.info("댓글 수정이 완료 되었습니다!");
             }
+            List<ReplyResponseDto> replyResponseDtoList = getReply(reply.get().getDebate().getDebateId(), request).getBody();
+
             return ResponseEntity.ok().body(replyResponseDtoList);
         }
 
@@ -116,11 +117,11 @@ public class ReplyService {
         if(!reply.isPresent()){
             throw new IllegalArgumentException("댓글 정보가 없습니다");
         } else {
-            List<ReplyResponseDto> replyResponseDtoList = getReply(reply.get().getDebate().getDebateId(), request).getBody();
             if(reply.get().getUser().getEmail().equals(userDetails.getUser().getEmail())){
                 replyRepository.deleteById(replyId);
                 log.info("댓글 삭제가 완료되었습니다!");
             }
+            List<ReplyResponseDto> replyResponseDtoList = getReply(reply.get().getDebate().getDebateId(), request).getBody();
             return ResponseEntity.ok().body(replyResponseDtoList);
         }
     }

@@ -96,6 +96,5 @@ public class NotificationService {
             log.info("timer method timerResponseDto: {}:",timerResponseDto.getDebateEndTime());
             sendToClient(emitter,roomId,timerResponseDto);
         } else throw new IllegalArgumentException("방장이 아닙니다.");
-
     }
 }
