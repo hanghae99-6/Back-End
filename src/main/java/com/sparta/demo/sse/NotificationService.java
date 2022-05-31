@@ -1,11 +1,16 @@
 package com.sparta.demo.sse;
 
 import com.sparta.demo.model.Debate;
+import com.sparta.demo.redis.chat.model.ChatMessage;
+import com.sparta.demo.redis.chat.model.Timer;
 import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
+import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
+import com.sparta.demo.redis.chat.repository.TimerRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -24,16 +29,16 @@ public class NotificationService {
 
     private final EmitterRepository emitterRepository;
     private final DebateRepository debateRepository;
-
+    private final TimerRepository timerRepository;
 
     public SseEmitter subscribe(String roomId, String lastEventId) {
         // 1
         String id = roomId + "_" + System.currentTimeMillis();
-        log.info("구독 id: {}",id);
+        log.info("구독 id: {}", id);
 
         // 2
         SseEmitter emitter = emitterRepository.save(roomId, new SseEmitter(DEFAULT_TIMEOUT));
-        log.info("구독 emitter timeout: {}",emitter.getTimeout());
+        log.info("구독 emitter timeout: {}", emitter.getTimeout());
 
         emitter.onCompletion(() -> emitterRepository.deleteById(id));
         emitter.onTimeout(() -> emitterRepository.deleteById(id));
@@ -52,6 +57,10 @@ public class NotificationService {
                     .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
             log.info("클라이언트가 미수신 목록이 존재할 경우 재전송");
         }
+
+        // 5 (redis 저장된 값)
+        if (timerRepository.findAll(roomId) != null)
+            sendToClient(emitter, id, timerRepository.findAll(roomId));
 
         return emitter;
     }
@@ -78,23 +87,32 @@ public class NotificationService {
 //        return savedReview.getId();
 //    }
 
-    public void timer(String roomId, UserDetailsImpl userDetails){
+    public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
         log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
 
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
-        if(debate.get().getUser().getEmail().equals(userDetails.getUser().getEmail())){
-            LocalDateTime localDateTime = LocalDateTime.now();
-            Long debateTime = debate.get().getDebateTime();
-            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            Boolean isStarted = true;
-            TimerResponseDto timerResponseDto = new TimerResponseDto(isStarted,debateEndTime);
-            log.info("토론 종료 시간 결과: {}", debateEndTime);
-            log.info("timer method emmiter: {}:",emitter);
-            log.info("timer method roomId: {}:",roomId);
-            log.info("timer method timerResponseDto: {}:",timerResponseDto.getDebateEndTime());
-            sendToClient(emitter,roomId,timerResponseDto);
-        } else throw new IllegalArgumentException("방장이 아닙니다.");
+
+        if (!debate.get().getUser().getEmail().equals(userDetails.getUser().getEmail())) {
+            throw new IllegalArgumentException("방장이 아닙니다.");
+        }
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Long debateTime = debate.get().getDebateTime();
+        String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        Boolean isStarted = true;
+        // redis 에 저장장
+        Timer timer = new Timer();
+            timer.setType(Timer.MessageType.START);
+            timer.setDebateEndTime(debateEndTime);
+            timer.setIsStarted(isStarted);
+            timerRepository.save(timer, roomId);
+        TimerResponseDto timerResponseDto = new TimerResponseDto(Timer.MessageType.START, isStarted, debateEndTime);
+        log.info("토론 종료 시간 결과: {}", debateEndTime);
+        log.info("timer method emmiter: {}:", emitter);
+        log.info("timer method roomId: {}:", roomId);
+        log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
+        sendToClient(emitter, roomId, timerResponseDto);
+
     }
 }

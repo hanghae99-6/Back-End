@@ -1,8 +1,5 @@
 package com.sparta.demo.redis.chat.service;
 
-import com.sparta.demo.dto.debate.DebateTimerRes;
-import com.sparta.demo.exception.CustomException;
-import com.sparta.demo.exception.ErrorCode;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.redis.chat.model.ChatMessage;
 import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
@@ -11,11 +8,9 @@ import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
 import com.sparta.demo.repository.DebateRepository;
-import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,8 +19,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import static com.sparta.demo.exception.ErrorCode.NO_MESSAGE;
 
 @Slf4j
 @Service
@@ -82,6 +75,7 @@ public class ChatService {
 //            String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 //            message.setDebateEndTime(debateEndTime);
             message.setIsStarted(true);
+
         } else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
             message.setMessage("[알림] " + message.getSender() + "님이 나가셨습니다.");
             message.setSender("\uD83D\uDC51 PEECH KING \uD83D\uDC51");
