@@ -136,7 +136,7 @@ public class ChatService {
         log.info("getTimer roomId : {}", roomId);
         TimerResponseDto timerResponseDto = new TimerResponseDto();
         Optional<Debate> debate = debateRepository.findByRoomId(roomId);
-        ChatMessage message = new ChatMessage();
+
         LocalDateTime localDateTime = LocalDateTime.now();
         // 토론 종료 시간
         Long debateTime = debate.get().getDebateTime();
