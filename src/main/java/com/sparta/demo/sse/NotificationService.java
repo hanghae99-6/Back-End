@@ -42,7 +42,7 @@ public class NotificationService {
         log.info("구독 id: {}", id);
 
         // 2
-        SseEmitter emitter = emitterRepository.save(roomId, new SseEmitter(DEFAULT_TIMEOUT));
+        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
 
         emitterSet.add(emitter);
