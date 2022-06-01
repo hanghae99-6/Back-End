@@ -27,7 +27,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+//    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000;
 
     private final EmitterRepository emitterRepository;
     private final DebateRepository debateRepository;
@@ -40,6 +41,10 @@ public class NotificationService {
         // 1
         String id = roomId + "_" + System.currentTimeMillis();
         log.info("구독 id: {}", id);
+
+        for (SseEmitter emitter: emitterSet) {
+            log.info("emitterSet 안에: {}",emitter.getTimeout());
+        }
 
         // 2
 //        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
@@ -101,9 +106,12 @@ public class NotificationService {
     public void sendToClient(String id, Object data) {
         log.info("쎈드투클라이언트 진입!");
         List<SseEmitter> deadEmitters = new ArrayList<>();
-        int i = 1;
+        final int[] i = {1};
+        log.info("emitterSet size(): {}", emitterSet.size());
         emitterSet.forEach(emitter -> {
-            log.info("emitterSet.forEach: {}번", i);
+            log.info("emitterSet.forEach: {}번", i[0]);
+            i[0]++;
+            log.info("emitterSet.forEach emitter 확인: {}",emitter.getTimeout());
             try {
                 emitter.send(SseEmitter.event()
                         .id(id)
