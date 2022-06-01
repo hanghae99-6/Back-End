@@ -101,7 +101,9 @@ public class NotificationService {
     public void sendToClient(String id, Object data) {
         log.info("쎈드투클라이언트 진입!");
         List<SseEmitter> deadEmitters = new ArrayList<>();
+        int i = 1;
         emitterSet.forEach(emitter -> {
+            log.info("emitterSet.forEach: {}번", i);
             try {
                 emitter.send(SseEmitter.event()
                         .id(id)
@@ -152,12 +154,15 @@ public class NotificationService {
         log.info("timer method roomId: {}:", roomId);
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
 
-        int i = 0;
-        for (; i < emitterSet.size(); i++) {
-//            sendToClient(emit, roomId, timerResponseDto);
-            log.info("emitterList for : {}번째", i);
-            sendToClient(roomId, timerResponseDto);
-        }
+//        int i = 0;
+//        for (; i < emitterSet.size(); i++) {
+////            sendToClient(emit, roomId, timerResponseDto);
+//            log.info("emitterList for : {}번째", i);
+//            sendToClient(roomId, timerResponseDto);
+//        }
+
+        sendToClient(roomId, timerResponseDto);
+
         return ResponseEntity.ok().body(timerResponseDto);
     }
 }
