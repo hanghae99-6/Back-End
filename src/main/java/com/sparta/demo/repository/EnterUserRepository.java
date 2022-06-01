@@ -18,4 +18,6 @@ public interface EnterUserRepository extends JpaRepository<EnterUser, Long> {
     Optional<EnterUser> findByDebate_RoomId(String roomId);
 
     Optional<Object> findByDebate_DebateIdAndSide(Long debateId, SideTypeEnum side);
+
+    Long countByDebate_DebateId(Long debateId);
 }
