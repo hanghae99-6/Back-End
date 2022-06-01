@@ -78,8 +78,6 @@ public class SessionService {
         EnterUser enterUser = setEnterUser(debate, user);
         System.out.println("userName: " + user.getUserName());
 
-        setEnterUserCache(roomId, userEmail);
-
         OpenViduRole role = (getPanel(debate, userEmail)) ? OpenViduRole.PUBLISHER:OpenViduRole.SUBSCRIBER;
 
         String token = getToken(user, role, roomId, httpSession);
@@ -129,18 +127,6 @@ public class SessionService {
         log.info("setEnterUser enterUser.getNickname : {}", enterUser.get().getUserNickName());
         log.info("setEnterUser enterUser.getSide : {}", enterUser.get().getSide());
         return enterUser.get();
-    }
-
-    private void setEnterUserCache(String roomId, String userEmail){
-        log.info("setEnterUserCache 진입");
-        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-        if(Objects.requireNonNull(hashOperations.get(userEmail, ENTER_USER)).equals(roomId)){
-            throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
-        }
-        log.info("redisKey: {}", userEmail);
-        hashOperations.put(userEmail, ENTER_USER, roomId);
-        log.info("저장 된 값 확인: {}", hashOperations.get(userEmail, ENTER_USER));
-        redisTemplate.expire(userEmail, DEFAULT_TIMEOUT, TimeUnit.SECONDS);
     }
 
     private Boolean getPanel(Debate debate, String userEmail) {
@@ -235,7 +221,6 @@ public class SessionService {
             // If the token exists
             if (this.mapSessionNamesTokens.get(roomId).remove(token) != null) {
                 log.info("token 유효성 통과");
-                deleteEnterUserCache(roomId, enterUser.getUserEmail());
                 // todo: publisher가 모두 나가면 session 삭제
                 boolean checkToken = checkToken(roomId, enterUser.getUserEmail(), token);
                 log.info("checkToken : {}",checkToken);
@@ -292,15 +277,6 @@ public class SessionService {
             }
         }
         return false;
-    }
-
-    private void deleteEnterUserCache(String roomId, String userEmail){
-        log.info("setEnterUserCache 진입");
-        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-        if(!Objects.equals(hashOperations.get(userEmail, ENTER_USER), roomId)){
-            throw new CustomException(ErrorCode.NOT_FOUND_USER);
-        }
-        hashOperations.delete(userEmail, ENTER_USER);
     }
 
 }
