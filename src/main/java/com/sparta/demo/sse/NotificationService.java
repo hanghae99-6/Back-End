@@ -35,7 +35,7 @@ public class NotificationService {
     private final TimerRepository timerRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    private Set<SseEmitter> emitterSet = new CopyOnWriteArraySet<>();
+    private final Set<SseEmitter> emitterSet = new CopyOnWriteArraySet<>();
 
     public SseEmitter subscribe(String roomId, String lastEventId) {
         // 1
