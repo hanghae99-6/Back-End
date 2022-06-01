@@ -43,7 +43,7 @@ public class NotificationService {
 
         // 2
         SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
-        SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
+//        SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
 
         emitterSet.add(emitter);
 
@@ -52,8 +52,8 @@ public class NotificationService {
         emitter.onCompletion(() -> emitterRepository.deleteById(id));
         emitter.onTimeout(() -> emitterRepository.deleteById(id));
 
-        emitter.onTimeout(() -> emitterSet.remove(sseEmitter));
-        emitter.onCompletion(() -> emitterSet.remove(sseEmitter));
+        emitter.onTimeout(() -> emitterSet.remove(emitter));
+        emitter.onCompletion(() -> emitterSet.remove(emitter));
 
         // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
@@ -110,6 +110,7 @@ public class NotificationService {
                 deadEmitters.add(emitter);
                 emitter.complete();
                 emitterRepository.deleteById(id);
+                log.warn("disconnected id : {}", id);
                 throw new RuntimeException("연결 오류!");
             }
         });
@@ -122,6 +123,7 @@ public class NotificationService {
         SseEmitter emitter = emitterRepository.findByRoomId(roomId);
         Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
         for (int i = 0; i < emitterSet.size(); i++) {
+            log.info("emitterRoom emitter for: {}번째", i);
             emitterList.add(emitter);
         }
 
@@ -149,8 +151,11 @@ public class NotificationService {
         log.info("timer method roomId: {}:", roomId);
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
 
+        int i = 1;
         for (SseEmitter emit : emitterList) {
 //            sendToClient(emit, roomId, timerResponseDto);
+            log.info("emitterSet emitter for: {}번째", i);
+            i++;
             sendToClient(roomId, timerResponseDto);
         }
         return ResponseEntity.ok().body(timerResponseDto);
