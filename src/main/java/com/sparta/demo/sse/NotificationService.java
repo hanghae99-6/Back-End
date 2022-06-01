@@ -42,18 +42,18 @@ public class NotificationService {
         log.info("구독 id: {}", id);
 
         // 2
-        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
-//        SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
+//        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
+        SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
 
-        emitterSet.add(emitter);
+        emitterSet.add(sseEmitter);
 
-        log.info("구독 emitter timeout: {}", emitter.getTimeout());
+//        log.info("구독 emitter timeout: {}", emitter.getTimeout());
+//
+//        emitter.onCompletion(() -> emitterRepository.deleteById(id));
+//        emitter.onTimeout(() -> emitterRepository.deleteById(id));
 
-        emitter.onCompletion(() -> emitterRepository.deleteById(id));
-        emitter.onTimeout(() -> emitterRepository.deleteById(id));
-
-        emitter.onTimeout(() -> emitterSet.remove(emitter));
-        emitter.onCompletion(() -> emitterSet.remove(emitter));
+        sseEmitter.onTimeout(() -> emitterSet.remove(sseEmitter));
+        sseEmitter.onCompletion(() -> emitterSet.remove(sseEmitter));
 
         // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
@@ -79,7 +79,8 @@ public class NotificationService {
             log.info("타이머 레포지토리 진입");
         }
 
-        return emitter;
+//        return emitter;
+        return sseEmitter;
     }
 
     // 6
@@ -120,12 +121,12 @@ public class NotificationService {
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
         // todo:
-        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
-        Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
-        for (int i = 0; i < emitterSet.size(); i++) {
-            log.info("emitterRoom emitter for: {}번째", i);
-            emitterList.add(emitter);
-        }
+//        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
+//        Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
+//        for (int i = 0; i < emitterSet.size(); i++) {
+//            log.info("emitterRoom emitter for: {}번째", i);
+//            emitterList.add(emitter);
+//        }
 
         Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(
                 () -> new IllegalArgumentException("없는 토론방입니다.")
@@ -151,11 +152,10 @@ public class NotificationService {
         log.info("timer method roomId: {}:", roomId);
         log.info("timer method timerResponseDto: {}:", timerResponseDto.getDebateEndTime());
 
-        int i = 1;
-        for (SseEmitter emit : emitterList) {
+        int i = 0;
+        for (; i < emitterSet.size(); i++) {
 //            sendToClient(emit, roomId, timerResponseDto);
-            log.info("emitterSet emitter for: {}번째", i);
-            i++;
+            log.info("emitterList for : {}번째", i);
             sendToClient(roomId, timerResponseDto);
         }
         return ResponseEntity.ok().body(timerResponseDto);
