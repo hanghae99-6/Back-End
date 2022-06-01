@@ -106,7 +106,7 @@ public class NotificationService {
                         .id(id)
                         .data(data));
                 log.info("클라이언트에게 전송!");
-            } catch (IOException exception) {
+            } catch (Exception ignore) {
                 deadEmitters.add(emitter);
                 emitter.complete();
                 emitterRepository.deleteById(id);
