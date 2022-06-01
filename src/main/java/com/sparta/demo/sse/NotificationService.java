@@ -51,6 +51,7 @@ public class NotificationService {
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
 
         emitterSet.add(sseEmitter);
+        log.info("Add emitterSet size(): {}",emitterSet.size());
 
 //        log.info("구독 emitter timeout: {}", emitter.getTimeout());
 //
@@ -59,6 +60,8 @@ public class NotificationService {
 
         sseEmitter.onTimeout(() -> emitterSet.remove(sseEmitter));
         sseEmitter.onCompletion(() -> emitterSet.remove(sseEmitter));
+
+        log.info("Remove emitterSet size(): {}",emitterSet.size());
 
         // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
