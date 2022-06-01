@@ -40,7 +40,12 @@ public enum ErrorCode {
 
     // 500 Sever  Error
     FAIL_FILE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "505_50", "파일 업로드에 실패 했습니다."),
-    TRY_SUBSTRING(HttpStatus.INTERNAL_SERVER_ERROR, "505_51", "refreshToken 보낼 때, Bearer 붙여서 보내주는지 확인")
+    TRY_SUBSTRING(HttpStatus.INTERNAL_SERVER_ERROR, "505_51", "refreshToken 보낼 때, Bearer 붙여서 보내주는지 확인"),
+
+
+    // 토론방 EnterUser 확인
+    ALREADY_EXIST_USER(HttpStatus.ALREADY_REPORTED, "500_5", "이미 존재하는 유저입니다."),
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "500_6", "입장한 적 없는 유저입니다.")
     ;
 
 
