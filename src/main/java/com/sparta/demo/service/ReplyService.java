@@ -119,6 +119,7 @@ public class ReplyService {
         } else {
             if(reply.get().getUser().getEmail().equals(userDetails.getUser().getEmail())){
                 replyRepository.deleteById(replyId);
+                reply.get().getDebate().setTotalReply(reply.get().getDebate().getTotalReply() -1);
                 log.info("댓글 삭제가 완료되었습니다!");
             }
             List<ReplyResponseDto> replyResponseDtoList = getReply(reply.get().getDebate().getDebateId(), request).getBody();
