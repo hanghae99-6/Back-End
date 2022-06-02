@@ -2,13 +2,16 @@ FROM openjdk:8-jdk-alpine
 ARG JAR_FILE=build/libs/demo-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java", "-jar", "/app.jar"]
-#CMD (java \
-#          -Dcom.sun.management.jmxremote \
-#          -Dcom.sun.management.jmxremote.port=9090 \
-#          -Dcom.sun.management.jmxremote.authenticate=false \
-#          -Dcom.sun.management.jmxremote.ssl=false \
-#          -Dcom.sun.management.jmxremote.rmi.port=9090 \
-#          -Djava.rmi.server.hostname=localhost )
+CMD (java \
+          -Dcom.sun.management.jmxremote \
+          -Dcom.sun.management.jmxremote.port=9090 \
+#          접속 인증 설정. true로 하면 인증 관련된
+          -Dcom.sun.management.jmxremote.authenticate=false \
+#          ssl 접속 설정
+          -Dcom.sun.management.jmxremote.ssl=false \
+          -Dcom.sun.management.jmxremote.rmi.port=9090 \
+          -Djava.rmi.server.hostname=3.35.78.146 )
+EXPOSE 9090
 
  #FROM openjdk:8-jdk-alpine
  #open jdk java8 버전의 환경을 구성합니다.

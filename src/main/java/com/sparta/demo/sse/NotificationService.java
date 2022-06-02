@@ -151,6 +151,7 @@ public class NotificationService {
 
         LocalDateTime localDateTime = LocalDateTime.now();
         Long debateTime = debate.getDebateTime();
+        log.info("토론할 시간 : {}", debateTime);
         String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         Boolean isStarted = true;
         // redis 에 저장장
