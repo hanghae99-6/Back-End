@@ -31,11 +31,11 @@ public class DebateValidator {
 
     public ResponseEntity<MainDetailResponseDto> validEmptyValue(Long debateId, Debate debate, SideTypeEnum side) {
 
-        List<EnterUser> enterUserList = enterUserRepository.findByDebate_DebateIdOrderBySideDesc(debateId);
+        List<EnterUser> enterUserList = enterUserRepository.findByDebate_DebateIdOrderBySideAsc(debateId);
         // 토론방에 상대자가 들어오지 않았을 경우 상세페이지에 빈값 보내주기
         if(enterUserList.size()<2){
             EnterUser enterUser = new EnterUser();
-            if(enterUserList.get(0).getSide().getTypeNum()==1)
+            if(enterUserList.get(0).getSide().getTypeNum()==2)
                 enterUserList.add(enterUser);
             else
                 enterUserList.add(0,enterUser);
