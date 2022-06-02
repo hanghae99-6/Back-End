@@ -4,13 +4,15 @@ import com.sparta.demo.dto.session.EnterRes;
 import com.sparta.demo.dto.session.LeaveRoomRes;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.enumeration.StatusTypeEnum;
+import com.sparta.demo.exception.CustomException;
+import com.sparta.demo.exception.ErrorCode;
+import com.sparta.demo.exception.ExistSessionException;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.model.User;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
-import com.sparta.demo.exception.ExistSessionException;
 import io.openvidu.java.client.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +42,7 @@ public class SessionService {
 
     private final RedisTemplate<String, String> redisTemplate;
     private static final String DEBATE_STATUS = "debateStatus";
+    private static final String ENTER_USER = "ENTER_USER";
 
     // OpenVidu object as entrypoint of the SDK
     private OpenVidu openVidu;
@@ -217,7 +221,6 @@ public class SessionService {
             // If the token exists
             if (this.mapSessionNamesTokens.get(roomId).remove(token) != null) {
                 log.info("token 유효성 통과");
-                log.info("this.mapSessionNamesTokens.get(roomId).toString() :{}",this.mapSessionNamesTokens.get(roomId).toString());
                 // todo: publisher가 모두 나가면 session 삭제
                 boolean checkToken = checkToken(roomId, enterUser.getUserEmail(), token);
                 log.info("checkToken : {}",checkToken);
@@ -230,19 +233,6 @@ public class SessionService {
                     debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
                     return ResponseEntity.ok().body(new LeaveRoomRes(enterUser, true));
                 }
-                // 패널이 있음(  = this.mapSessionNamesTokens.get(roomId).isEmpty() = false)
-                // 발표자가 없음 ( == checktoken = true)
-                // 둘 사이에 or을 붙이면?    = > false  ==> 아래 로직으로 넘어가지지 않음 ===> session 삭제 안됨
-//                if (this.mapSessionNamesTokens.get(roomId).isEmpty()){
-//                // User left the session
-////                if (this.mapSessionNamesTokens.get(roomId).isEmpty()) {
-//                    log.info("token이 하나도 안남았을 때");
-//                    // Last user left: session must be removed
-//                    this.mapSessions.remove(roomId);
-//                    // todo: session이 삭제되면 토론방 상태를 완료로 변경
-//                    debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
-//                    return ResponseEntity.ok().body(new LeaveRoomRes(enterUser,true));
-//                }
                 return ResponseEntity.ok().body(new LeaveRoomRes(enterUser,false));
             } else {
                 // The TOKEN wasn't valid
