@@ -82,6 +82,12 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.12'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 
+    // text String Escape utils
+    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
+
+    //xss
+    implementation 'org.apache.commons:commons-text:1.9'
+
 }
 
 test {
