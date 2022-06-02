@@ -69,6 +69,13 @@ public class EnterUser extends Timestamped {
         this.userNickName = enterUser.getUserNickName();
         this.side = enterUser.getSide();
     }
+
+    public EnterUser(Debate debate, User user) {
+        this.debate = debate;
+        this.userEmail = user.getEmail();
+        this.userImage = user.getProfileImg();
+        this.userNickName = user.getNickName();
+    }
 }
 
 

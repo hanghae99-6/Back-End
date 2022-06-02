@@ -121,7 +121,7 @@ public class SessionService {
             }else if(consCheck.isPresent()){
                 enterUser = Optional.of(enterUserRepository.save(new EnterUser(debate1.get(), user, SideTypeEnum.CONS)));
             }else
-                enterUser = Optional.of(enterUserRepository.save(new EnterUser(debate1.get(), user, SideTypeEnum.DEFAULT)));
+                enterUser = Optional.of(enterUserRepository.save(new EnterUser(debate1.get(), user)));
         }
 
         log.info("setEnterUser enterUser.getNickname : {}", enterUser.get().getUserNickName());
