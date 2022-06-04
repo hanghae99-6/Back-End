@@ -7,10 +7,12 @@ import com.sparta.demo.dto.main.OneClickResponseDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
-import com.sparta.demo.model.EnterUser;
 import com.sparta.demo.model.OneClick;
 import com.sparta.demo.model.OneClickUser;
-import com.sparta.demo.repository.*;
+import com.sparta.demo.repository.DebateRepository;
+import com.sparta.demo.repository.DebateVoteRepository;
+import com.sparta.demo.repository.OneClickRepository;
+import com.sparta.demo.repository.OneClickUserRepository;
 import com.sparta.demo.util.GetIp;
 import com.sparta.demo.validator.DebateValidator;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -34,11 +35,10 @@ public class MainService {
     private static final Long DEFAULT_TIMEOUT = 60L * 24 * 60;
     private static final String VISIT_COUNT = "visitCnt";
 
-    final private DebateRepository debateRepository;
+    private final DebateRepository debateRepository;
     private final OneClickRepository oneClickRepository;
     private final OneClickUserRepository oneClickUserRepository;
     private final DebateVoteRepository debateVoteRepository;
-    private final EnterUserRepository enterUserRepository;
     private final DebateValidator debateValidator;
 
     @Autowired
@@ -119,19 +119,18 @@ public class MainService {
             side = SideTypeEnum.DEFAULT;
         }
         log.info("detail service side: {}", side);
-        String redisKey = String.valueOf(debateId);
+        String redisKey = VISIT_COUNT + debateId;
 
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
 
         String userIp = hashOperations.get(redisKey, VISIT_COUNT);
 
         if(userIp != null && userIp.equals(ip)) {
-            System.out.println("조회수는 딱 한번만 올라갈거에요^^");
             return debateValidator.validEmptyValue(debateId, debate, side);
         }
 
         hashOperations.put(redisKey, VISIT_COUNT, ip);
-        redisTemplate.expire(redisKey, DEFAULT_TIMEOUT, TimeUnit.HOURS);
+        redisTemplate.expire(redisKey, DEFAULT_TIMEOUT, TimeUnit.SECONDS);
 
         debate.setVisitCnt(debate.getVisitCnt()+1L);
 

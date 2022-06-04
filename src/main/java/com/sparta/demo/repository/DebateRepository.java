@@ -1,8 +1,8 @@
 package com.sparta.demo.repository;
 
 import com.sparta.demo.enumeration.CategoryEnum;
+import com.sparta.demo.enumeration.StatusTypeEnum;
 import com.sparta.demo.model.Debate;
-import com.sparta.demo.model.User;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -25,4 +25,8 @@ public interface  DebateRepository extends JpaRepository<Debate, Long> {
     List<Debate> findTop60ByProsNameOrConsName(Sort sort, String userEmailPros, String userEmailCons);
 
     void deleteByDebateIdAndUser_Email(Long debateId, String email);
+    void deleteByDebateId(Long debateId);
+
+    List<Debate> findAllByStatusEnumOrStatusEnum(StatusTypeEnum liveOn, StatusTypeEnum hold);
+
 }

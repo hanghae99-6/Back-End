@@ -11,4 +11,6 @@ public class DebateLinkRequestDto {
     private String prosName;
     private String consName;
     private String content;
+    private Long debateTime;
+
 }

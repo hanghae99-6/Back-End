@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-public class EnterUser extends Timestamped{
+public class EnterUser extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long enterId;
@@ -27,9 +27,11 @@ public class EnterUser extends Timestamped{
     @Column
     private String userEmail;
 
+    @Setter
     @Column
     private String userImage;
 
+    @Setter
     @Column
     private String userNickName;
 
@@ -66,6 +68,13 @@ public class EnterUser extends Timestamped{
         this.userImage = enterUser.getUserImage();
         this.userNickName = enterUser.getUserNickName();
         this.side = enterUser.getSide();
+    }
+
+    public EnterUser(Debate debate, User user) {
+        this.debate = debate;
+        this.userEmail = user.getEmail();
+        this.userImage = user.getProfileImg();
+        this.userNickName = user.getNickName();
     }
 }
 

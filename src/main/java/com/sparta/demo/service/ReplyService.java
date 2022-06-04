@@ -5,7 +5,6 @@ import com.sparta.demo.dto.reply.ReplyResponseDto;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.Reply;
-import com.sparta.demo.model.User;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.LikesRepository;
 import com.sparta.demo.repository.ReplyRepository;
@@ -92,8 +91,9 @@ public class ReplyService {
 
     // 댓글 수정
     @Transactional
-    public ResponseEntity<ErrorResult> updateReply(ReplyRequestDto replyRequestDto, UserDetailsImpl userDetails, Long replyId){
+    public ResponseEntity<List<ReplyResponseDto>> updateReply(ReplyRequestDto replyRequestDto, UserDetailsImpl userDetails, Long replyId, HttpServletRequest request){
         Optional<Reply> reply = replyRepository.findByReplyId(replyId);
+
         log.info("유저정보: {}", userDetails.getUser().getEmail());
         if(!reply.isPresent()){
             throw new IllegalArgumentException("댓글 정보가 없습니다");
@@ -101,29 +101,29 @@ public class ReplyService {
             if(reply.get().getUser().getEmail().equals(userDetails.getUser().getEmail())){
                 reply.get().updateReply(replyRequestDto);
                 log.info("댓글 수정이 완료 되었습니다!");
-                return ResponseEntity.ok().body(new ErrorResult(true, "댓글 수정이 완료 되었습니다!"));
             }
-            else {
-                return ResponseEntity.ok().body(new ErrorResult(false, "댓글 작성자가 다릅니다."));
-            }
+            List<ReplyResponseDto> replyResponseDtoList = getReply(reply.get().getDebate().getDebateId(), request).getBody();
+
+            return ResponseEntity.ok().body(replyResponseDtoList);
         }
 
     }
 
     // 댓글 삭제
     @Transactional
-    public ResponseEntity<ErrorResult> deleteReply(UserDetailsImpl userDetails, Long replyId){
+    public ResponseEntity<List<ReplyResponseDto>> deleteReply(UserDetailsImpl userDetails, Long replyId, HttpServletRequest request){
         Optional<Reply> reply = replyRepository.findByReplyId(replyId);
+
         if(!reply.isPresent()){
             throw new IllegalArgumentException("댓글 정보가 없습니다");
         } else {
             if(reply.get().getUser().getEmail().equals(userDetails.getUser().getEmail())){
                 replyRepository.deleteById(replyId);
+                reply.get().getDebate().setTotalReply(reply.get().getDebate().getTotalReply() -1);
                 log.info("댓글 삭제가 완료되었습니다!");
-                return ResponseEntity.ok().body(new ErrorResult(true, "댓글 삭제가 완료되었습니다!"));
-            } else {
-                return ResponseEntity.ok().body(new ErrorResult(false, "본인의 댓글만 삭제 가능합니다."));
             }
+            List<ReplyResponseDto> replyResponseDtoList = getReply(reply.get().getDebate().getDebateId(), request).getBody();
+            return ResponseEntity.ok().body(replyResponseDtoList);
         }
     }
 }
