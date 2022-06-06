@@ -6,6 +6,7 @@ import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.User;
 import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
 import com.sparta.demo.repository.DebateRepository;
+import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class LiveNowService {
     private final DebateRepository debateRepository;
     private final UserRepository userRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final EnterUserRepository enterUserRepository;
 
     public ResponseEntity<List<LiveResponseDto>> getLiveNow() {
 
@@ -40,7 +42,8 @@ public class LiveNowService {
 
             Optional<User> prosUser = userRepository.findByEmail(debate.getProsName());
             Optional<User> consUser = userRepository.findByEmail(debate.getConsName());
-            Long userCnt = chatMessageRepository.getUserCnt(debate.getRoomId());
+//            Long userCnt = chatMessageRepository.getUserCnt(debate.getRoomId());
+            Long userCnt = enterUserRepository.countByDebate_DebateId(debate.getDebateId());
 
             log.info("prosNickName: {}", prosUser.get().getNickName());
             log.info("consUser isPresent: {}", consUser.isPresent());

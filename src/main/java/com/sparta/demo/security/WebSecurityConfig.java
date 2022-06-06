@@ -5,6 +5,7 @@ import com.sparta.demo.security.filter.JwtAuthFilter;
 import com.sparta.demo.security.jwt.HeaderTokenExtractor;
 import com.sparta.demo.security.provider.FormLoginAuthProvider;
 import com.sparta.demo.security.provider.JWTAuthProvider;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,9 +18,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -80,6 +84,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 특정 권한을 가진 사용자만 접근을 허용해야 할 경우, 하기 항목을 통해 가능
 
 
+        http.sessionManagement()
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(true)
+                .expiredUrl("/")
+                .sessionRegistry(sessionRegistry());
 
 
         http
@@ -89,7 +98,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.headers().frameOptions().disable();
+        http.headers().frameOptions().sameOrigin();
 
         /* 1.
          * UsernamePasswordAuthenticationFilter 이전에 FormLoginFilter, JwtFilter 를 등록합니다.
@@ -150,6 +159,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         skipPathList.add("GET,/image/**");
         skipPathList.add("GET,/main/**");
+        skipPathList.add("GET,/main/detail/**");
         skipPathList.add("PUT,/main/one-click");
         skipPathList.add("POST,/main/debate/vote");
         skipPathList.add("POST,/main/reply/likes");
@@ -175,6 +185,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setAuthenticationManager(super.authenticationManagerBean());
 
         return filter;
+    }
+
+    // logout 후 login할 때 정상동작을 위함
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    // was가 여러개 있을 때(session clustering)
+    @Bean
+    public static ServletListenerRegistrationBean httpSessionEventPublisher() {
+        return new ServletListenerRegistrationBean(new HttpSessionEventPublisher());
     }
 
     @Bean
