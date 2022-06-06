@@ -1,11 +1,9 @@
 package com.sparta.demo.sse;
 
 
-import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,8 +32,8 @@ public class SseController {
 
     // 토론 시작하기 눌렀을 때
     @GetMapping("/timer/{roomId}")
-    public ResponseEntity<TimerResponseDto> sseTimer(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public void sseTimer(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info("타이머 controller 입장");
-        return notificationService.timer(roomId, userDetails);
+        notificationService.timer(roomId, userDetails);
     }
 }
