@@ -91,28 +91,6 @@ public class DebateService {
         return ResponseEntity.ok().body(new ErrorResult(true, "success"));
     }
 
-    // 타이머 - 토론 시작하기
-    @Transactional
-    public ResponseEntity<DebateTimerRes> startDebateTimer(String roomId, UserDetailsImpl userDetails) {
-        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
-
-        if (!debate.isPresent()) {
-            throw new IllegalArgumentException("해당 토론방이 없습니다");
-        } else {
-            if (userDetails.getUser().getEmail().equals(debate.get().getUser().getEmail())) {
-                LocalDateTime localDateTime = LocalDateTime.now();
-                // 토론 시작 시간
-                String debateStartTime = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                // 토론 종료 시간
-                Long debateTime = debate.get().getDebateTime();
-                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
-                DebateTimerRes debateTimerRes = new DebateTimerRes(debateStartTime, debateEndTime);
-                return ResponseEntity.ok().body(debateTimerRes);
-            } else throw new IllegalArgumentException("방장만 토론 타이머 시작이 가능합니다.");
-        }
-    }
-
     public ResponseEntity<ErrorResult> emailCheck(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return ResponseEntity.ok().body(new ErrorResult(user.isPresent(),"emailChecking"));
