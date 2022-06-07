@@ -1,10 +1,10 @@
 package com.sparta.demo.sse;
 
 import com.sparta.demo.model.Debate;
-import com.sparta.demo.redis.chat.model.Timer;
-import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
-import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
-import com.sparta.demo.redis.chat.repository.TimerRepository;
+import com.sparta.demo.model.Timer;
+import com.sparta.demo.dto.TimerResponseDto;
+import com.sparta.demo.repository.ChatMessageRepository;
+import com.sparta.demo.repository.TimerRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;

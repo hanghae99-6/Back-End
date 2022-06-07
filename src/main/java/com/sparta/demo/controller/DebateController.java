@@ -4,6 +4,7 @@ import com.sparta.demo.dto.debate.*;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.DebateService;
 import com.sparta.demo.validator.ErrorResult;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class DebateController {
 //    }
 
     // 토론방 퇴장시 주장한 의견과 근거 작성
-
+    @ApiOperation(value = "토론방 나가기")
     @PostMapping("/{roomId}")
     public ResponseEntity<ErrorResult> saveDebateInfo(@PathVariable String roomId,
                                                       @RequestBody DebateInfoDto debateInfoDto,
@@ -50,12 +51,6 @@ public class DebateController {
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);
     }
 
-    // 타이머 - 토론 시작하기
-    @GetMapping("/{roomId}/start-timer")
-    public ResponseEntity<DebateTimerRes> startDebateTimer(@PathVariable String roomId,
-                                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return debateService.startDebateTimer(roomId, userDetails);
-    }
 
     @PostMapping("/emailCheck/pros")
     public ResponseEntity<ErrorResult> prosEmailCheck(@RequestParam String email){

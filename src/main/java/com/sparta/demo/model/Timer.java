@@ -1,9 +1,6 @@
-package com.sparta.demo.redis.chat.model;
+package com.sparta.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
-import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.sparta.demo.dto.TimerResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

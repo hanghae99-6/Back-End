@@ -1,7 +1,7 @@
-package com.sparta.demo.redis.chat.model;
+package com.sparta.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
+import com.sparta.demo.dto.ChatMessageDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
