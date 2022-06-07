@@ -20,27 +20,22 @@
 ## ✨Overview
 간단한 서비스 소개 부분 위피치 어쩌고저쩌고
 
-## 👀위피치 서비스 화면
-|실시간 화상 채팅|
-|-------|
-|![wepeech-실시간 화상](https://user-images.githubusercontent.com/57132148/171780270-911ab894-3e5d-4ba3-8e93-5aec6f567a37.gif)|
-|실시간 채팅|
-|![wepeech-실시간 채팅](https://user-images.githubusercontent.com/57132148/171780204-f7fafb7e-da69-4e23-a4e3-26b454478b49.gif)|
-|패널 참여|
-|![wepeech-패널 입장](https://user-images.githubusercontent.com/57132148/171780228-ec28fef4-5698-4b63-9b24-721de3ae388d.gif)|
+## 👀위피치 핵심 서비스
+|실시간 화상 채팅|실시간 채팅|
+|--|--|
+|![wepeech-실시간 화상](https://user-images.githubusercontent.com/57132148/171780270-911ab894-3e5d-4ba3-8e93-5aec6f567a37.gif)|![wepeech-실시간 채팅](https://user-images.githubusercontent.com/57132148/171780204-f7fafb7e-da69-4e23-a4e3-26b454478b49.gif)|
+
+|패널 참여|토론 타이머|
+|--|--|
+|![wepeech-패널 입장](https://user-images.githubusercontent.com/57132148/171780228-ec28fef4-5698-4b63-9b24-721de3ae388d.gif)|<img src = "https://user-images.githubusercontent.com/57132148/171780394-ec8c2c31-e37f-4982-a773-55bc73a200a9.gif" width="430" height="280"/>|
 
 
-
-### 게임 - 스쿼트
 
 ## ✨ 주요 기능
----
-- 서비스 설명 : 모두가 건강하게 집에서 즐길 수 있는 운동 게임
-- 주요 기능 :
-    - webRTC를 통한 실시간 화상 운동 게임
-    - Pose Detection을 통한 자동 자세 인식
-    - 게임 log를 통한 사용자 운동기록 추적
-    - 기록에 따른 보상을 통한 운동 동기 부여
+    - webRTC를 통한 실시간 화상 토론
+    - WebSocket과 Stomp를 이용한 실시간 채팅
+    - 토론자와 패널의 분리
+    - 토론 시간을 설정하고 참여자 모두에게 보여지는 타이머
 
 ### 🖥️ 개발 환경
 
@@ -48,16 +43,17 @@
 
 🖱**Backend**
 - IntelliJ
-- spring boot 2.4.5
+- spring boot 2.6.7
 - spring-boot-jpa
 - Spring Security
 - Java 8
 - AWS EC2
 - mysql
 - redis
+- jsoup
 
 🖱**Web RTC**
-- openvidu 2.19.0
+- openvidu 2.21.1
 
 🖱**CI/CD**
 - aws ec2
@@ -68,7 +64,9 @@
 ### 💫 서비스 아키텍처
 
 ---
-아키텍처 사진 고고
+
+# Back-End
+![image](https://user-images.githubusercontent.com/48950985/169887325-4f49da9f-54d6-4c32-8ce9-79cee520a530.png)
 
 ### ✨Jenkins를 이용한 CD 구축 및 SSL 인증서 적용
 
@@ -81,11 +79,21 @@
 
 - WebRTC (Openvidu)
 
-Openvidu로만 할 수 있는 기능 뿐만이 아니라 백엔드를 함께 이용한 개발로 여러 기능을 구현했습니다. 각 방마다 인원수가 6명까지만 들어갈 수 있게 구현하였고, 방장만 게임을 시작할 수 있기에 방을 만들거나 방에서 인원이 나가면 자동으로 다른 사람에게 방장 권한이 부여되게 하였습니다. 그리고 private 방을 만들 수 있게 하여 방 번호와 비밀번호를 아는 사용자 외에는 들어오지 못하게 구현하였고, 빠른 시작 기능을 구현하여 현재 존재하는 방에 빠르게 입장할 수 있게 하였고, 방이 없으면 자동으로 방 생성까지 할 수 있도록 구현하였습니다.
+Openvidu 서버와의 통신만으로 그치지 않고, 백앤드 서버의 DB에 접근하여 다양한 기능을 구현하였습니다. 토론방 생성 시 발표자의 정보를 메인DB에 저장하고, 방 입장 시 발표자만이 midea stream할 수 있도록 Publisher role을 부여하고, 패널은 미디어 접근 없이 subscribe만 할 수 있게 되어있습니다.
 
 - Redis
 
-랭킹 기능에 들어가는 랭킹 정보는 자정마다 업데이트 되는 정보여서 단순한 구조의 정보이고, 반복적으로 동일하게 제공되고, 최신화가 실시간으로 필요하지 않은 정보였습니다. 이러한  데이터의 특성으로 캐싱을 적용하기에 적절하다고 생각을 했고, Redis에 랭킹 정보를 저장하여 DB를 거치지 않고 정보를 가져와 트래픽이 많아질 때 백엔드 부하를 줄이고, 정보 조회 속도를 높였습니다. 또한 저희는 Spring Scurity와 JWT를 이용하여 인증을 구현하였는데, Redis를 이용해 로그아웃시킨 토큰들을 만료처리하여 해당 토큰으로는 다시 인증할 수 없도록 구현하였습니다.
+stomp의 외부 브로커 역할 로서 sub/pub 기능을 이용한 채팅 기능 구현
+
+토론방에 입장하는 참여자들의 token 정보를 redis cache 메모리에 저장하여 expire time을 2시간으로 지정했습니다. 상대 참여자의 입/퇴장 여부와 관계 없이 만들어진 방이더라도 2시간 후에는 sessionName이 삭제되고 종료된 방으로 표시될 수 있게 구현했습니다.
+
+
+
+
+- SSE
+토론방 내부 타이머 기능
+
+
 
 - 배포
 
@@ -221,8 +229,6 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
 자세한 회고는 [블로그](https://yesforlog.tistory.com/24)에서 자세히 보실 수 있습니다.
 
 
-# Back-End
-![image](https://user-images.githubusercontent.com/48950985/169887325-4f49da9f-54d6-4c32-8ce9-79cee520a530.png)
 
 # ERD
 <img width="739" alt="image" src="https://user-images.githubusercontent.com/98947838/172311261-22d43691-870c-4bdb-9d38-3e9190ee6a9f.png">
