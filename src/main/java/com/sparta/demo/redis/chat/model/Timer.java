@@ -6,11 +6,13 @@ import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Timer {
     public enum MessageType {
         ENTER, TIMER, START
