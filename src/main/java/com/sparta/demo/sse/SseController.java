@@ -26,6 +26,7 @@ public class SseController {
      * @title 로그인 한 유저 sse 연결
      * 페이지 시작했을 때 구독 요청
      */
+    @ApiOperation(value = "토로방 구독", notes = "토로방 구독")
     @GetMapping(value = "/subscribe/{roomId}", produces = "text/event-stream")
     public SseEmitter subscribe(@PathVariable String roomId,
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
@@ -34,7 +35,7 @@ public class SseController {
     }
 
     // 토론 시작하기 눌렀을 때
-    @ApiOperation(value = "유저 페이지- 토론 내역 조회", notes = "")
+    @ApiOperation(value = "토로방 시작하기 타이머", notes = "토로방 시작하기 타이머")
     @GetMapping("/timer/{roomId}")
     public void sseTimer(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info("타이머 controller 입장");
