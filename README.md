@@ -65,8 +65,9 @@
 
 ---
 
-# Back-End
-![image](https://user-images.githubusercontent.com/48950985/169887325-4f49da9f-54d6-4c32-8ce9-79cee520a530.png)
+![KakaoTalk_Photo_2022-06-07-20-35-10](https://user-images.githubusercontent.com/98947838/172370024-431d5b03-7c97-4ecb-85aa-590856f86cd8.png)
+
+
 
 ### ✨Jenkins를 이용한 CD 구축 및 SSL 인증서 적용
 
@@ -229,6 +230,7 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
 자세한 회고는 [블로그](https://yesforlog.tistory.com/24)에서 자세히 보실 수 있습니다.
 
 
-
+# Back-End
+![image](https://user-images.githubusercontent.com/48950985/169887325-4f49da9f-54d6-4c32-8ce9-79cee520a530.png)
 # ERD
 <img width="739" alt="image" src="https://user-images.githubusercontent.com/98947838/172311261-22d43691-870c-4bdb-9d38-3e9190ee6a9f.png">
