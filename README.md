@@ -1,16 +1,36 @@
-# 💪 HomeDong ( 모두가 건강하게 집에서 즐길 수 있는 운동 게임 )
+# 친구와 함께 하는 1:1 화상 토론 서비스, WEPEECH 🍑
 
-## 👇홈동 소개 및 시연 영상👇
-[<img src="https://user-images.githubusercontent.com/31542907/131515083-458cac93-16d0-463e-a18e-ec26156a15f3.png" width="250">](https://www.youtube.com/watch?v=_U6xNSv4kFM)
+<br>
+<br>
 
-홈동 시나리오는 👉[여기](https://github.com/yesfordev/homedong/blob/develop/%EC%8B%9C%EC%97%B0%20%EC%8B%9C%EB%82%98%EB%A6%AC%EC%98%A4.md)👈에서 더 자세히 보실 수 있습니다.
+<div align=center> <img src = "https://user-images.githubusercontent.com/57132148/171787944-2d5b6105-b809-438d-8fd8-06521f4e5c97.png" width="600" height="400"> <a href="https://wepeech.com/"><img width="200" alt="modal1" src="https://user-images.githubusercontent.com/57132148/172310521-cca6bb2a-a351-44c3-bc38-bc0156d4111c.png">
+</a> </div>
+
+<br>
+<br>
+
+
+---
+# 프로젝트 기간
+> 2022년 4월 22일 ~ 2022년 6월 3일 (6주)
+
+# 최종 발표영상 
+> [위피치 발표 영상 바로가기](https://www.youtube.com/watch?v=V20WB3ELn1s)
 
 ## ✨Overview
-1일 1커밋의 열풍이 불고 있는 여러분들의 건강은 괜찮으신가요? 모두의 건강을 책임지기 위해 저희 **HomeDong**이 왔습니다 ✌1일 1홈동(홈 트레이닝 운동)의 시작을 홈동과 함께하고 건강을 지켜보세요!
+간단한 서비스 소개 부분 위피치 어쩌고저쩌고
 
-### 프로젝트 기간 - 2021.07.12 ~ 2021.08.20
+## 👀위피치 서비스 화면
+|실시간 화상 채팅|
+|-------|
+|![wepeech-실시간 화상](https://user-images.githubusercontent.com/57132148/171780270-911ab894-3e5d-4ba3-8e93-5aec6f567a37.gif)|
+|실시간 채팅|
+|![wepeech-실시간 채팅](https://user-images.githubusercontent.com/57132148/171780204-f7fafb7e-da69-4e23-a4e3-26b454478b49.gif)|
+|패널 참여|
+|![wepeech-패널 입장](https://user-images.githubusercontent.com/57132148/171780228-ec28fef4-5698-4b63-9b24-721de3ae388d.gif)|
 
-## 👀홈동 서비스 화면
+
+
 ### 게임 - 스쿼트
 
 ## ✨ 주요 기능
