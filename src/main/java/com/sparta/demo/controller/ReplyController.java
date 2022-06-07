@@ -5,6 +5,8 @@ import com.sparta.demo.dto.reply.ReplyResponseDto;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.ReplyService;
 import com.sparta.demo.validator.ErrorResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
+@Api(value = "댓글 관리 API", tags = {"Reply"})
 @RequiredArgsConstructor
 public class ReplyController {
 
@@ -24,6 +27,7 @@ public class ReplyController {
 
     // 리뷰 생성
     @PostMapping("/main/{debateId}/reply")
+    @ApiOperation(value = "댓글 생성", notes = "<strong>댓글 생성</strong> 댓글 작성 시")
     public ResponseEntity<List<ReplyResponseDto>> writeReply(@PathVariable Long debateId,
                                                              @RequestBody ReplyRequestDto replyRequestDto,
                                                              @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -35,6 +39,7 @@ public class ReplyController {
 
     // 리뷰 조회
     @GetMapping("/main/{debateId}/reply")
+    @ApiOperation(value = "댓글 조회", notes = "<strong>댓글 조회</strong> 상세페이지에서 댓글 조회용 API")
     public ResponseEntity<List<ReplyResponseDto>> writeReply(@PathVariable Long debateId, HttpServletRequest request){
         log.info("controller debateId: {}", debateId);
         return replyService.getReply(debateId, request);
