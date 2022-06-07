@@ -2,6 +2,8 @@ package com.sparta.demo.sse;
 
 
 import com.sparta.demo.security.UserDetailsImpl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Api(value = "SSE", tags = {"SSE"})
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class SseController {
     }
 
     // 토론 시작하기 눌렀을 때
+    @ApiOperation(value = "유저 페이지- 토론 내역 조회", notes = "")
     @GetMapping("/timer/{roomId}")
     public void sseTimer(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info("타이머 controller 입장");
