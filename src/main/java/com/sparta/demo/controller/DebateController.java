@@ -32,6 +32,7 @@ public class DebateController {
 
     // 토론방 퇴장시 주장한 의견과 근거 작성
     @PostMapping("/{roomId}")
+    @ApiOperation(value = "토론 근거 작성하기")
     public ResponseEntity<ErrorResult> saveDebateInfo(@PathVariable String roomId,
                                                       @RequestBody DebateInfoDto debateInfoDto,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails

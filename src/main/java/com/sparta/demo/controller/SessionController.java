@@ -54,7 +54,7 @@ public class SessionController {
 
 
     @PutMapping("")
-    @ApiOperation(value = "참가자가 방을 나갈 경우 사용", notes = "<strong>방 나가기</strong>를 통해 방 정보 OFF로 변경 및 방 관리 map에서 해당 정보 삭제")
+    @ApiOperation(value = "참가자가 방을 나갈 경우 사용", notes = "<strong>방 나가기</strong>를 통해 방 정보 LIVEOFF로 변경 및 방 관리 map에서 해당 정보 삭제")
     @ApiResponses({
             @ApiResponse(code = 200, message = "방 나가기 성공"),
             @ApiResponse(code = 400, message = "input 오류", response = ErrorResponse.class),
