@@ -1,4 +1,4 @@
-package com.sparta.demo.redis.session;
+package com.sparta.demo.session;
 
 import com.sparta.demo.enumeration.StatusTypeEnum;
 import com.sparta.demo.model.Debate;

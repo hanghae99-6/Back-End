@@ -1,12 +1,12 @@
-package com.sparta.demo.redis.chat.service;
+package com.sparta.demo.service;
 
 import com.sparta.demo.model.Debate;
-import com.sparta.demo.redis.chat.model.ChatMessage;
-import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
-import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
-import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
-import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
-import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
+import com.sparta.demo.model.ChatMessage;
+import com.sparta.demo.dto.ChatMessageDto;
+import com.sparta.demo.dto.TimerResponseDto;
+import com.sparta.demo.pubsub.RedisPublisher;
+import com.sparta.demo.repository.ChatMessageRepository;
+import com.sparta.demo.repository.ChatRoomRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;

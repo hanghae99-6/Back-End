@@ -1,7 +1,7 @@
-package com.sparta.demo.redis.chat.repository;
+package com.sparta.demo.repository;
 
-import com.sparta.demo.redis.chat.model.ChatRoom;
-import com.sparta.demo.redis.chat.pubsub.RedisSubscriber;
+import com.sparta.demo.model.ChatRoom;
+import com.sparta.demo.pubsub.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
