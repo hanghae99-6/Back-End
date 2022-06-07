@@ -1,8 +1,6 @@
-package com.sparta.demo.redis.chat.repository;
+package com.sparta.demo.repository;
 
-import com.sparta.demo.redis.chat.model.ChatMessage;
-import com.sparta.demo.redis.chat.model.Timer;
-import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
+import com.sparta.demo.model.Timer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
@@ -13,8 +11,6 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j

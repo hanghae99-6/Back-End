@@ -1,4 +1,4 @@
-package com.sparta.demo.redis.chat.model;
+package com.sparta.demo.model;
 
 import lombok.Getter;
 import lombok.Setter;

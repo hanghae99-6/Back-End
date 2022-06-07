@@ -44,7 +44,7 @@ public class MainController {
         return mainService.getMainDetail(debateId, request);
     }
 
-    @ApiOperation(value = "원클릭 찬반 토론 가져오기")
+    @ApiOperation(value = "원클릭 찬반 토론 보기")
     @GetMapping("/one-click")
     public ResponseEntity<List<OneClickResponseDto>> getOneClick(HttpServletRequest request) {
         return mainService.getOneClick(request);

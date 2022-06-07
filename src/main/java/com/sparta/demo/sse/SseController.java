@@ -1,7 +1,7 @@
 package com.sparta.demo.sse;
 
 
-import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
+import com.sparta.demo.dto.TimerResponseDto;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

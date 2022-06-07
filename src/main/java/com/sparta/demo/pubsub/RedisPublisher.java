@@ -1,6 +1,6 @@
-package com.sparta.demo.redis.chat.pubsub;
+package com.sparta.demo.pubsub;
 
-import com.sparta.demo.redis.chat.model.ChatMessage;
+import com.sparta.demo.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,10 +20,4 @@ public class RedisPublisher {
         redisTemplate.convertAndSend(topic.getTopic(), message);
         System.out.println("발행 완료!");
     }
-
-//    public void publish(ChannelTopic topic, Timer timer) {
-//        log.info("Timer publish 진입확인 ");
-//        redisTemplate.convertAndSend(topic.getTopic(), timer);
-//        System.out.println("발행 완료");
-//    }
 }
