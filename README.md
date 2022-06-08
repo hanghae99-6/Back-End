@@ -251,7 +251,6 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
     - 게임 시작, 종료 이벤트 처리 및 실시간 랭킹, 채팅 기능 구현
     - styled-component와 material-ui를 통한 css 스타일링
 - **팀장(이현재)**
-    - 게임 및 채팅 기능 javascript → react로 migration           =================> 이 부분 수정이 안 된 거 아닐까요?
     - IP 기준으로 oneClick 찬반 토론 기능 구현
     - Docker 를 통해 Spring 서버와 Openvidu 서버를 하나의 인스턴스에서 배포
     - Stomp와 Redis 를 이용한 실시간 채팅 기능 구현
