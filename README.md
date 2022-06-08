@@ -110,12 +110,6 @@ stomp의 외부 브로커 역할 로서 sub/pub 기능을 이용한 채팅 기�
 - Slack
 - Figma
 
-### 💭 User Flow
-
----
-
-![wepeech userFlow](https://user-images.githubusercontent.com/57132148/172508731-b99d2e58-89f9-4328-9219-42a9018a0429.png)
-
 ### 🎨 와이어 프레임
 
 ---
