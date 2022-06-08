@@ -1,7 +1,7 @@
-package com.sparta.demo.redis.config.handler;
+package com.sparta.demo.config.handler;
 
-import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
-import com.sparta.demo.redis.chat.service.ChatRoomService;
+import com.sparta.demo.repository.ChatMessageRepository;
+import com.sparta.demo.service.ChatRoomService;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
-package com.sparta.demo.redis.chat.repository;
+package com.sparta.demo.repository;
 
-import com.sparta.demo.redis.chat.model.ChatMessage;
+import com.sparta.demo.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;

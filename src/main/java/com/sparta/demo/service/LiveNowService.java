@@ -4,7 +4,7 @@ import com.sparta.demo.dto.live.LiveResponseDto;
 import com.sparta.demo.enumeration.StatusTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.User;
-import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
+import com.sparta.demo.repository.ChatMessageRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.repository.EnterUserRepository;
 import com.sparta.demo.repository.UserRepository;
