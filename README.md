@@ -74,7 +74,7 @@
 ---
 
 제가 담당하여 서비스 아키텍처와 같이, Jenkins의 pipeline을 이용하여 자동 배포를 구축하였습니다. Gitlab webhook을 설정하여 Jenkins에 빌드 트리거를 설정했고, 이에 따라 Gitlab에서 master 브랜치에 push하면 자동으로 배포될 수 있도록 구축하여 개발하는 과정에서 배포로 인한 시간 낭비를 줄였습니다.
-또한 프론트엔드인 React.js는 Nginx와 함께 docker image로 빌드하여 배포하였고, 백엔드 및 redis, openvidu 또한 docker container로 배포하였습니다. 그리고 Nginx와 letsencrypt를 이용하여 ssl 인증서를 적용하였고, 프론트엔드는 443(https)로 프록시로 분기시켰고 백엔드는 /api 경로로 프록시를 걸어줬습니다.
+백엔드 및 redis, openvidu 는 docker container로 배포하였습니다. 그리고 letsencrypt를 이용하여 ssl 인증서를 적용하였고, 백엔드는 api. 경로로 8443포트를 사용합니다.
 
 ### ✨기술 특이점
 
@@ -88,13 +88,13 @@ stomp의 외부 브로커 역할 로서 sub/pub 기능을 이용한 채팅 기�
 
 토론방에 입장하는 참여자들의 token 정보를 redis cache 메모리에 저장하여 expire time을 2시간으로 지정했습니다. 상대 참여자의 입/퇴장 여부와 관계 없이 만들어진 방이더라도 2시간 후에는 sessionName이 삭제되고 종료된 방으로 표시될 수 있게 구현했습니다.
 
-
-
-
 - SSE
-토론방 내부 타이머 기능
 
+단방향 통신으로 토론방 방장이 시작하기를 눌렀을 때 토론방 내부 모든 유저의 타이머가 시작할 수 있도록 구현했습니다.
 
+- WebSocket (Stomp)
+
+양방향 통신으로 토론방 내 채팅 기능을 구현했습니다.
 
 - 배포
 
@@ -105,29 +105,75 @@ stomp의 외부 브로커 역할 로서 sub/pub 기능을 이용한 채팅 기�
 ---
 
 - Git
-- Jira
 - Notion
-- Mattermost
-- Webex
+- Slack
+- Figma
 
-### 💭요구사항 정의서
+### 💭 User Flow
+
+---
+
+![wepeech userFlow](https://user-images.githubusercontent.com/57132148/172508731-b99d2e58-89f9-4328-9219-42a9018a0429.png)
+
+### 🎨 와이어 프레임
 
 ---
 
-### 🎨 화면 설계서
+![wepeech frame](https://user-images.githubusercontent.com/57132148/172509234-310f5a2c-e5f8-42a2-806b-9d200851f831.png)
+
+### 🤖 ERD
 
 ---
+
+<img width="739" alt="image" src="https://user-images.githubusercontent.com/98947838/172311261-22d43691-870c-4bdb-9d38-3e9190ee6a9f.png">
 
 ### ✨코드 컨벤션
 
 ---
 
+```java
+- class 명 : 명사, UpperCamelCase (UserController)
+- package 명: 소문자, 단어 추가될 경우에도 소문자 (username)
+- 함수 명: 동사, CamelCase (getUserId(), isNormal())
+- URL: KebabCase (/user-email-page)
+- 객체 이름을 함수 이름에 중복해서 넣지 않는다. (line.getLength()/line.lineGetLength())
+- 누구나 알 수 있는 쉬운 단어로 네이밍!
+- 컬렉션은 복수형을 사용하거나 컬렉션을 명시해준다. (List ids, Map<User, Int> userToIdMap ...)
+- 이중적인 의미를 가지는 단어는 지양한다. (event, design ...)
+- 의도가 드러난다면 되도록 짧은 이름을 선택한다. (retreiveUser() (X) / getUser() (O))
+    - 단, 축약형을 선택하는 경우는 개발자의 의도가 명백히 전달되는 경우이다. 명백히 전달이 안된다면 축약형보다 서술형이 더 좋다.
+- LocalDateTime -> xxxAt, LocalDate -> xxxDt로 네이밍
+- 객체를 조회하는 함수는 JPA Repository에서 findXxx 형식의 네이밍 쿼리메소드를 사용하므로 개발자가 작성하는 Service단에서는 되도록이면 getXxx를 사용하자.
+
+코드 스타일을 적용시키고 항상 코딩 작업을 마친 후에는 reformat code(단축키 : cmd + alt + L)을 통해 간격, 공백등의 코드 스타일을 적용시킨다. (코드 스타일을 IDE에 적용시켰다는 전제하에)
+
+또한 코드에 사용되지 않은 라이브러리를 삭제해준다. (단축키 : ctrl + alt + O)
 ```
-- 의미 없는 변수명 X
-	⇒ 유지보수 힘들고, 알아보기 힘드니 반드시 지양! ex) text1, test2
-- 메서드 이름은 소문자로 시작하고, 동사로 지으면 좋다! ex) getName()
-- 변수명, 메서드 이름은 카멜케이스로 지어주세요
-- 클래스 이름은 대문자로 시작합니다
+
+### ✨Structure Convention
+```
+좋은 설계를 위해 꾸준히 고민하고 리팩토링 작업하는 것을 지향한다.
+
+1. 패키지는 목적별로 묶는다.
+    - user(User 관련 패키지), coupon(쿠폰 관련 패키지)
+2. Controller에서는 최대한 어떤 Service를 호출할지 결정하는 역할과 Exception처리만을 담당하자.
+    - Controller 단에서 로직을 구현하는 것을 지양한다.
+    - Controller의 코드 라인 수를 줄이자는 뜻은 절대 아니다.
+3. 하나의 메소드와 클래스는 하나의 목적을 두게 만든다.
+    - 하나의 메소드 안에서 한가지 일만 해야한다.
+    - 하나의 클래스 안에서는 같은 목적을 둔 코드들의 집합이여야한다.
+4. 메소드와 클래스는 최대한 작게 만든다.
+    - 메소드와 클래스가 커진다면 하나의 클래스나 메소드 안에서 여러 동작을 하고 있을 확률이 크다.
+    - 수많은 책임을 떠안은 클래스를 피한다. 큰 클래스 몇 개가 아니라 작은 클래스 여럿으로 이뤄진 시스템이 더욱 바람직하다.
+    - 클래스 나누는 것을 두려워하지 말자.
+5. 도메인 서비스를 만들어지는 것을 피하자.
+    - User라는 도메인이 있을 때, UserService로 만드는 것을 피한다.
+    - 이렇게 도메인 네이밍을 딴 서비스가 만들어지면 자연스레 수많은 책임을 떠안은 큰 클래스로 발전될 가능성이 높다.
+    - 기능 별로 세분화해서 만들어보자. (UserRegisterService, UserEmailService 등...)
+6. DTO 정리
+    - Entity별로 디렉토리 나누기
+    - entity명+메서드명안의 명사+request/response구분+Dto
+    - UpperCamelCase
 ```
 
 ### ✨Git 컨벤션
@@ -165,9 +211,9 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
         ⇒ pull request가 요청되면, 모든 팀원들이 코드 리뷰를 하여 안전하게 merge한다.
     2. 매 주마다 develop 브랜치를 master 브랜치로 병합하여 배포를 진행한다.
 - feature 브랜치 이름 명명 규칙
-    - feature/[front or back]/[기능 이름]
-        ex) feature/front/login
-        ex) feature/webrtc
+    - feature/[기능 이름]/[개발자명]
+        ex) feature/login/H
+        ex) feature/webrtc/G
         
 ### 👨‍👩‍👧 Notion
 
@@ -208,29 +254,13 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
     - Openvidu를 통한 게임 내부 정보 실시간 통신
     - 게임 시작, 종료 이벤트 처리 및 실시간 랭킹, 채팅 기능 구현
     - styled-component와 material-ui를 통한 css 스타일링
-- **팀장(본인)**
-    - Spring security, JWT, JPA를 이용한 이메일 인증(폼 구현)회원가입, 로그인 기능 구현 (인증, 인가)
-    - JWT, Redis 캐싱을 이용한 랭킹 조회 정보 캐싱 처리 구현
-    - JWT, Redis를 이용해 로그아웃된 토큰 재사용 불가 처리 구현
-    - 비밀번호 변경, 닉네임 변경, 회원 정보 CRUD 구현
-    - 연속 운동일 수 조회, 1일 1홈동 조회, 방장 게임 시작 기능, 게임 끝 기능, 렝킹 페이지 기능, 최고 기록 조회, 뱃지 조회 등의 Spring Boot 백엔드 기능 구현
-    - Jenkins, Docker를 이용한 CD 구현 - Docker로 nginx+react container, spring boot container 생성하여 배포
-    - Nginx 리다이렉트 설정 및 백엔드 및 프론트엔드 url 분기 처리 (/, /api/**)
-    - react를 이용한 프론트엔드 프로필 설정 및 프로필 변경 기능, 프로필 변경 및 1일 1홈동 호버 툴팁 구현
+- **팀장(이현재)**
     - 게임 및 채팅 기능 javascript → react로 migration
-    - styled-component를 통한 css 스타일링
-
-### 🐣Homedong을 개발하고 난 후의 회고
----
-- 안되는 것은 함께 해결하면 해결할 수 있다.
-- 코드 리뷰 꼼꼼히 하자
-- 긍정적인 말로 팀 분위기를 만들어가자
-- 문서화를 잘 하자!
-
-자세한 회고는 [블로그](https://yesforlog.tistory.com/24)에서 자세히 보실 수 있습니다.
+    - IP 기준으로 oneClick 찬반 토론 기능 구현
+    - Docker 를 통해 Spring 서버와 Openvidu 서버를 하나의 인스턴스에서 배포
+    - Stomp와 Redis 를 이용한 실시간 채팅 기능 구현
 
 
 # Back-End
 ![image](https://user-images.githubusercontent.com/48950985/169887325-4f49da9f-54d6-4c32-8ce9-79cee520a530.png)
-# ERD
-<img width="739" alt="image" src="https://user-images.githubusercontent.com/98947838/172311261-22d43691-870c-4bdb-9d38-3e9190ee6a9f.png">
+
