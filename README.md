@@ -99,7 +99,7 @@ stomp의 외부 브로커 역할 로서 sub/pub 기능을 이용한 채팅 기�
 
 - 배포
 
-도커, Nginx, Jenkins를 이용한 자동 무중단 배포를 구현하였습니다. 백엔드를 도커 컨테이너로 배포하였고, 프론트로 Nginx와 함께 도커 컨테이너로 배포하였습니다.
+도커, Jenkins를 이용한 자동 배포를 구현하였습니다.
 
 ### 👨‍👩‍👧 협업 툴
 
@@ -198,7 +198,7 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
 - Git Flow model을 사용하고, Git 기본 명령어 사용한다.
 - Git Flow 사용 브랜치
     - feature - 기능
-    - develop - 개발
+    - dev - 개발            ===============> 이 부분 어떡하죠? 저희 dev로 배포 중인 상황이라
     - master - 배포
     - hotfix - 급한 에러 수정
 - Git Flow 진행 방식
@@ -232,13 +232,14 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
 ### 😃 팀원 역할
 
 ---
+![image](https://user-images.githubusercontent.com/48950985/169887325-4f49da9f-54d6-4c32-8ce9-79cee520a530.png)
 
 - **팀원1**
     - openvidu를 통한 WebRTC 기능 구현
-    - 백엔드 방 관리 API 구현(방 만들기/빠른 시작/방 찾기/방 나가기/방장 부여)
-    - 백엔드 관리자 API 구현
-    - 오픈비두 서버 배포
-    - styled-component와 material-ui를 통한 css 스타일링
+    - 백엔드 방 관리 API 구현(토론방 생성, 입장시 토론자/패널 구분, 토론방 나가기)
+    - 댓글 생성, 조회, 좋아요
+    - 상세페이지 조회 구현
+    - ERD 설계/유저플로우 그리기
 - **팀원2**
     - react와 redux-toolkit을 활용하여 SPA 구현
     - 프론트 개발(회원가입, 로그인, 회원정보 수정, 메인 화면, 랭킹, 튜토리얼, 마이페이지, 방만들기, 방찾기등, 관리자 페이지 구현)
@@ -250,7 +251,7 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
     - 게임 시작, 종료 이벤트 처리 및 실시간 랭킹, 채팅 기능 구현
     - styled-component와 material-ui를 통한 css 스타일링
 - **팀장(이현재)**
-    - 게임 및 채팅 기능 javascript → react로 migration
+    - 게임 및 채팅 기능 javascript → react로 migration           =================> 이 부분 수정이 안 된 거 아닐까요?
     - IP 기준으로 oneClick 찬반 토론 기능 구현
     - Docker 를 통해 Spring 서버와 Openvidu 서버를 하나의 인스턴스에서 배포
     - Stomp와 Redis 를 이용한 실시간 채팅 기능 구현
