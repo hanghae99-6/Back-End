@@ -198,9 +198,9 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
 - Git Flow model을 사용하고, Git 기본 명령어 사용한다.
 - Git Flow 사용 브랜치
     - feature - 기능
-    - dev - 개발            ===============> 이 부분 어떡하죠? 저희 dev로 배포 중인 상황이라
-    - master - 배포
-    - hotfix - 급한 에러 수정
+    - dev - 개발
+    - main - 배포
+    - fix - 급한 에러 수정
 - Git Flow 진행 방식
     1. feature 브랜치가 완성되면 develop 브랜치로 pull request를 통해 merge한다.
         ⇒ pull request가 요청되면, 모든 팀원들이 코드 리뷰를 하여 안전하게 merge한다.
@@ -255,7 +255,4 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
     - Docker 를 통해 Spring 서버와 Openvidu 서버를 하나의 인스턴스에서 배포
     - Stomp와 Redis 를 이용한 실시간 채팅 기능 구현
 
-
-# Back-End
-![image](https://user-images.githubusercontent.com/48950985/169887325-4f49da9f-54d6-4c32-8ce9-79cee520a530.png)
 
