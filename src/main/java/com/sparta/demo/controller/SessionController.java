@@ -32,7 +32,7 @@ public class SessionController {
     private final SessionService sessionService;
 
     @GetMapping("/{roomId}")
-    @ApiOperation(value = "url을 통해서 입장했을 때 유효성 검사", notes = "<strong>입장하기</strong> roomId와 token의 유저 정보를 통해 토론자인지 아닌지 확인 후 role 전송")
+    @ApiOperation(value = "입장했을 때 유효성 검사", notes = "<strong>입장하기</strong> roomId와 token의 유저 정보를 통해 토론자인지 아닌지 확인 후 role 전송")
     @ApiResponses({
             @ApiResponse(code = 200, message = "입장 성공"),
             @ApiResponse(code = 400, message = "input 오류", response = ErrorResponse.class),
@@ -54,7 +54,7 @@ public class SessionController {
 
 
     @PutMapping("")
-    @ApiOperation(value = "참가자가 방을 나갈 경우 사용", notes = "<strong>방 나가기</strong>를 통해 방 정보 OFF로 변경 및 방 관리 map에서 해당 정보 삭제")
+    @ApiOperation(value = "참가자가 방을 나갈 경우 사용", notes = "<strong>방 나가기</strong>를 통해 방 정보 LIVEOFF로 변경 및 방 관리 map에서 해당 정보 삭제")
     @ApiResponses({
             @ApiResponse(code = 200, message = "방 나가기 성공"),
             @ApiResponse(code = 400, message = "input 오류", response = ErrorResponse.class),
