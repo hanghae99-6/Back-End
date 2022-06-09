@@ -16,6 +16,7 @@ public class Timer {
     }
 
     private MessageType type; // 메시지 타입
+//    private String roomId; // 방번호
     private String debateEndTime;
     private Boolean isStarted;
 

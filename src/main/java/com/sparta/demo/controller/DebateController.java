@@ -41,6 +41,7 @@ public class DebateController {
         return debateService.saveDebateInfo(roomId, debateInfoDto, userDetails);
     }
 
+
     @PostMapping("/emailCheck/pros")
     @ApiOperation(value = "찬성 이메일 유효성 검사", notes = "<strong>찬성 이메일 유효성 검사</strong> 방 생성 시 찬성 측 이메일 유효성검사")
     public ResponseEntity<ErrorResult> prosEmailCheck(@RequestParam String email){

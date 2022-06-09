@@ -87,6 +87,10 @@ public class MainService {
                     Debate debate = debateList.get(ran);
                     MainCategoryResDto mainCategoryResDto = new MainCategoryResDto(debate);
                     catList.add(mainCategoryResDto);
+                    for(int j=0;j<i;j++){
+                        if(catList.get(i).getDebateId()==catList.get(j).getDebateId()) i--;
+                        else break;
+                    }
                 }
             } else {
                 Set<Integer> debateNum = new HashSet<>();
