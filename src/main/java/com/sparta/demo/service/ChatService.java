@@ -1,12 +1,12 @@
-package com.sparta.demo.redis.chat.service;
+package com.sparta.demo.service;
 
 import com.sparta.demo.model.Debate;
-import com.sparta.demo.redis.chat.model.ChatMessage;
-import com.sparta.demo.redis.chat.model.dto.ChatMessageDto;
-import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
-import com.sparta.demo.redis.chat.pubsub.RedisPublisher;
-import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
-import com.sparta.demo.redis.chat.repository.ChatRoomRepository;
+import com.sparta.demo.model.ChatMessage;
+import com.sparta.demo.dto.ChatMessageDto;
+import com.sparta.demo.dto.TimerResponseDto;
+import com.sparta.demo.pubsub.RedisPublisher;
+import com.sparta.demo.repository.ChatMessageRepository;
+import com.sparta.demo.repository.ChatRoomRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
@@ -94,50 +94,4 @@ public class ChatService {
         return chatMessageRepository.findAllMessage(roomId);
     }
 
-    // 타이머
-    public void getTimer(ChatMessageDto messageDto, String token) {
-
-        ChatMessage message = new ChatMessage(messageDto);
-
-        Optional<Debate> debate = debateRepository.findByRoomId(messageDto.getRoomId());
-
-        if (!(String.valueOf(token).equals("Authorization") || String.valueOf(token).equals("null"))) {
-            if (ChatMessage.MessageType.TIMER.equals(message.getType())) {
-
-                LocalDateTime localDateTime = LocalDateTime.now();
-                // 토론 종료 시간
-                Long debateTime = debate.get().getDebateTime();
-                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                message.setDebateEndTime(debateEndTime);
-                message.setType(ChatMessage.MessageType.START);
-                log.info("TIMER 요청됨. debateEndTime: {}", message.getDebateEndTime());
-                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
-            }
-//            else if(ChatMessage.MessageType.ENTER.equals(message.getType())){
-//                LocalDateTime localDateTime = LocalDateTime.now();
-//                // 토론 종료 시간
-//                Long debateTime = debate.get().getDebateTime();
-//                String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-//                Timer timer = new Timer(Timer.MessageType.START,debateEndTime,true);
-//                redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), timer);
-//            }
-        }
-    }
-
-    @Transactional
-    public TimerResponseDto getTimer(String roomId) {
-        log.info("getTimer roomId : {}", roomId);
-        TimerResponseDto timerResponseDto = new TimerResponseDto();
-        Optional<Debate> debate = debateRepository.findByRoomId(roomId);
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-        // 토론 종료 시간
-        Long debateTime = debate.get().getDebateTime();
-        String debateEndTime = localDateTime.plusMinutes(debateTime).format((DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        Boolean isStarted = true;
-        timerResponseDto.setDebateEndTime(debateEndTime);
-        timerResponseDto.setIsStarted(isStarted);
-        log.info("타이머 GETMAPPING 응답확인 (엔드타임): {}", timerResponseDto.getDebateEndTime());
-        return timerResponseDto;
-    }
 }

@@ -1,6 +1,6 @@
-package com.sparta.demo.redis.chat.model.dto;
+package com.sparta.demo.dto;
 
-import com.sparta.demo.redis.chat.model.ChatMessage;
+import com.sparta.demo.model.ChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

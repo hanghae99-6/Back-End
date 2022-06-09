@@ -1,4 +1,4 @@
-package com.sparta.demo.redis.chat.service;
+package com.sparta.demo.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

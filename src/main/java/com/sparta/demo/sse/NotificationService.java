@@ -1,10 +1,10 @@
 package com.sparta.demo.sse;
 
 import com.sparta.demo.model.Debate;
-import com.sparta.demo.redis.chat.model.Timer;
-import com.sparta.demo.redis.chat.model.dto.TimerResponseDto;
-import com.sparta.demo.redis.chat.repository.ChatMessageRepository;
-import com.sparta.demo.redis.chat.repository.TimerRepository;
+import com.sparta.demo.model.Timer;
+import com.sparta.demo.dto.TimerResponseDto;
+import com.sparta.demo.repository.ChatMessageRepository;
+import com.sparta.demo.repository.TimerRepository;
 import com.sparta.demo.repository.DebateRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-//    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
     private static final Long DEFAULT_TIMEOUT = 60L * 1000;
 
     private final EmitterRepository emitterRepository;
@@ -47,16 +45,10 @@ public class NotificationService {
         }
 
         // 2
-//        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
 
         emitterSet.add(sseEmitter);
         log.info("Add emitterSet size(): {}",emitterSet.size());
-
-//        log.info("구독 emitter timeout: {}", emitter.getTimeout());
-//
-//        emitter.onCompletion(() -> emitterRepository.deleteById(id));
-//        emitter.onTimeout(() -> emitterRepository.deleteById(id));
 
         sseEmitter.onTimeout(() -> emitterSet.remove(sseEmitter));
         sseEmitter.onCompletion(() -> emitterSet.remove(sseEmitter));
@@ -65,7 +57,6 @@ public class NotificationService {
 
         // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
-//        sendToClient(emitter, id, "EventStream Created. [roomId=" + roomId + "]");
         sendToClient(id, "EventStream Created. [roomId=" + roomId + "]");
         log.info("더미 이벤트 발송");
 
@@ -133,13 +124,14 @@ public class NotificationService {
 
     public ResponseEntity<TimerResponseDto> timer(String roomId, UserDetailsImpl userDetails) {
         log.info("타이머 서비스 진입!");
-        // todo:
-//        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
-//        Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
-//        for (int i = 0; i < emitterSet.size(); i++) {
-//            log.info("emitterRoom emitter for: {}번째", i);
-//            emitterList.add(emitter);
-//        }
+
+        SseEmitter emitter = emitterRepository.findByRoomId(roomId);
+        Set<SseEmitter> emitterList = new CopyOnWriteArraySet<>();
+        for (int i = 0; i < emitterSet.size(); i++) {
+            emitterList.add(emitter);
+        }
+        log.info("emmiter 찾아온 것 : {}", emitter.getTimeout());
+
 
         Debate debate = debateRepository.findByRoomId(roomId).orElseThrow(
                 () -> new IllegalArgumentException("없는 토론방입니다.")

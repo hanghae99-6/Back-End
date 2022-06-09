@@ -3,6 +3,7 @@ package com.sparta.demo.controller;
 
 import com.sparta.demo.dto.main.CrawlingDto;
 import com.sparta.demo.service.CrawlingService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 
+@Api(tags = {"Crawling"})
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/main/crawling")
