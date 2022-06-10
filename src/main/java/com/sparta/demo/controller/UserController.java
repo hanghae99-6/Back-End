@@ -8,6 +8,7 @@ import com.sparta.demo.dto.user.UserRequestDto;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.service.UserService;
 import com.sparta.demo.validator.ErrorResult;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+@Api(value = "댓글 관리 API", tags = {"Reply"})
 @Slf4j
 @RestController
 @RequiredArgsConstructor

@@ -1,8 +1,13 @@
 package com.sparta.demo.controller;
 
 import com.sparta.demo.dto.main.*;
+import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.model.OneClick;
+import com.sparta.demo.model.OneClickUser;
+import com.sparta.demo.repository.OneClickRepository;
+import com.sparta.demo.repository.OneClickUserRepository;
 import com.sparta.demo.service.MainService;
+import com.sparta.demo.util.GetIp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -23,6 +29,8 @@ import java.util.List;
 public class MainController {
 
     private final MainService mainService;
+    private final OneClickRepository oneClickRepository;
+    private final OneClickUserRepository oneClickUserRepository;
 
     @ApiOperation(value = "메인페이지 핫피치 보여주기", notes = "메인페이지 핫피치 랜덤 6개 보여주기")
     @GetMapping("/")
@@ -53,7 +61,23 @@ public class MainController {
     @ApiOperation(value = "원클릭 찬반 선택하기")
     @PutMapping("/one-click")
     public ResponseEntity<List<OneClickResponseDto>> sumOneClick(@RequestBody OneClickRequestDto oneClickRequestDto,
-                                                HttpServletRequest request) {
-        return mainService.sumOneClick(oneClickRequestDto, request);
+                                                                 HttpServletRequest request) {
+        String userIp = GetIp.getIp(request);
+
+        SideTypeEnum sideTypeEnum = SideTypeEnum.typeOf(oneClickRequestDto.getSide()); // enum 값으로 변형
+
+        OneClick oneClick = oneClickRepository.findById(oneClickRequestDto.getOneClickId()).orElseThrow( // oneClickTopic 으로 OneClick 객체를 찾아옴
+                () -> new IllegalStateException("없는 토픽입니다.")
+        );
+
+        Optional<OneClickUser> oneClickUser = oneClickUserRepository.findByUserIpAndOneClickId(userIp, oneClickRequestDto.getOneClickId());
+
+        log.info("sideTypeEnum.getTypeNum(): {}", sideTypeEnum.getTypeNum());
+
+        if(oneClickUser.isPresent()){
+            return mainService.updateOneClickVote(sideTypeEnum,oneClick,oneClickUser.get(), request);
+        }
+        return mainService.createOneClickVote(oneClickRequestDto, userIp, sideTypeEnum, oneClick, request);
     }
+
 }
