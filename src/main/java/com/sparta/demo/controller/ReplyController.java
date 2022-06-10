@@ -47,6 +47,7 @@ public class ReplyController {
 
     // 리뷰 수정
     @PutMapping("/main/reply/{replyId}")
+    @ApiOperation(value = "댓글 수정", notes = "<strong>댓글 수정</strong> 상세페이지에서 댓글 수정용 API")
     public ResponseEntity<List<ReplyResponseDto>> updateReply(@RequestBody ReplyRequestDto replyRequestDto,
                                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                        @PathVariable Long replyId, HttpServletRequest request){
@@ -55,6 +56,7 @@ public class ReplyController {
 
     // 리뷰 삭제
     @DeleteMapping("/main/reply/{replyId}")
+    @ApiOperation(value = "댓글 삭제", notes = "<strong>댓글 삭제</strong> 상세페이지에서 댓글 삭제용 API")
     public ResponseEntity<List<ReplyResponseDto>> deleteReply(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                    @PathVariable Long replyId,
                                                    HttpServletRequest request){
