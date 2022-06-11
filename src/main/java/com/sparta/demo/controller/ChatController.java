@@ -42,5 +42,4 @@ public class ChatController {
         log.info("요청 메서드 [GET] /chat/message/{roomId}");
         return chatService.getMessages(roomId);
     }
-
 }

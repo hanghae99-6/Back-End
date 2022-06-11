@@ -57,13 +57,16 @@ public class ChatMessageRepository {// Redis
         return opsHashChatMessage.get(CHAT_MESSAGE, roomId);
         }
 
-    public Long plusUserCnt(String roomId) {
-        return Optional.ofNullable(valueOps.increment(USER_COUNT + "_" + roomId)).orElse(0L);
+    public void plusUserCnt(String roomId) {
+        valueOps.increment(USER_COUNT + "_" + roomId);
     }
 
-    public Long minusUserCnt(String roomId) {
-        return Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0).orElse(0L);
-
+    public void minusUserCnt(String sessionId, String roomId) {
+        String redisRoomId = getRoomId(sessionId);
+        if(roomId.equals(redisRoomId)) {
+            return;
+        }
+        Optional.ofNullable(valueOps.decrement(USER_COUNT + "_" + roomId)).filter(count -> count > 0);
     }
 
     public Long getUserCnt(String roomId) {

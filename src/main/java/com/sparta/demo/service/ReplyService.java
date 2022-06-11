@@ -10,7 +10,6 @@ import com.sparta.demo.repository.LikesRepository;
 import com.sparta.demo.repository.ReplyRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.util.GetIp;
-import com.sparta.demo.validator.ErrorResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -19,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service

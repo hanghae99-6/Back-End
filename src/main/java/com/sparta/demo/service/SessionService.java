@@ -4,8 +4,6 @@ import com.sparta.demo.dto.session.EnterRes;
 import com.sparta.demo.dto.session.LeaveRoomRes;
 import com.sparta.demo.enumeration.SideTypeEnum;
 import com.sparta.demo.enumeration.StatusTypeEnum;
-import com.sparta.demo.exception.CustomException;
-import com.sparta.demo.exception.ErrorCode;
 import com.sparta.demo.exception.ExistSessionException;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.EnterUser;
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -121,7 +118,7 @@ public class SessionService {
             }else if(consCheck.isPresent()){
                 enterUser = Optional.of(enterUserRepository.save(new EnterUser(debate1.get(), user, SideTypeEnum.CONS)));
             }else
-                enterUser = Optional.of(enterUserRepository.save(new EnterUser(debate1.get(), user)));
+                enterUser = Optional.of(enterUserRepository.save(new EnterUser(debate1.get(), user, SideTypeEnum.DEFAULT)));
         }
 
         log.info("setEnterUser enterUser.getNickname : {}", enterUser.get().getUserNickName());

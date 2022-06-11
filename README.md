@@ -14,25 +14,27 @@
 # 프로젝트 기간
 > 2022년 4월 22일 ~ 2022년 6월 3일 (6주)
 
-# 최종 발표영상 
+# 최종 발표영상
 > [위피치 발표 영상 바로가기](https://www.youtube.com/watch?v=V20WB3ELn1s)
 
 ## ✨Overview
 
-관전자들과 함께 하는 1:1 화상 토론 
+관전자들과 함께 하는 1:1 화상 토론
 
 ## 👀위피치 핵심 서비스
+
 |실시간 화상 채팅|실시간 채팅|
-|--|--|
+---|---
 |![wepeech-실시간 화상](https://user-images.githubusercontent.com/57132148/171780270-911ab894-3e5d-4ba3-8e93-5aec6f567a37.gif)|![wepeech-실시간 채팅](https://user-images.githubusercontent.com/57132148/171780204-f7fafb7e-da69-4e23-a4e3-26b454478b49.gif)|
 
 |패널 참여|토론 타이머|
-|--|--|
+---|---
 |![wepeech-패널 입장](https://user-images.githubusercontent.com/57132148/171780228-ec28fef4-5698-4b63-9b24-721de3ae388d.gif)|<img src = "https://user-images.githubusercontent.com/57132148/171780394-ec8c2c31-e37f-4982-a773-55bc73a200a9.gif" width="430" height="280"/>|
 
 
 
 ## ✨ 주요 기능
+
     - webRTC를 통한 실시간 화상 토론
     - WebSocket과 Stomp를 이용한 실시간 채팅
     - 토론자와 패널의 분리
@@ -128,21 +130,21 @@ stomp의 외부 브로커 역할 로서 sub/pub 기능을 이용한 채팅 기�
 
 ```java
 - class 명 : 명사, UpperCamelCase (UserController)
-- package 명: 소문자, 단어 추가될 경우에도 소문자 (username)
-- 함수 명: 동사, CamelCase (getUserId(), isNormal())
-- URL: KebabCase (/user-email-page)
-- 객체 이름을 함수 이름에 중복해서 넣지 않는다. (line.getLength()/line.lineGetLength())
-- 누구나 알 수 있는 쉬운 단어로 네이밍!
-- 컬렉션은 복수형을 사용하거나 컬렉션을 명시해준다. (List ids, Map<User, Int> userToIdMap ...)
-- 이중적인 의미를 가지는 단어는 지양한다. (event, design ...)
-- 의도가 드러난다면 되도록 짧은 이름을 선택한다. (retreiveUser() (X) / getUser() (O))
-    - 단, 축약형을 선택하는 경우는 개발자의 의도가 명백히 전달되는 경우이다. 명백히 전달이 안된다면 축약형보다 서술형이 더 좋다.
-- LocalDateTime -> xxxAt, LocalDate -> xxxDt로 네이밍
-- 객체를 조회하는 함수는 JPA Repository에서 findXxx 형식의 네이밍 쿼리메소드를 사용하므로 개발자가 작성하는 Service단에서는 되도록이면 getXxx를 사용하자.
+        - package 명: 소문자, 단어 추가될 경우에도 소문자 (username)
+        - 함수 명: 동사, CamelCase (getUserId(), isNormal())
+        - URL: KebabCase (/user-email-page)
+        - 객체 이름을 함수 이름에 중복해서 넣지 않는다. (line.getLength()/line.lineGetLength())
+        - 누구나 알 수 있는 쉬운 단어로 네이밍!
+        - 컬렉션은 복수형을 사용하거나 컬렉션을 명시해준다. (List ids, Map<User, Int> userToIdMap ...)
+        - 이중적인 의미를 가지는 단어는 지양한다. (event, design ...)
+        - 의도가 드러난다면 되도록 짧은 이름을 선택한다. (retreiveUser() (X) / getUser() (O))
+        - 단, 축약형을 선택하는 경우는 개발자의 의도가 명백히 전달되는 경우이다. 명백히 전달이 안된다면 축약형보다 서술형이 더 좋다.
+        - LocalDateTime -> xxxAt, LocalDate -> xxxDt로 네이밍
+        - 객체를 조회하는 함수는 JPA Repository에서 findXxx 형식의 네이밍 쿼리메소드를 사용하므로 개발자가 작성하는 Service단에서는 되도록이면 getXxx를 사용하자.
 
-코드 스타일을 적용시키고 항상 코딩 작업을 마친 후에는 reformat code(단축키 : cmd + alt + L)을 통해 간격, 공백등의 코드 스타일을 적용시킨다. (코드 스타일을 IDE에 적용시켰다는 전제하에)
+        코드 스타일을 적용시키고 항상 코딩 작업을 마친 후에는 reformat code(단축키 : cmd + alt + L)을 통해 간격, 공백등의 코드 스타일을 적용시킨다. (코드 스타일을 IDE에 적용시켰다는 전제하에)
 
-또한 코드에 사용되지 않은 라이브러리를 삭제해준다. (단축키 : ctrl + alt + O)
+        또한 코드에 사용되지 않은 라이브러리를 삭제해준다. (단축키 : ctrl + alt + O)
 ```
 
 ### ✨Structure Convention
@@ -197,25 +199,25 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
 
 - Git Flow model을 사용하고, Git 기본 명령어 사용한다.
 - Git Flow 사용 브랜치
-    - feature - 기능
-    - dev - 개발
-    - main - 배포
-    - fix - 급한 에러 수정
+  - feature - 기능
+  - dev - 개발
+  - main - 배포
+  - fix - 급한 에러 수정
 - Git Flow 진행 방식
-    1. feature 브랜치가 완성되면 develop 브랜치로 pull request를 통해 merge한다.
-        ⇒ pull request가 요청되면, 모든 팀원들이 코드 리뷰를 하여 안전하게 merge한다.
-    2. 매 주마다 develop 브랜치를 master 브랜치로 병합하여 배포를 진행한다.
+  1. feature 브랜치가 완성되면 develop 브랜치로 pull request를 통해 merge한다.
+     ⇒ pull request가 요청되면, 모든 팀원들이 코드 리뷰를 하여 안전하게 merge한다.
+  2. 매 주마다 develop 브랜치를 master 브랜치로 병합하여 배포를 진행한다.
 - feature 브랜치 이름 명명 규칙
-    - feature/[기능 이름]/[개발자명]
-        ex) feature/login/H
-        ex) feature/webrtc/G
-        
+  - feature/[기능 이름]/[개발자명]
+    ex) feature/login/H
+    ex) feature/webrtc/G
+
 ### 👨‍👩‍👧 Notion
 
 ---
 
 모두가 봐야할 공지, 함께 공부해야 할 링크 등을 모아 관리했습니다. 그리고 항상 모든 회의 및 피드백은 기록으로 남겨두어서 잘 반영할 수 있도록 하였습니다. 컨벤션 규칙, 브랜치 전략 등도 노션에 기록하여 모두가 항시 확인할 수 있도록 관리했습니다.
-        
+
 ### ✨ EC2 포트 정리
 ---
 |**PORT**|**이름**|
@@ -234,46 +236,23 @@ ex) FEAT: 로그인 rest api 추가 [#지라이슈넘버]
 ---
 ![image](https://user-images.githubusercontent.com/48950985/169887325-4f49da9f-54d6-4c32-8ce9-79cee520a530.png)
 
-<<<<<<< HEAD
-# 친구와 함께 하는 1:1 화상 토론 서비스, WEPEECH 🍑
-
-
-|카테고리|찬반 선택|원클릭 투표|
-|--|--|--|
-|<img src = "https://user-images.githubusercontent.com/57132148/171777559-72bab1b2-e51d-49d3-b7b3-20da1c6c26ab.gif" width="300" height="200"/>|<img src="https://user-images.githubusercontent.com/57132148/171777728-d8fede4a-40e4-4d98-b845-5cf74033568c.gif" width="300" height="200" />|<img src="https://user-images.githubusercontent.com/57132148/171778770-1da123c8-3f87-463b-9226-8d49e1080dc7.gif" width="300" height="200"/>|
-
-|뉴스 크롤링|카카오 로그인|방 만들기|
-|--|--|--|
-|![wepeech-방 만들기](https://user-images.githubusercontent.com/57132148/171779406-fabc14b1-f1c6-4a1b-9097-514c980be5a2.gif)|![wepeech-소셜 로그인](https://user-images.githubusercontent.com/57132148/171779392-c05df2f9-be54-4dc9-8000-b58be6687589.gif)|![wepeech-뉴스](https://user-images.githubusercontent.com/57132148/171779372-559d1d77-b8b3-4490-82f9-8d72681bd88d.gif)|
-
-|실시간 화상 채팅|실시간 채팅|패널 참여|
-|--|--|--|
-|![wepeech-실시간 화상](https://user-images.githubusercontent.com/57132148/171780270-911ab894-3e5d-4ba3-8e93-5aec6f567a37.gif)|![wepeech-실시간 채팅](https://user-images.githubusercontent.com/57132148/171780204-f7fafb7e-da69-4e23-a4e3-26b454478b49.gif)|![wepeech-패널 입장](https://user-images.githubusercontent.com/57132148/171780228-ec28fef4-5698-4b63-9b24-721de3ae388d.gif)|
-
-|토론 시작 - 타이머|토론 종료|참여 토론 페이지네이션|
-|--|--|--|
-|![wepeech-타이머](https://user-images.githubusercontent.com/57132148/171780394-ec8c2c31-e37f-4982-a773-55bc73a200a9.gif)|![wepeech-토론 종료](https://user-images.githubusercontent.com/57132148/171780426-87f83fbf-dd68-4a8f-9007-47c1e8b0374b.gif)|![wepeech-페이지네이션](https://user-images.githubusercontent.com/57132148/171780440-8d147c68-a79e-443e-9ac4-e16f17ea9281.gif)|
-=======
 - **팀원1**
-    - openvidu를 통한 WebRTC 기능 구현
-    - 백엔드 방 관리 API 구현(토론방 생성, 입장시 토론자/패널 구분, 토론방 나가기)
-    - 댓글 생성, 조회, 좋아요
-    - 상세페이지 조회 구현
-    - ERD 설계/유저플로우 그리기
+  - openvidu를 통한 WebRTC 기능 구현
+  - 백엔드 방 관리 API 구현(토론방 생성, 입장시 토론자/패널 구분, 토론방 나가기)
+  - 댓글 생성, 조회, 좋아요
+  - 상세페이지 조회 구현
+  - ERD 설계/유저플로우 그리기
 - **팀원2**
-    - react와 redux-toolkit을 활용하여 SPA 구현
-    - 프론트 개발(회원가입, 로그인, 회원정보 수정, 메인 화면, 랭킹, 튜토리얼, 마이페이지, 방만들기, 방찾기등, 관리자 페이지 구현)
-    - styled-components와 material-ui를 통한 컴포넌트 레이아웃 구현 및 css 스타일링
+  - react와 redux-toolkit을 활용하여 SPA 구현
+  - 프론트 개발(회원가입, 로그인, 회원정보 수정, 메인 화면, 랭킹, 튜토리얼, 마이페이지, 방만들기, 방찾기등, 관리자 페이지 구현)
+  - styled-components와 material-ui를 통한 컴포넌트 레이아웃 구현 및 css 스타일링
 - **팀원3**
-    - Teachable Machine을 통한 운동 인식 구현
-    - 운동별 로직을 통한 운동 카운트 기능 및 튜토리얼 구현
-    - Openvidu를 통한 게임 내부 정보 실시간 통신
-    - 게임 시작, 종료 이벤트 처리 및 실시간 랭킹, 채팅 기능 구현
-    - styled-component와 material-ui를 통한 css 스타일링
+  - Teachable Machine을 통한 운동 인식 구현
+  - 운동별 로직을 통한 운동 카운트 기능 및 튜토리얼 구현
+  - Openvidu를 통한 게임 내부 정보 실시간 통신
+  - 게임 시작, 종료 이벤트 처리 및 실시간 랭킹, 채팅 기능 구현
+  - styled-component와 material-ui를 통한 css 스타일링
 - **팀장(이현재)**
     - IP 기준으로 oneClick 찬반 토론 기능 구현
     - Docker 를 통해 Spring 서버와 Openvidu 서버를 하나의 인스턴스에서 배포
     - Stomp와 Redis 를 이용한 실시간 채팅 기능 구현
-
-
->>>>>>> e771319dd853bcf0216c37c8afda0a74e3f60e67

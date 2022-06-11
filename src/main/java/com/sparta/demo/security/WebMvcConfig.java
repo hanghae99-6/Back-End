@@ -3,7 +3,6 @@ package com.sparta.demo.security;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -14,8 +13,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
 //                .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("https://wepeech.com")
-                .allowedOrigins("https://www.wepeech.com")
+//                .allowedOrigins("https://wepeech.com")
+//                .allowedOrigins("https://www.wepeech.com")
+                .allowedOrigins("*")
                 .allowedHeaders("*")
                 .exposedHeaders(HttpHeaders.AUTHORIZATION)
                 .allowedMethods(
