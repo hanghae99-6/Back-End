@@ -1,9 +1,10 @@
 package com.sparta.demo.service;
 
-import com.sparta.demo.dto.debate.*;
+import com.sparta.demo.dto.debate.DebateInfoDto;
+import com.sparta.demo.dto.debate.DebateLinkRequestDto;
+import com.sparta.demo.dto.debate.DebateLinkResponseDto;
 import com.sparta.demo.enumeration.CategoryEnum;
 import com.sparta.demo.enumeration.SideTypeEnum;
-import com.sparta.demo.enumeration.StatusTypeEnum;
 import com.sparta.demo.model.Debate;
 import com.sparta.demo.model.DebateEvidence;
 import com.sparta.demo.model.EnterUser;
@@ -15,23 +16,15 @@ import com.sparta.demo.repository.UserRepository;
 import com.sparta.demo.security.UserDetailsImpl;
 import com.sparta.demo.validator.DebateValidator;
 import com.sparta.demo.validator.ErrorResult;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
