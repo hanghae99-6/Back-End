@@ -54,8 +54,7 @@ public class StompHandler implements ChannelInterceptor {
             String roomId = chatMessageRepository.getRoomId(sessionId);
             log.info("세션으로 가져오는 roomId, 50 : {}", roomId);
 
-            chatMessageRepository.minusUserCnt(roomId);
-            log.info("minusUserCnt : {}", chatMessageRepository.minusUserCnt(roomId));
+            chatMessageRepository.minusUserCnt(sessionId, roomId);
 
             // 퇴장한 클라이언트의 roomId 맵핑 정보를 삭제한다.
             chatMessageRepository.removeUserEnterInfo(sessionId);
