@@ -79,12 +79,12 @@ public class ChatService {
         return chatMessageRepository.findAllMessage(roomId);
     }
 
-    public String getRoomId(String destination) {
-        int lastIndex = destination.lastIndexOf('/');
-        if (lastIndex != -1) {
-            return destination.substring(lastIndex + 1);
-        } else {
-            return "";
-        }
-    }
+//    public String getRoomId(String destination) {
+//        int lastIndex = destination.lastIndexOf('/');
+//        if (lastIndex != -1) {
+//            return destination.substring(lastIndex + 1);
+//        } else {
+//            return "";
+//        }
+//    }
 }
