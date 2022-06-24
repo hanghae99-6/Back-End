@@ -78,4 +78,13 @@ public class ChatService {
         log.info("getMessages roomId : {}", roomId);
         return chatMessageRepository.findAllMessage(roomId);
     }
+
+    public String getRoomId(String destination) {
+        int lastIndex = destination.lastIndexOf('/');
+        if (lastIndex != -1) {
+            return destination.substring(lastIndex + 1);
+        } else {
+            return "";
+        }
+    }
 }

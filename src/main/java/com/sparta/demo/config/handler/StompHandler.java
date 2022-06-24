@@ -3,6 +3,7 @@ package com.sparta.demo.config.handler;
 import com.sparta.demo.repository.ChatMessageRepository;
 import com.sparta.demo.service.ChatRoomService;
 import com.sparta.demo.security.jwt.JwtDecoder;
+import com.sparta.demo.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -21,6 +22,7 @@ public class StompHandler implements ChannelInterceptor {
 
     private final JwtDecoder jwtDecoder;
     private final ChatRoomService chatRoomService;
+    private final ChatService chatService;
     private final ChatMessageRepository chatMessageRepository;
 
     // websocket 을 통해 들어온 요청이 처리 되기전 실행된다.
@@ -42,7 +44,7 @@ public class StompHandler implements ChannelInterceptor {
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             log.info("SUBSCRIBE : {}", sessionId);
             sessionId = (String) message.getHeaders().get("simpSessionId");
-            String roomId = chatRoomService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
+            String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
 
             log.info("roomId, 45 : {}", roomId);
 
