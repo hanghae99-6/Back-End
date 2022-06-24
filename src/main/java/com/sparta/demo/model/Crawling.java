@@ -3,7 +3,6 @@ package com.sparta.demo.model;
 import com.sparta.demo.enumeration.CrawlTypeEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
