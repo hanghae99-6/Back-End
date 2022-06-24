@@ -35,6 +35,7 @@ public class CrawlingService {
     @Transactional
     public ResponseEntity<CrawlingDto> getNaverNews() throws IOException {
 
+        log.info("오늘날짜:{}",todayDate);
         int page = 1;
         CrawlingDto naverNewsDto = new CrawlingDto();
 
