@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ChatRoomService {
 
-//    public String getRoomId(String destination) {
-//        int lastIndex = destination.lastIndexOf('/');
-//        if (lastIndex != -1) {
-//            return destination.substring(lastIndex + 1);
-//        } else {
-//            return "";
-//        }
-//    }
+    public String getRoomId(String destination) {
+        int lastIndex = destination.lastIndexOf('/');
+        if (lastIndex != -1) {
+            return destination.substring(lastIndex + 1);
+        } else {
+            return "";
+        }
+    }
 }
