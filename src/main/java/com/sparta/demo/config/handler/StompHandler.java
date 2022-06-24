@@ -22,7 +22,7 @@ public class StompHandler implements ChannelInterceptor {
 
     private final JwtDecoder jwtDecoder;
     private final ChatRoomService chatRoomService;
-    private final ChatService chatService;
+//    private final ChatService chatService;
     private final ChatMessageRepository chatMessageRepository;
 
     // websocket 을 통해 들어온 요청이 처리 되기전 실행된다.
