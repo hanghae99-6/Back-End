@@ -44,7 +44,7 @@ public class StompHandler implements ChannelInterceptor {
         } else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             log.info("SUBSCRIBE : {}", sessionId);
             sessionId = (String) message.getHeaders().get("simpSessionId");
-            String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
+            String roomId = chatRoomService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
 
             log.info("roomId, 45 : {}", roomId);
 
