@@ -15,7 +15,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //                .allowedOrigins("http://localhost:3000")
                 .allowedOrigins("https://wepeech.com")
                 .allowedOrigins("https://www.wepeech.com")
-//                .allowedOrigins("*")
+                .allowedOrigins("*")
                 .allowedHeaders("*")
                 .exposedHeaders(HttpHeaders.AUTHORIZATION)
                 .allowedMethods(
