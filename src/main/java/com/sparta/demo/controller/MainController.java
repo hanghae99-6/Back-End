@@ -60,7 +60,7 @@ public class MainController {
 
     @ApiOperation(value = "원클릭 찬반 선택하기")
     @PutMapping("/one-click")
-    public ResponseEntity<List<OneClickResponseDto>> sumOneClick(@RequestBody OneClickRequestDto oneClickRequestDto,
+    public ResponseEntity<List<OneClickResponseDto>> createOneClickVote(@RequestBody OneClickRequestDto oneClickRequestDto,
                                                                  HttpServletRequest request) {
         String userIp = GetIp.getIp(request);
 
