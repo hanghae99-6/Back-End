@@ -93,6 +93,7 @@ public class MainService {
                     }
                 }
             } else {
+                log.info("category name : {}", category.toString());
                 Set<Integer> debateNum = new HashSet<>();
                 while (debateNum.size() < 6) {
                     debateNum.add((int) (Math.random() * debateList.size()));
