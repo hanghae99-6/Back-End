@@ -38,7 +38,8 @@ public class SessionListener extends KeyExpirationEventMessageListener {
 
         System.out.println("########## onMessage pattern " + new String(pattern) + " | " + message.toString());
 
-        log.info("redis key value: {}, type: {}", Long.valueOf(message.toString()), Long.valueOf(message.toString()).getClass());
+        // NumberFormatException: For input string 발생
+//        log.info("redis key value: {}, type: {}", Long.valueOf(message.toString()), Long.valueOf(message.toString()).getClass());
         try{
             Debate debate = debateRepository.findByDebateId(Long.valueOf(message.toString())).get();
             debate.setStatusEnum(StatusTypeEnum.LIVEOFF);
