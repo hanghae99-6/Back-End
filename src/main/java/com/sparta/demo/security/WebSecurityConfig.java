@@ -171,6 +171,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/wss-stomp/**");
         skipPathList.add("GET,/subscribe/{roomId}");
 
+        skipPathList.add("GET,/**");
+
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
