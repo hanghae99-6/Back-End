@@ -16,7 +16,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "https://wepeech.com",
                         "https://www.wepeech.com",
-                        "https://199.36.158.100"
+                        "https://199.36.158.100",
+                        "https://112.153.29.46",
+                        "http://112.153.29.46",
+                        "http://3.35.78.146:9099/",
+                        "https://3.35.78.146:9099/"
                 )
                 .allowedHeaders("*")
                 .exposedHeaders(HttpHeaders.AUTHORIZATION)
