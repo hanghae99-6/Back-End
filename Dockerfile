@@ -1,17 +1,18 @@
 FROM openjdk:8-jdk-alpine
 ARG JAR_FILE=build/libs/demo-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
-CMD (java \
-          -Dcom.sun.management.jmxremote=true \
-          -Dcom.sun.management.jmxremote.lacal.only=false \
-          -Dcom.sun.management.jmxremote.port=9099 \
-#          접속 인증 설정. true로 하면 인증 관련된 추가 설정 필요
-          -Dcom.sun.management.jmxremote.authenticate=false \
-#          ssl 접속 설정
-          -Dcom.sun.management.jmxremote.ssl=false \
-          -Dcom.sun.management.jmxremote.rmi.port=9099 \
-          -Djava.rmi.server.hostname=localhost )
+ENTRYPOINT ["java", \
+            "-Dcom.sun.management.jmxremote=true", \
+            "-Dcom.sun.management.jmxremote.local.only=false", \
+            "-Dcom.sun.management.jmxremote.port=9099", \
+            # 접속 인증 설정. true로 하면 인증 관련된 추가 설정 필요
+            "-Dcom.sun.management.jmxremote.authenticate=false", \
+            # ssl 접속 설정
+            "-Dcom.sun.management.jmxremote.ssl=false", \
+            "-Dcom.sun.management.jmxremote.rmi.port=9099", \
+            "-Djava.rmi.server.hostname=3.35.78.146", \
+            "-jar", \
+            "/app.jar"]
 EXPOSE 9099
 
  #FROM openjdk:8-jdk-alpine
