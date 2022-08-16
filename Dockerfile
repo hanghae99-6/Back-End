@@ -10,7 +10,7 @@ ENTRYPOINT ["java", \
             # ssl 접속 설정
             "-Dcom.sun.management.jmxremote.ssl=false", \
             "-Dcom.sun.management.jmxremote.rmi.port=9099", \
-            "-Djava.rmi.server.hostname=3.35.78.146", \
+            "-Djava.rmi.server.hostname=3.38.220.218", \
             "-jar", \
             "/app.jar"]
 EXPOSE 9099
