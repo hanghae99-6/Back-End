@@ -70,7 +70,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-resources/**",
                         "/v2/api-docs",
                         "/webjars/**",
-                        "/swagger-ui.html/**");
+                        "/swagger-ui.html/**",
+                        ".well-known/acme-challenge/**");
     }
 
     @Override
