@@ -7,6 +7,7 @@
 *.yml
 *.properties
 *.p12
+Dockerfile
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
